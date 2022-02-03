@@ -88,7 +88,6 @@ public final class JClass implements JObject {
 
     public JMethod addMethod(Level level, String name) {
         if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("The method name not allowed!");
-        name = "jmethod_" + name;
         JMethod method = new JMethod(level, this, name);
         this.methods.add(method);
         return method;
@@ -177,7 +176,7 @@ public final class JClass implements JObject {
         JavaCompiler.CompilationTask task = compiler.getTask(null, jJavaFileManager, null, null, null, Collections.singletonList(new StringObject(new URI(className + ".java"), JavaFileObject.Kind.SOURCE, getString())));
         if (task.call()) {
             JJavaFileObject javaFileObject = jJavaFileManager.getJavaFileObject();
-            String className = null;
+            String className;
             if (packageName != null) {
                 className = packageName + "." + this.className;
             } else {
