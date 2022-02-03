@@ -40,7 +40,7 @@
     Class<?> generated = clazz.generate();
     Constructor<?> cons = generated.getConstructor(String.class, Human.class);
     Object instance = cons.newInstance("Test message!", new Human());
-    generated.getMethod("jmethod_testing", Human.class).invoke(instance, new Human());
+    generated.getMethod("testing", Human.class).invoke(instance, new Human());
 
 ####Generated code:
     package net.deechael.test;
@@ -68,7 +68,7 @@
             }
         }
 
-        public void jmethod_testing(net.deechael.library.dcg.test.Human jparam_human) {
+        public void testing(net.deechael.library.dcg.test.Human jparam_human) {
             int jvar_age = jparam_human.getAge();
             jparam_human.print("Method testing");
             if (jvar_age == 16) {
