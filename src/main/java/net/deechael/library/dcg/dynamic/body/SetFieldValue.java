@@ -1,18 +1,24 @@
 package net.deechael.library.dcg.dynamic.body;
 
+import net.deechael.library.dcg.dynamic.JField;
+
 public class SetFieldValue implements Operation {
 
-    private final String fieldName;
+    private final JField field;
     private final String varString;
 
-    public SetFieldValue(String fieldName, String varString) {
-        this.fieldName = fieldName;
+    public SetFieldValue(JField field, String varString) {
+        this.field = field;
         this.varString = varString;
     }
 
     @Override
     public String getString() {
-        return "this." + this.fieldName + " = (" + varString + ");";
+        if (field.isStatic()) {
+            return field.getParent().getName() + "." + field.getName() + " = (" + varString + ");";
+        } else {
+            return field.getParent().getName() + "." + "this." + this.field.getName() + " = (" + varString + ");";
+        }
     }
 
 }

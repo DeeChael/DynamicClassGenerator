@@ -23,6 +23,10 @@ public class JStringVar extends Var {
         return getValueString();
     }
 
+    public static JStringVar nullVar() {
+        return new JStringVar(null, null);
+    }
+
     public static JStringVar stringVar(String value) {
         return new JStringVar(String.class, "\"" + value + "\"");
     }

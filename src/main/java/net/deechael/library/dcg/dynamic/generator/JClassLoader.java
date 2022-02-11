@@ -1,19 +1,45 @@
 package net.deechael.library.dcg.dynamic.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class JClassLoader extends ClassLoader {
 
-    private final String className;
+    private final Map<String, Class<?>> generated_classes = new HashMap<>();
 
-    private final byte[] bytes;
+    private final static JClassLoader instance = new JClassLoader();
 
-    public JClassLoader(String className, byte[] bytes) {
-        this.className = className;
-        this.bytes = bytes;
+    private JClassLoader() {
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        if (generated_classes.containsKey(name)) {
+            return generated_classes.get(name);
+        }
+        return super.loadClass(name);
     }
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return defineClass(className, bytes, 0, bytes.length);
+        if (generated_classes.containsKey(name)) {
+            return generated_classes.get(name);
+        }
+        return super.findClass(name);
+    }
+
+    public Class<?> generate0(String className, byte[] bytes) {
+        Class<?> clazz = defineClass(className, bytes, 0, bytes.length);
+        this.generated_classes.put(className, clazz);
+        return clazz;
+    }
+
+    public static JClassLoader getInstance() {
+        return instance;
+    }
+
+    public static Class<?> generate(String className, byte[] bytes) {
+        return getInstance().generate0(className, bytes);
     }
 
 }

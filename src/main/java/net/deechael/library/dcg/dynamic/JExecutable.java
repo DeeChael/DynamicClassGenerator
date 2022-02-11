@@ -1,18 +1,15 @@
 package net.deechael.library.dcg.dynamic;
 
 import net.deechael.library.dcg.dynamic.body.*;
-import net.deechael.library.dcg.dynamic.items.UsingMethodAsVar;
-import net.deechael.library.dcg.dynamic.items.UsingStaticMethodAsVar;
-import net.deechael.library.dcg.dynamic.items.Var;
+import net.deechael.library.dcg.dynamic.items.*;
 import net.deechael.library.dcg.function.ArgumentOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URISyntaxException;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -224,6 +221,101 @@ public abstract class JExecutable implements JObject {
         }
         UsingMethod usingMethod = new UsingMethod("super", methodName, bodyBuilder.toString());
         operations.add(usingMethod);
+    }
+
+    /**
+     * Using the method, will execute the method is implemented by this class, if this class didn't implement this method but parent class did, execute the method in parent class
+     *
+     * Generated code looks like: this.methodName(arguments);
+     *
+     * @param methodName The method name
+     * @param arguments The arguments that the method needs
+     */
+    public void usingThisMethod(String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        UsingMethod usingMethod = new UsingMethod("this", methodName, bodyBuilder.toString());
+        operations.add(usingMethod);
+    }
+
+    /**
+     * Cast a var to another type
+     * @param originalVar The var to be cast
+     * @param castToClass The class type the var will be cast to
+     * @param newVarName New var name
+     * @return New var
+     */
+    public Var castObject(Var originalVar, Class<?> castToClass, String newVarName) {
+        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", newVarName)) throw new RuntimeException("This var name is not allowed!");
+        newVarName = "jvar_" + newVarName;
+        if (!vars.isEmpty()) {
+            if (vars.containsKey(newVarName)) {
+                throw new RuntimeException("Failed to cast because it exists");
+            }
+        }
+        Var var = new Var(castToClass, newVarName);
+        vars.put(newVarName, var);
+        CastVar castVar = new CastVar(castToClass, newVarName, originalVar.varString());
+        operations.add(castVar);
+        return var;
+    }
+
+    public Var castObjectAsVar(Var originalVar, Class<?> castToClass) {
+        return new CastingVar(castToClass, originalVar.varString());
+    }
+
+    public Var createNewVarFromObjectsField(String varName, Var var, String fieldName) {
+        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("This var name is not allowed!");
+        varName = "jvar_" + varName;
+        if (!vars.isEmpty()) {
+            if (vars.containsKey(varName)) {
+                throw new RuntimeException("Failed to cast because it exists");
+            }
+        }
+        Field field = object_field_exists_parentClass(var.getType(), fieldName);
+        if (field == null) {
+            throw new RuntimeException("Cannot find the field!");
+        }
+        Var newVar = new Var(field.getType(), varName);
+        vars.put(varName, newVar);
+        CreateNewObjectsFieldVar createVar = new CreateNewObjectsFieldVar(field.getType(), varName, var.varString(), fieldName);
+        operations.add(createVar);
+        return newVar;
+    }
+
+    public Var objectsFieldAsVar(Var var, String fieldName) {
+        Field field = object_field_exists_parentClass(var.getType(), fieldName);
+        if (field == null) {
+            throw new RuntimeException("Cannot find the field!");
+        }
+        return new ObjectsFieldVar(field.getType(), var.varString(), fieldName);
+    }
+
+    private Field object_field_exists_parentClass(Class<?> clazz, String name) {
+        try {
+            Field field = clazz.getField(name);
+            if (Modifier.isPublic(field.getModifiers()) || Modifier.isProtected(field.getModifiers())) {
+                return field;
+            } else {
+                return null;
+            }
+        } catch (NoSuchFieldException e) {
+            Class<?> parent = clazz.getSuperclass();
+            if (parent == null) {
+                return null;
+            } else {
+                if (parent == Object.class) {
+                    return null;
+                } else {
+                    return object_field_exists_parentClass(parent, name);
+                }
+            }
+        }
     }
     
     /**
@@ -614,7 +706,7 @@ public abstract class JExecutable implements JObject {
             if (((JField) var).parent != this.parent) {
                 throw new RuntimeException("The field not exists in the class!");
             }
-            return true;
+            return parent.varExists(var);
         }
         return (vars.containsValue(var) || (vars.containsKey(var.getName()) && vars.get(var.getName()).getType().getName().equals(var.getType().getName())));
     }
@@ -626,7 +718,7 @@ public abstract class JExecutable implements JObject {
     public void setFieldValue(JField field, Var var) {
         if (field.parent != this.parent)
         if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        this.operations.add(new SetFieldValue(field.getName(), var.varString()));
+        this.operations.add(new SetFieldValue(field, var.varString()));
     }
 
     /**

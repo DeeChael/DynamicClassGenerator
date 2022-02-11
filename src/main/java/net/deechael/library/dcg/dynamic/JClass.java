@@ -4,6 +4,7 @@ import net.deechael.library.dcg.dynamic.generator.JClassLoader;
 import net.deechael.library.dcg.dynamic.generator.JJavaFileManager;
 import net.deechael.library.dcg.dynamic.generator.JJavaFileObject;
 import net.deechael.library.dcg.dynamic.generator.StringObject;
+import net.deechael.library.dcg.dynamic.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -33,6 +36,12 @@ public final class JClass implements JObject {
     private final List<JField> fields = new ArrayList<>();
     private final List<JConstructor> constructors = new ArrayList<>();
     private final List<JMethod> methods = new ArrayList<>();
+
+    private int extending = 0;
+    private Class<?> extending_original = null;
+    private JClass extending_generated = null;
+
+    private Class<?> generated = null;
 
     public JClass(@Nullable String packageName, String className, Level level) {
         this.packageName = packageName;
@@ -97,6 +106,110 @@ public final class JClass implements JObject {
         return packageName != null ? (packageName.endsWith(".") ? packageName + className : packageName + "." + className) : className;
     }
 
+    public JField getField(String name) {
+        if (name.startsWith("jfield_")) {
+            for (JField field : this.fields) {
+                if (Objects.equals(field.getName(), name)) {
+                    return field;
+                }
+            }
+            if (extending == 2) {
+                if (extending_generated != null) {
+                    try {
+                        return getField_parentClass(name, extending_generated.generate());
+                    } catch (ClassNotFoundException | URISyntaxException e) {
+                        throw new RuntimeException("Cannot find the field!");
+                    }
+                }
+            }
+            throw new RuntimeException("Cannot find the field!");
+        } else {
+            if (extending == 1) {
+                if (extending_original != null) {
+                    return getField_parentClass(name, extending_original);
+                } else {
+                    throw new RuntimeException("Cannot find the field!");
+                }
+            } else {
+                throw new RuntimeException("Cannot find the field!");
+            }
+        }
+    }
+
+    private JField getField_parentClass(String name, Class<?> clazz) {
+        try {
+            Field field = clazz.getField(name);
+            return new JField(Modifier.isPublic(field.getModifiers()) ? Level.PUBLIC : (Modifier.isPrivate(field.getModifiers()) ? Level.PRIVATE : (Modifier.isProtected(field.getModifiers()) ? Level.PROTECTED : Level.UNNAMED)), field.getType(), this, name, Modifier.isFinal(field.getModifiers()), Modifier.isStatic(field.getModifiers()));
+        } catch (NoSuchFieldException e) {
+            Class<?> parent = clazz.getSuperclass();
+            if (parent == null) {
+                throw new RuntimeException("Cannot find the field!");
+            } else {
+                if (parent == Object.class) {
+                    throw new RuntimeException("Cannot find the field!");
+                } else {
+                    return getField_parentClass(name, parent);
+                }
+            }
+        }
+    }
+
+    public boolean varExists(Var var) {
+        if (var.getName().startsWith("jfield_")) {
+            for (JField field : this.fields) {
+                if (Objects.equals(field.getName(), var.getName())) {
+                    return true;
+                }
+            }
+        }
+        if (extending == 1) {
+            if (extending_original != null) {
+                return varExists_parentClass(var, extending_original);
+            }
+        }
+        if (extending == 2) {
+            if (extending_generated != null) {
+                try {
+                    return varExists_parentClass(var, extending_generated.generate());
+                } catch (ClassNotFoundException | URISyntaxException e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean varExists_parentClass(Var var, Class<?> clazz) {
+        try {
+            Field field = clazz.getField(var.getName());
+            if (field.getType() == var.getType()) {
+                return true;
+            } else {
+                Class<?> parent = clazz.getSuperclass();
+                if (parent == null) {
+                    return false;
+                } else {
+                    if (parent == Object.class) {
+                        return false;
+                    } else {
+                        return varExists_parentClass(var, parent);
+                    }
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            Class<?> parent = clazz.getSuperclass();
+            if (parent == null) {
+                return false;
+            } else {
+                if (parent == Object.class) {
+                    return false;
+                } else {
+                    return varExists_parentClass(var, parent);
+                }
+            }
+        }
+    }
+
     private static boolean classExists(String className) {
         try {
             Class.forName(className);
@@ -106,8 +219,32 @@ public final class JClass implements JObject {
         }
     }
 
+    public void extend(Class<?> clazz) {
+        this.extending = 1;
+        this.extending_original = clazz;
+        this.extending_generated = null;
+    }
+
+    public void extend(JClass clazz) {
+        this.extending = 1;
+        this.extending_original = null;
+        this.extending_generated = clazz;
+    }
+
     @Override
     public String getString() {
+        if (extending > 0) {
+            if (extending == 1) {
+                if (extending_original == null) {
+                    throw new RuntimeException("The class extended a class, but cannot find the class!");
+                }
+            }
+            if (extending == 2) {
+                if (extending_generated == null) {
+                    throw new RuntimeException("The class extended a class, but cannot find the class");
+                }
+            }
+        }
         this.fields.forEach(jConstructor -> jConstructor.getExtraClasses().forEach(this::importClass));
         this.constructors.forEach(jConstructor -> jConstructor.getRequirementTypes().forEach(this::importClass));
         this.methods.forEach(jMethod -> jMethod.getRequirementTypes().forEach(this::importClass));
@@ -169,7 +306,15 @@ public final class JClass implements JObject {
         getAnnotations().put(annotation, values);
     }
 
+    public boolean isGenerated() {
+        return generated != null;
+    }
+
     public Class<?> generate() throws ClassNotFoundException, URISyntaxException {
+        return isGenerated() ? generated : forceGenerate();
+    }
+
+    public Class<?> forceGenerate() throws ClassNotFoundException, URISyntaxException {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager javaFileManager = compiler.getStandardFileManager(null, null, null);
         JJavaFileManager jJavaFileManager = new JJavaFileManager(javaFileManager);
@@ -182,8 +327,9 @@ public final class JClass implements JObject {
             } else {
                 className = this.className;
             }
-            ClassLoader classLoader = new JClassLoader(className, javaFileObject.getBytes());
-            return classLoader.loadClass(className);
+            Class<?> generated = JClassLoader.generate(className, javaFileObject.getBytes());
+            this.generated = generated;
+            return generated;
         } else {
             throw new RuntimeException("Failed to generate the class!");
         }

@@ -82,6 +82,10 @@ public class JField extends Var implements JObject {
         initBody = new UsingStaticMethodAsVar(result, bodyBuilder.toString()).varString();
     }
 
+    public boolean isStatic() {
+        return isStatic;
+    }
+
     public void initializeByConstructor(JStringVar... vars) {
         needInit = true;
         StringBuilder argumentBody = new StringBuilder();
@@ -103,9 +107,17 @@ public class JField extends Var implements JObject {
         initBody = "new " + type.getName() + "(" + argumentBody + ")";
     }
 
+    public JClass getParent() {
+        return parent;
+    }
+
     @Override
     public String varString() {
-        return "this." + name;
+        if (this.isStatic()) {
+            return this.parent.getName() + "." + name;
+        } else {
+            return this.parent.getName() + "." + "this." + name;
+        }
     }
 
     @Override
