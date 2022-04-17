@@ -89,7 +89,7 @@
 ### Coming Soon:
 
 1.<s>Extending class</s>\
-2.Implementing interfaces\
+2.<s>Implementing interfaces</s>\
 3.Creating annotation\
 4.Creating enum\
 5.Creating interface\
