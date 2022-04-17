@@ -93,11 +93,12 @@
 3.Creating annotation\
 4.Creating enum\
 5.Creating interface\
-6.Try & Catch\
+6.<s>Try & Catch</s>\
 7.Try & multi Catch\
 8.Try & 1 Catch with multi exceptions\
 9.If & multi Else-ifs & else\
 10.If & multi Else-ifs\
 11.More requirements for If-block and Else-block\
 12.Convenient variables managing\
+13.Try & Catch & Finally\
 ...

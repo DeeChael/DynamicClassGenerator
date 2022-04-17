@@ -3,6 +3,7 @@ package net.deechael.library.dcg.dynamic;
 import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.library.dcg.dynamic.items.*;
 import net.deechael.library.dcg.function.ArgumentOnly;
+import net.deechael.library.dcg.function.BigArgumentOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -385,6 +386,17 @@ public abstract class JExecutable implements JObject {
         operations.add(usingMethodAndCreateVar);
         Var newVar = new Var(returnType, varName);
         return newVar;
+    }
+
+    public <T extends Throwable> void tryCatch(Class<T> throwing, String throwableObjectName, ArgumentOnly<JExecutable> tryExecuting, BigArgumentOnly<JExecutable, Var> catchExecuting) {
+        JExecutableForIfElse tryBody = new JExecutableForIfElse(this, this.parent);
+        JExecutableForIfElse catchBody = new JExecutableForIfElse(this, this.parent);
+        throwableObjectName = "jthrowable_" + throwableObjectName;
+        Var var = new Var(throwing, throwableObjectName);
+        tryExecuting.apply(tryBody);
+        catchExecuting.apply(catchBody, var);
+        TryAndCatch tryAndCatch = new TryAndCatch(throwing, throwableObjectName, tryBody, catchBody);
+        this.operations.add(tryAndCatch);
     }
 
     /**
