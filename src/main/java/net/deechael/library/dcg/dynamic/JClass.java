@@ -53,6 +53,7 @@ public final class JClass implements JObject {
     private int extending = 0;
     private Class<?> extending_original = null;
     private JClass extending_generated = null;
+    private final List<Class<?>> implementations = new ArrayList<>();
 
     private Class<?> generated = null;
 
@@ -194,6 +195,7 @@ public final class JClass implements JObject {
 
     public void implement(Class<?> clazz) {
         if (!Modifier.isInterface(clazz.getModifiers())) throw new RuntimeException("This class is not an interface");
+        implementations.add(clazz);
     }
 
     @Override
@@ -248,6 +250,17 @@ public final class JClass implements JObject {
             base.append(" extends ");
             base.append(extending_generated.getName());
         }
+        if (implementations.size() > 0) {
+            base.append(" implements ");
+            Iterator<Class<?>> iterator = implementations.iterator();
+            while (iterator.hasNext()) {
+                base.append(iterator.next().getName());
+                if (iterator.hasNext()) {
+                    base.append(", ");
+                }
+            }
+        }
+        base.append(" {\n");
         for (JField field : fields) {
             base.append(field.getString()).append("\n");
         }
