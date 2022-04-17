@@ -5,7 +5,9 @@ import net.deechael.library.dcg.dynamic.items.Var;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class JConstructor extends JExecutableParametered {
 

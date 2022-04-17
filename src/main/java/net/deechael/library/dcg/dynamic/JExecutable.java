@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -22,7 +24,6 @@ public abstract class JExecutable implements JObject {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
-    protected final Map<String, Var> vars = new HashMap<>();
     protected final List<Operation> operations = new ArrayList<>();
     private final List<Class<?>> extraClasses = new ArrayList<>();
     
@@ -47,25 +48,6 @@ public abstract class JExecutable implements JObject {
     */
 
     /**
-     * Get a created var
-     * Not include parameters and fields
-     * You can find the var once you created by createNewInstanceVar or createNewStringVar
-     *
-     * Won't generate code
-     *
-     * @param varName the name of the var which you want to find (Will add a prefix "jvar_" automatically to search)
-     * @return The var whose name is same to varName
-     */
-    public Var getVar(String varName) {
-        if (vars.isEmpty()) throw new RuntimeException("The var not exists");
-        if (varName == null) throw new RuntimeException("The var not exists");
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var not exists");
-        varName = "jvar_" + varName;
-        if (!vars.containsKey(varName)) throw new RuntimeException("The var not exists");
-        return vars.get(varName);
-    }
-
-    /**
      * Create a new var by constructor
      *
      * Generated code look likes: Example example = new Example(...);
@@ -76,13 +58,8 @@ public abstract class JExecutable implements JObject {
      * @return Created var which can be found by method "getVar"
      */
     public Var createNewInstanceVar(@NotNull Class<?> type, @NotNull String name, Var... arguments) {
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("This var name is not allowed!");
         name = "jvar_" + name;
-        if (!vars.isEmpty()) {
-            if (vars.containsKey(name)) return vars.get(name);
-        }
         Var var = new Var(type, name);
-        vars.put(name, var);
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -109,11 +86,7 @@ public abstract class JExecutable implements JObject {
      * @return Created var which can be found by method "getVar"
      */
     public Var createNewStringVar(String name, JStringVar stringValue) {
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("This var name is not allowed!");
         name = "jvar_" + name;
-        if (!vars.isEmpty()) {
-            if (vars.containsKey(name)) throw new RuntimeException("This var name has been used!");
-        }
         Class<?> latest = stringValue.getType();
         while (latest.isArray()) {
             latest = latest.getComponentType();
@@ -146,18 +119,6 @@ public abstract class JExecutable implements JObject {
      *                  is easier than reflection
      */
     public void usingMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        Class<?> clazz = var.getType();
-        boolean hasMethod = false;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && !Modifier.isStatic(method.getModifiers())) {
-                hasMethod = true;
-                break;
-            }
-        }
-        if (!hasMethod) {
-            throw new RuntimeException("Unknown method of the class " + var.getType().getName() + ": " + methodName + "(...);");
-        }
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -253,13 +214,7 @@ public abstract class JExecutable implements JObject {
     public Var castObject(Var originalVar, Class<?> castToClass, String newVarName) {
         if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", newVarName)) throw new RuntimeException("This var name is not allowed!");
         newVarName = "jvar_" + newVarName;
-        if (!vars.isEmpty()) {
-            if (vars.containsKey(newVarName)) {
-                throw new RuntimeException("Failed to cast because it exists");
-            }
-        }
         Var var = new Var(castToClass, newVarName);
-        vars.put(newVarName, var);
         CastVar castVar = new CastVar(castToClass, newVarName, originalVar.varString());
         operations.add(castVar);
         return var;
@@ -269,31 +224,32 @@ public abstract class JExecutable implements JObject {
         return new CastingVar(castToClass, originalVar.varString());
     }
 
+    public Var constructorVar(Class<?> type, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new ConstructorVar(type, bodyBuilder.toString());
+    }
+
     public Var createNewVarFromObjectsField(String varName, Var var, String fieldName) {
         if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("This var name is not allowed!");
         varName = "jvar_" + varName;
-        if (!vars.isEmpty()) {
-            if (vars.containsKey(varName)) {
-                throw new RuntimeException("Failed to cast because it exists");
-            }
-        }
         Field field = object_field_exists_parentClass(var.getType(), fieldName);
         if (field == null) {
             throw new RuntimeException("Cannot find the field!");
         }
         Var newVar = new Var(field.getType(), varName);
-        vars.put(varName, newVar);
         CreateNewObjectsFieldVar createVar = new CreateNewObjectsFieldVar(field.getType(), varName, var.varString(), fieldName);
         operations.add(createVar);
         return newVar;
     }
 
     public Var objectsFieldAsVar(Var var, String fieldName) {
-        Field field = object_field_exists_parentClass(var.getType(), fieldName);
-        if (field == null) {
-            throw new RuntimeException("Cannot find the field!");
-        }
-        return new ObjectsFieldVar(field.getType(), var.varString(), fieldName);
+        return new ObjectsFieldVar(var.varString(), fieldName);
     }
 
     private Field object_field_exists_parentClass(Class<?> clazz, String name) {
@@ -331,10 +287,8 @@ public abstract class JExecutable implements JObject {
      * @return New created var
      */
     public Var usingMethodAndCreateVar(String varName, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
         if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var name not allowed!");
         varName = "jvar_" + varName;
-        if (vars.containsKey(varName)) throw new RuntimeException("The var exists!");
         Class<?> clazz = var.getType();
         Class<?> returnType = null;
         boolean hasMethod = false;
@@ -360,9 +314,7 @@ public abstract class JExecutable implements JObject {
         }
         UsingMethodAndCreateVar usingMethodAndCreateVar = new UsingMethodAndCreateVar(returnType.getName(), varName, var.varString(), methodName, bodyBuilder.toString());
         operations.add(usingMethodAndCreateVar);
-        Var newVar = new Var(returnType, varName);
-        vars.put(varName, newVar);
-        return newVar;
+        return new Var(returnType, varName);
     }
 
     /**
@@ -379,18 +331,15 @@ public abstract class JExecutable implements JObject {
      * @param arguments The arguments that the method needs
      */
     public void usingSuperMethodAndCreateVar(String varName, String methodName, Var... arguments) {
-        //TODO
-        /*
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].getString());
+            bodyBuilder.append(arguments[i].varString());
             if (i != arguments.length - 1) {
                 bodyBuilder.append(", ");
             }
         }
         UsingMethod usingMethod = new UsingMethod("super", methodName, bodyBuilder.toString());
         operations.add(usingMethod);
-        */
     }
 
     /**
@@ -409,9 +358,7 @@ public abstract class JExecutable implements JObject {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var name not allowed!");
         varName = "jvar_" + varName;
-        if (vars.containsKey(varName)) throw new RuntimeException("The var exists!");
         Class<?> returnType = null;
         boolean hasMethod = false;
         for (Method method : clazz.getDeclaredMethods()) {
@@ -437,7 +384,6 @@ public abstract class JExecutable implements JObject {
         UsingStaticMethodAndCreateVar usingMethodAndCreateVar = new UsingStaticMethodAndCreateVar(returnType.getName(), varName, clazz.getName(), methodName, bodyBuilder.toString());
         operations.add(usingMethodAndCreateVar);
         Var newVar = new Var(returnType, varName);
-        vars.put(varName, newVar);
         return newVar;
     }
 
@@ -465,8 +411,6 @@ public abstract class JExecutable implements JObject {
      * @param elseExecuting The executable body in else block
      */
     public void ifElse_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        if (!isVarExists(isEqual)) throw new RuntimeException("The var not exists in the executing body!");
         JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
         JExecutableForIfElse elseBody = new JExecutableForIfElse(this, this.parent);
         ifExecuting.apply(ifBody);
@@ -476,7 +420,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void ifElse_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
-        if (!isVarExists(booleanTypeVar)) throw new RuntimeException("The var not exists in the executing body!");
         if (!(booleanTypeVar.getType() == boolean.class || booleanTypeVar.getType() == Boolean.class)) {
             throw new RuntimeException("The var is not boolean type var");
         }
@@ -489,7 +432,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void ifElse_Method(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
         Class<?> clazz = var.getType();
         boolean hasMethod = false;
         Method result = null;
@@ -517,7 +459,7 @@ public abstract class JExecutable implements JObject {
         JExecutableForIfElse elseBody = new JExecutableForIfElse(this, this.parent);
         ifExecuting.apply(ifBody);
         elseExecuting.apply(elseBody);
-        IfAndElse ifAndElse = new IfAndElse(new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString()), ifBody, elseBody);
+        IfAndElse ifAndElse = new IfAndElse(new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString()), ifBody, elseBody);
         operations.add(ifAndElse);
     }
 
@@ -556,8 +498,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void ifOnly_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        if (!isVarExists(isEqual)) throw new RuntimeException("The var not exists in the executing body!");
         JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
         ifExecuting.apply(ifBody);
         IfOnly ifOnly = new IfOnly(new EqualCheck(var, isEqual), ifBody);
@@ -565,7 +505,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void ifOnly_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting) {
-        if (!isVarExists(booleanTypeVar)) throw new RuntimeException("The var not exists in the executing body!");
         JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
         ifExecuting.apply(ifBody);
         IfOnly ifOnly = new IfOnly(new BooleanVarCheck(booleanTypeVar.varString()), ifBody);
@@ -573,7 +512,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void ifOnly_Method(ArgumentOnly<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
         Class<?> clazz = var.getType();
         boolean hasMethod = false;
         Method result = null;
@@ -599,7 +537,7 @@ public abstract class JExecutable implements JObject {
         }
         JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
         ifExecuting.apply(ifBody);
-        IfOnly ifOnly = new IfOnly(new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString()), ifBody);
+        IfOnly ifOnly = new IfOnly(new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString()), ifBody);
         operations.add(ifOnly);
     }
 
@@ -635,21 +573,7 @@ public abstract class JExecutable implements JObject {
         operations.add(ifOnly);
     }
 
-    public Var createUsingMethodAsString(@NotNull Var var, @NotNull String methodName, Var... arguments) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        Class<?> clazz = var.getType();
-        boolean hasMethod = false;
-        Method result = null;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && !Modifier.isStatic(method.getModifiers())) {
-                hasMethod = true;
-                result = method;
-                break;
-            }
-        }
-        if (!hasMethod) {
-            throw new RuntimeException("Unknown method of the class " + var.getType().getName() + ": " + methodName + "(...);");
-        }
+    public Var usingMethodAsVar(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -657,10 +581,32 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        return new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString());
+        return new UsingMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
     }
 
-    public Var createUsingMethodAsString(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    public Var usingThisMethodAsVar(@NotNull String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
+    }
+
+    public Var usingSuperMethodAsVar(@NotNull String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
+    }
+
+    public Var usingMethodAsVar(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
@@ -687,7 +633,6 @@ public abstract class JExecutable implements JObject {
     }
 
     public void returnValue(Var var) {
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
         this.operations.add(new ReturnValue(var.varString()));
     }
 
@@ -695,30 +640,21 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new ReturnVoid());
     }
 
-    protected boolean isVarExists(Var var) {
-        if (var instanceof UsingMethodAsVar || var instanceof UsingStaticMethodAsVar) {
-            return true;
-        }
-        if (var instanceof JStringVar) {
-            return true;
-        }
-        if (var instanceof JField) {
-            if (((JField) var).parent != this.parent) {
-                throw new RuntimeException("The field not exists in the class!");
-            }
-            return parent.varExists(var);
-        }
-        return (vars.containsValue(var) || (vars.containsKey(var.getName()) && vars.get(var.getName()).getType().getName().equals(var.getType().getName())));
-    }
-
     protected List<Operation> getOperations() {
         return new ArrayList<>(this.operations);
     }
 
     public void setFieldValue(JField field, Var var) {
-        if (field.parent != this.parent)
-        if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-        this.operations.add(new SetFieldValue(field, var.varString()));
+        this.operations.add(new SetFieldValue(field.getParent().getName(), null, field.getName(), var.varString(), field.isStatic()));
+    }
+
+    public void setThisFieldValue(JField field, Var var) {
+        if (field.parent != this.parent) throw new RuntimeException("The parent class of the field is not correct");
+        this.operations.add(new SetFieldValue(parent.getName(), "this", field.getName(), var.varString(), field.isStatic()));
+    }
+
+    public void setOthersFieldValue(Var fieldOwner, String field, Var var) {
+        this.operations.add(new SetFieldValue(null, fieldOwner.varString(), field, var.varString(), false));
     }
 
     /**
@@ -733,23 +669,9 @@ public abstract class JExecutable implements JObject {
             this.executable = parent;
         }
 
-        public Var getVar(String varName) {
-            if (executable.vars.isEmpty()) throw new RuntimeException("The var not exists");
-            if (varName == null) throw new RuntimeException("The var not exists");
-            if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var not exists");
-            varName = "jvar_" + varName;
-            if (!executable.vars.containsKey(varName)) throw new RuntimeException("The var not exists");
-            return executable.vars.get(varName);
-        }
-
         public Var createNewInstanceVar(@NotNull Class<?> type, @NotNull String name, Var... arguments) {
-            if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("This var name is not allowed!");
             name = "jvar_" + name;
-            if (!vars.isEmpty()) {
-                if (vars.containsKey(name)) return vars.get(name);
-            }
             Var var = new Var(type, name);
-            executable.vars.put(name, var);
             StringBuilder bodyBuilder = new StringBuilder();
             for (int i = 0; i < arguments.length; i++) {
                 bodyBuilder.append(arguments[i].varString());
@@ -763,11 +685,7 @@ public abstract class JExecutable implements JObject {
         }
 
         public Var createNewStringVar(String name, JStringVar stringValue) {
-            if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("This var name is not allowed!");
             name = "jvar_" + name;
-            if (!executable.vars.isEmpty()) {
-                if (executable.vars.containsKey(name)) throw new RuntimeException("This var name has been used!");
-            }
             Class<?> latest = stringValue.getType();
             while (latest.isArray()) {
                 latest = latest.getComponentType();
@@ -778,7 +696,6 @@ public abstract class JExecutable implements JObject {
             Var var = new Var(stringValue.getType(), name);
             CreateNewStringVar createVar = new CreateNewStringVar(stringValue.getType(), name, stringValue.varString());
             operations.add(createVar);
-            executable.vars.put(name, var);
             return var;
         }
 
@@ -808,10 +725,7 @@ public abstract class JExecutable implements JObject {
         }
 
         public Var usingMethodAndCreateVar(String varName, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-            if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var name not allowed!");
             varName = "jvar_" + varName;
-            if (executable.vars.containsKey(varName)) throw new RuntimeException("The var exists!");
             Class<?> clazz = var.getType();
             Class<?> returnType = null;
             boolean hasMethod = false;
@@ -837,9 +751,7 @@ public abstract class JExecutable implements JObject {
             }
             UsingMethodAndCreateVar usingMethodAndCreateVar = new UsingMethodAndCreateVar(returnType.getName(), varName, var.varString(), methodName, bodyBuilder.toString());
             operations.add(usingMethodAndCreateVar);
-            Var newVar = new Var(returnType, varName);
-            executable.vars.put(varName, newVar);
-            return newVar;
+            return new Var(returnType, varName);
         }
 
         public void usingSuperMethodAndCreateVar(String varName, String methodName, Var... arguments) {
@@ -861,9 +773,7 @@ public abstract class JExecutable implements JObject {
             if (!executable.extraClasses.contains(clazz)) {
                 executable.extraClasses.add(clazz);
             }
-            if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", varName)) throw new RuntimeException("The var name not allowed!");
             varName = "jvar_" + varName;
-            if (executable.vars.containsKey(varName)) throw new RuntimeException("The var exists!");
             Class<?> returnType = null;
             boolean hasMethod = false;
             for (Method method : clazz.getDeclaredMethods()) {
@@ -889,13 +799,10 @@ public abstract class JExecutable implements JObject {
             UsingStaticMethodAndCreateVar usingMethodAndCreateVar = new UsingStaticMethodAndCreateVar(returnType.getName(), varName, clazz.getName(), methodName, bodyBuilder.toString());
             operations.add(usingMethodAndCreateVar);
             Var newVar = new Var(returnType, varName);
-            executable.vars.put(varName, newVar);
             return newVar;
         }
 
         public void ifElse_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-            if (!isVarExists(isEqual)) throw new RuntimeException("The var not exists in the executing body!");
             JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
             JExecutableForIfElse elseBody = new JExecutableForIfElse(this, this.parent);
             ifExecuting.apply(ifBody);
@@ -905,7 +812,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public void ifElse_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
-            if (!isVarExists(booleanTypeVar)) throw new RuntimeException("The var not exists in the executing body!");
             if (!(booleanTypeVar.getType() == boolean.class || booleanTypeVar.getType() == Boolean.class)) {
                 throw new RuntimeException("The var is not boolean type var");
             }
@@ -918,7 +824,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public void ifElse_Method(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
             Class<?> clazz = var.getType();
             boolean hasMethod = false;
             Method result = null;
@@ -946,7 +851,7 @@ public abstract class JExecutable implements JObject {
             JExecutableForIfElse elseBody = new JExecutableForIfElse(this, this.parent);
             ifExecuting.apply(ifBody);
             elseExecuting.apply(elseBody);
-            IfAndElse ifAndElse = new IfAndElse(new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString()), ifBody, elseBody);
+            IfAndElse ifAndElse = new IfAndElse(new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString()), ifBody, elseBody);
             operations.add(ifAndElse);
         }
 
@@ -985,8 +890,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public void ifOnly_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
-            if (!isVarExists(isEqual)) throw new RuntimeException("The var not exists in the executing body!");
             JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
             ifExecuting.apply(ifBody);
             IfOnly ifOnly = new IfOnly(new EqualCheck(var, isEqual), ifBody);
@@ -994,7 +897,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public void ifOnly_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting) {
-            if (!isVarExists(booleanTypeVar)) throw new RuntimeException("The var not exists in the executing body!");
             JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
             ifExecuting.apply(ifBody);
             IfOnly ifOnly = new IfOnly(new BooleanVarCheck(booleanTypeVar.varString()), ifBody);
@@ -1002,7 +904,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public void ifOnly_Method(ArgumentOnly<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
             Class<?> clazz = var.getType();
             boolean hasMethod = false;
             Method result = null;
@@ -1028,7 +929,7 @@ public abstract class JExecutable implements JObject {
             }
             JExecutableForIfElse ifBody = new JExecutableForIfElse(this, this.parent);
             ifExecuting.apply(ifBody);
-            IfOnly ifOnly = new IfOnly(new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString()), ifBody);
+            IfOnly ifOnly = new IfOnly(new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString()), ifBody);
             operations.add(ifOnly);
         }
 
@@ -1065,7 +966,6 @@ public abstract class JExecutable implements JObject {
         }
 
         public Var createUsingMethodAsString(@NotNull Var var, @NotNull String methodName, Var... arguments) {
-            if (!isVarExists(var)) throw new RuntimeException("The var not exists in the executing body!");
             Class<?> clazz = var.getType();
             boolean hasMethod = false;
             Method result = null;
@@ -1086,7 +986,7 @@ public abstract class JExecutable implements JObject {
                     bodyBuilder.append(", ");
                 }
             }
-            return new UsingMethodAsVar(var.varString(), result, bodyBuilder.toString());
+            return new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString());
         }
 
         public Var createUsingMethodAsString(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
@@ -1116,11 +1016,6 @@ public abstract class JExecutable implements JObject {
         }
 
         @Override
-        protected boolean isVarExists(Var var) {
-            return executable.isVarExists(var);
-        }
-
-        @Override
         public String getString() {
             StringBuilder base = new StringBuilder();
             for (Operation operation : this.getOperations()) {
@@ -1131,12 +1026,7 @@ public abstract class JExecutable implements JObject {
     }
 
     protected List<Class<?>> getRequirementTypes() {
-        List<Class<?>> list = new ArrayList<>();
-        for (Var var : vars.values()) {
-            list.add(var.getType());
-        }
-        list.addAll(extraClasses);
-        return list;
+        return new ArrayList<>(extraClasses);
     }
 
     @Override

@@ -12,6 +12,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
@@ -22,6 +23,18 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public final class JClass implements JObject {
+
+    private final static List<File> libraries = new ArrayList<>();
+
+    public static void loadLibrary(File file) {
+        if (file.exists()) {
+            if (file.isFile()) {
+                if (file.getName().endsWith(".jar")) {
+                    libraries.add(file);
+                }
+            }
+        }
+    }
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -82,7 +95,6 @@ public final class JClass implements JObject {
     }
 
     public JField addField(Level level, Class<?> type, String name, boolean isFinal, boolean isStatic) {
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("The field name not allowed!");
         name = "jfield_" + name;
         JField field = new JField(level, type, this, name, isFinal, isStatic);
         this.fields.add(field);
@@ -96,8 +108,13 @@ public final class JClass implements JObject {
     }
 
     public JMethod addMethod(Level level, String name) {
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", name)) throw new RuntimeException("The method name not allowed!");
         JMethod method = new JMethod(level, this, name);
+        this.methods.add(method);
+        return method;
+    }
+
+    public JMethod addMethod(Class<?> returnType, Level level, String name) {
+        JMethod method = new JMethod(returnType, level, this, name);
         this.methods.add(method);
         return method;
     }
@@ -138,7 +155,7 @@ public final class JClass implements JObject {
 
     private JField getField_parentClass(String name, Class<?> clazz) {
         try {
-            Field field = clazz.getField(name);
+            Field field = clazz.getDeclaredField(name);
             return new JField(Modifier.isPublic(field.getModifiers()) ? Level.PUBLIC : (Modifier.isPrivate(field.getModifiers()) ? Level.PRIVATE : (Modifier.isProtected(field.getModifiers()) ? Level.PROTECTED : Level.UNNAMED)), field.getType(), this, name, Modifier.isFinal(field.getModifiers()), Modifier.isStatic(field.getModifiers()));
         } catch (NoSuchFieldException e) {
             Class<?> parent = clazz.getSuperclass();
@@ -149,62 +166,6 @@ public final class JClass implements JObject {
                     throw new RuntimeException("Cannot find the field!");
                 } else {
                     return getField_parentClass(name, parent);
-                }
-            }
-        }
-    }
-
-    public boolean varExists(Var var) {
-        if (var.getName().startsWith("jfield_")) {
-            for (JField field : this.fields) {
-                if (Objects.equals(field.getName(), var.getName())) {
-                    return true;
-                }
-            }
-        }
-        if (extending == 1) {
-            if (extending_original != null) {
-                return varExists_parentClass(var, extending_original);
-            }
-        }
-        if (extending == 2) {
-            if (extending_generated != null) {
-                try {
-                    return varExists_parentClass(var, extending_generated.generate());
-                } catch (ClassNotFoundException | URISyntaxException e) {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean varExists_parentClass(Var var, Class<?> clazz) {
-        try {
-            Field field = clazz.getField(var.getName());
-            if (field.getType() == var.getType()) {
-                return true;
-            } else {
-                Class<?> parent = clazz.getSuperclass();
-                if (parent == null) {
-                    return false;
-                } else {
-                    if (parent == Object.class) {
-                        return false;
-                    } else {
-                        return varExists_parentClass(var, parent);
-                    }
-                }
-            }
-        } catch (NoSuchFieldException e) {
-            Class<?> parent = clazz.getSuperclass();
-            if (parent == null) {
-                return false;
-            } else {
-                if (parent == Object.class) {
-                    return false;
-                } else {
-                    return varExists_parentClass(var, parent);
                 }
             }
         }
@@ -229,6 +190,10 @@ public final class JClass implements JObject {
         this.extending = 1;
         this.extending_original = null;
         this.extending_generated = clazz;
+    }
+
+    public void implement(Class<?> clazz) {
+        if (!Modifier.isInterface(clazz.getModifiers())) throw new RuntimeException("This class is not an interface");
     }
 
     @Override
@@ -275,7 +240,14 @@ public final class JClass implements JObject {
                 }
             }
         }
-        base.append(level.getString()).append(" class ").append(className).append(" {\n");
+        base.append(level.getString()).append(" class ").append(className);
+        if (extending == 1) {
+            base.append(" extends ");
+            base.append(extending_original.getName());
+        } else if (extending == 2) {
+            base.append(" extends ");
+            base.append(extending_generated.getName());
+        }
         for (JField field : fields) {
             base.append(field.getString()).append("\n");
         }
@@ -315,12 +287,21 @@ public final class JClass implements JObject {
     }
 
     public Class<?> forceGenerate() throws ClassNotFoundException, URISyntaxException {
+        Iterable<String> options = null;
+        if (libraries.size() > 0) {
+            StringBuilder classpath_option = new StringBuilder();
+            for (File library : libraries) {
+                classpath_option.append(library.getPath()).append(";");
+            }
+            options = Arrays.asList("-classpath", classpath_option.toString());
+        }
+
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager javaFileManager = compiler.getStandardFileManager(null, null, null);
         JJavaFileManager jJavaFileManager = new JJavaFileManager(javaFileManager);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, jJavaFileManager, null, null, null, Collections.singletonList(new StringObject(new URI(className + ".java"), JavaFileObject.Kind.SOURCE, getString())));
+        JavaCompiler.CompilationTask task = compiler.getTask(null, jJavaFileManager, null, options, null, Collections.singletonList(new StringObject(new URI(className + ".java"), JavaFileObject.Kind.SOURCE, getString())));
         if (task.call()) {
-            JJavaFileObject javaFileObject = jJavaFileManager.getJavaFileObject();
+            JJavaFileObject javaFileObject = jJavaFileManager.getLastJavaFileObject();
             String className;
             if (packageName != null) {
                 className = packageName + "." + this.className;

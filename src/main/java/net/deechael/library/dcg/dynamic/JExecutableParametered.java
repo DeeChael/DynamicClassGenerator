@@ -1,8 +1,6 @@
 package net.deechael.library.dcg.dynamic;
 
-import net.deechael.library.dcg.dynamic.items.UsingMethodAsVar;
-import net.deechael.library.dcg.dynamic.items.UsingStaticMethodAsVar;
-import net.deechael.library.dcg.dynamic.items.Var;
+import net.deechael.library.dcg.dynamic.items.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,37 +20,12 @@ public abstract class JExecutableParametered extends JExecutable {
 
     public Var addParameter(Class<?> clazz, String parameterName) {
         if (parameterName == null) return null;
-        if (!Pattern.matches("^[A-Za-z_$]+[A-Za-z_$\\d]+$", parameterName)) return null;
         parameterName = "jparam_" + parameterName;
-        if (parameters.containsKey(parameterName)) return vars.get(parameterName);
-        parameters.put(parameterName, clazz);
-        Var var = new Var(clazz, parameterName);
-        vars.put(parameterName, var);
-        return var;
+        return new Var(clazz, parameterName);
     }
 
     protected Map<String, Class<?>> getParameters() {
         return parameters;
-    }
-
-    public boolean containsParameter(Var var) {
-        return parameters.containsKey(var.getName()) && vars.containsKey(var.getName()) && parameters.get(var.getName()) == var.getType();
-    }
-
-    protected boolean isVarExists(Var var) {
-        if (var instanceof UsingMethodAsVar || var instanceof UsingStaticMethodAsVar) {
-            return true;
-        }
-        if (var instanceof JStringVar) {
-            return true;
-        }
-        if (var instanceof JField) {
-            if (((JField) var).parent != this.parent) {
-                throw new RuntimeException("The field not exists in the class!");
-            }
-            return true;
-        }
-        return vars.containsValue(var) || (vars.containsKey(var.getName()) && vars.get(var.getName()).getType().getName().equals(var.getType().getName())) || containsParameter(var);
     }
 
     public void throwing(Class<? extends Throwable>... throwables) {

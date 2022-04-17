@@ -116,7 +116,7 @@ public class JField extends Var implements JObject {
         if (this.isStatic()) {
             return this.parent.getName() + "." + name;
         } else {
-            return this.parent.getName() + "." + "this." + name;
+            return "this." + name;
         }
     }
 

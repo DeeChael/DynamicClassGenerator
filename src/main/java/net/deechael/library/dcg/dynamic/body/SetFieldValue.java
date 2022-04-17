@@ -1,23 +1,32 @@
 package net.deechael.library.dcg.dynamic.body;
 
-import net.deechael.library.dcg.dynamic.JField;
-
 public class SetFieldValue implements Operation {
 
-    private final JField field;
+    private final String parentName;
+    private final String owner;
+    private final String field;
     private final String varString;
 
-    public SetFieldValue(JField field, String varString) {
+    private final boolean isStatic;
+
+    public SetFieldValue(String parentName, String owner, String field, String varString, boolean isStatic) {
+        this.parentName = parentName;
+        this.owner = owner;
         this.field = field;
         this.varString = varString;
+        this.isStatic = isStatic;
     }
 
     @Override
     public String getString() {
-        if (field.isStatic()) {
-            return field.getParent().getName() + "." + field.getName() + " = (" + varString + ");";
+        if (isStatic) {
+            return parentName + "." + field + " = (" + varString + ");";
         } else {
-            return field.getParent().getName() + "." + "this." + this.field.getName() + " = (" + varString + ");";
+            String base = "";
+            if (owner != null) {
+                base = this.owner + ".";
+            }
+            return base + this.field + " = (" + varString + ");";
         }
     }
 

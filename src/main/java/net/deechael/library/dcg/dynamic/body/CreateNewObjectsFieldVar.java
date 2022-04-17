@@ -1,7 +1,5 @@
 package net.deechael.library.dcg.dynamic.body;
 
-import net.deechael.library.dcg.dynamic.items.Var;
-
 public class CreateNewObjectsFieldVar implements Operation {
 
     private final Class<?> type;
