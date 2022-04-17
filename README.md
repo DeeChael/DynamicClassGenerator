@@ -44,7 +44,7 @@
     Object instance = cons.newInstance("Test message!", new Human());
     generated.getMethod("testing", Human.class).invoke(instance, new Human());
 
-####Generated code:
+#### Generated code:
     package net.deechael.test;
 
     import java.lang.String;
@@ -86,7 +86,7 @@
     
     }
 
-###Coming Soon:
+### Coming Soon:
 
 1.<s>Extending class</s>\
 2.Implementing interfaces\
