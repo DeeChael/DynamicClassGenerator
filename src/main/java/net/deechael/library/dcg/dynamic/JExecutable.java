@@ -325,8 +325,6 @@ public abstract class JExecutable implements JObject {
      *
      * Generated code looks like: ReturnType object = super.methodName(arguments);
      *
-     * TODO: The method hasn't been finished yet!
-     *
      * @param varName The name of the new var that you want to create (Will add a prefix "jvar_" automatically)
      * @param methodName The method name that implemented by the parent class
      * @param arguments The arguments that the method needs
