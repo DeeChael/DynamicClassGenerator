@@ -1,7 +1,6 @@
 package net.deechael.library.dcg.dynamic.items;
 
 import net.deechael.library.dcg.dynamic.JStringVar;
-import net.deechael.library.dcg.dynamic.body.CreateNewStringVar;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
