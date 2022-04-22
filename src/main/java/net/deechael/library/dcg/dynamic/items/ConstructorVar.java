@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.items;
 
-public class ConstructorVar extends Var {
+class ConstructorVar extends Var {
 
     private final String bodyString;
 

@@ -2,7 +2,7 @@ package net.deechael.library.dcg.dynamic.items;
 
 import net.deechael.library.dcg.dynamic.body.Requirement;
 
-public class UsingMethodAsVar extends Var implements Requirement {
+class UsingMethodAsVar extends Var implements Requirement {
 
     private final String varName;
     private final String methodName;

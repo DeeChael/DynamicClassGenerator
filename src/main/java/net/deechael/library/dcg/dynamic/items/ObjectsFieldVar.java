@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.items;
 
-public class ObjectsFieldVar extends Var {
+class ObjectsFieldVar extends Var {
 
     private final String varName;
     private final String fieldName;

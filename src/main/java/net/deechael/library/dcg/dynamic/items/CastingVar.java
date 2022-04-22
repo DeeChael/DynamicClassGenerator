@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.items;
 
-public class CastingVar extends Var {
+class CastingVar extends Var {
 
     private final Class<?> type;
     private final String originalVarString;
