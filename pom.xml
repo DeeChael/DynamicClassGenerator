@@ -18,10 +18,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>release</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
     </repositories>
 
     <dependencies>
