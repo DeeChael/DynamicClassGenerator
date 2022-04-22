@@ -16,14 +16,6 @@ public class IfAndElse implements Operation {
 
     @Override
     public String getString() {
-        if (requirement instanceof UsingMethod) {
-            String requirementString = requirement.getString();
-            return "if (" + requirementString.substring(0, requirementString.length() - 1) + ") {\n"
-                    + ifExecuting.getString() + "\n"
-                    + "} else {\n"
-                    + elseExecuting.getString() + "\n"
-                    + "}\n";
-        }
         return "if (" + requirement.getString() + ") {\n"
                 + ifExecuting.getString() + "\n"
                 + "} else {\n"

@@ -4,7 +4,7 @@ import net.deechael.library.dcg.dynamic.body.Requirement;
 
 import java.lang.reflect.Method;
 
-class UsingStaticMethodAsVar extends Var implements Requirement {
+class UsingStaticMethodAsVar extends Var {
 
     private final String varName;
     private final String methodName;
@@ -24,12 +24,6 @@ class UsingStaticMethodAsVar extends Var implements Requirement {
 
     @Override
     public String varString() {
-        return varName + "." + methodName + "(" + body + ")";
-    }
-
-
-    @Override
-    public String getString() {
         return varName + "." + methodName + "(" + body + ")";
     }
 

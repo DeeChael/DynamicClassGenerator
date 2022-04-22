@@ -154,6 +154,12 @@ public abstract class JExecutable implements JObject {
         this.operations.add(tryAndCatch);
     }
 
+    public void whileLoop(Requirement requirement, Parameter<JExecutable4Loop> parameter) {
+        JExecutable4Loop whileBody = new JExecutable4Loop(this, this.parent);
+        parameter.apply(whileBody);
+        operations.add(new WhileLoop(requirement, whileBody));
+    }
+
     /**
      * Using if-else block in executable body
      * ArgumentOnly is a functional interface
@@ -565,56 +571,6 @@ public abstract class JExecutable implements JObject {
             operations.add(ifOnly);
         }
 
-        public Var createUsingMethodAsString(@NotNull Var var, @NotNull String methodName, Var... arguments) {
-            Class<?> clazz = var.getType();
-            boolean hasMethod = false;
-            Method result = null;
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (method.getName().equals(methodName) && !Modifier.isStatic(method.getModifiers())) {
-                    hasMethod = true;
-                    result = method;
-                    break;
-                }
-            }
-            if (!hasMethod) {
-                throw new RuntimeException("Unknown method of the class " + var.getType().getName() + ": " + methodName + "(...);");
-            }
-            StringBuilder bodyBuilder = new StringBuilder();
-            for (int i = 0; i < arguments.length; i++) {
-                bodyBuilder.append(arguments[i].varString());
-                if (i != arguments.length - 1) {
-                    bodyBuilder.append(", ");
-                }
-            }
-            return new UsingMethodAsVar(var.varString(), result.getName(), bodyBuilder.toString());
-        }
-
-        public Var createUsingMethodAsString(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
-            if (!executable.extraClasses.contains(clazz)) {
-                executable.extraClasses.add(clazz);
-            }
-            boolean hasMethod = false;
-            Method result = null;
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (method.getName().equals(methodName) && Modifier.isStatic(method.getModifiers())) {
-                    hasMethod = true;
-                    result = method;
-                    break;
-                }
-            }
-            if (!hasMethod) {
-                throw new RuntimeException("Unknown method of the class " + clazz.getName() + ": " + methodName + "(...);");
-            }
-            StringBuilder bodyBuilder = new StringBuilder();
-            for (int i = 0; i < arguments.length; i++) {
-                bodyBuilder.append(arguments[i].varString());
-                if (i != arguments.length - 1) {
-                    bodyBuilder.append(", ");
-                }
-            }
-            return new UsingStaticMethodAsVar(result, bodyBuilder.toString());
-        }
-
         @Override
         public String getString() {
             StringBuilder base = new StringBuilder();
@@ -637,6 +593,26 @@ public abstract class JExecutable implements JObject {
     @Override
     public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
         return annotations;
+    }
+
+    public static final class JExecutable4Loop extends JExecutable4InnerStructure {
+
+        JExecutable4Loop(JExecutable parent, JClass clazz) {
+            super(parent, clazz);
+        }
+
+        public void breakLoop() {
+            this.operations.add(new Break());
+        }
+
+        public void breakToLabel(JLabel label) {
+            this.operations.add(new BreakToLabel(label.getName()));
+        }
+
+        public void continueLoop() {
+            this.operations.add(new Continue());
+        }
+
     }
 
 }

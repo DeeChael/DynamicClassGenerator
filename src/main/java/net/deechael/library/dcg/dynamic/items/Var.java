@@ -77,7 +77,7 @@ public class Var {
         return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
     }
 
-    public static Var usingSuperMethodAsVar(@NotNull String methodName, Var... arguments) {
+    public static Var usingSuperMethod(@NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());

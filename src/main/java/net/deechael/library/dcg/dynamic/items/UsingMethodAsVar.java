@@ -1,8 +1,6 @@
 package net.deechael.library.dcg.dynamic.items;
 
-import net.deechael.library.dcg.dynamic.body.Requirement;
-
-class UsingMethodAsVar extends Var implements Requirement {
+class UsingMethodAsVar extends Var {
 
     private final String varName;
     private final String methodName;
@@ -27,11 +25,6 @@ class UsingMethodAsVar extends Var implements Requirement {
 
     @Override
     public String varString() {
-        return varName + "." + methodName + "(" + body + ")";
-    }
-
-    @Override
-    public String getString() {
         return varName + "." + methodName + "(" + body + ")";
     }
 
