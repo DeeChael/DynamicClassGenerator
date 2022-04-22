@@ -221,10 +221,6 @@ public abstract class JExecutable implements JObject {
         return var;
     }
 
-    public Var castObjectAsVar(Var originalVar, Class<?> castToClass) {
-        return new CastingVar(castToClass, originalVar.varString());
-    }
-
     public Var constructorVar(Class<?> type, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
@@ -247,10 +243,6 @@ public abstract class JExecutable implements JObject {
         CreateNewObjectsFieldVar createVar = new CreateNewObjectsFieldVar(field.getType(), varName, var.varString(), fieldName);
         operations.add(createVar);
         return newVar;
-    }
-
-    public Var objectsFieldAsVar(Var var, String fieldName) {
-        return new ObjectsFieldVar(var.varString(), fieldName);
     }
 
     private Field object_field_exists_parentClass(Class<?> clazz, String name) {
@@ -581,65 +573,6 @@ public abstract class JExecutable implements JObject {
         ifExecuting.apply(ifBody);
         IfOnly ifOnly = new IfOnly(new UsingStaticMethodAsVar(result, bodyBuilder.toString()), ifBody);
         operations.add(ifOnly);
-    }
-
-    public Var usingMethodAsVar(@NotNull Var var, @NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
-    }
-
-    public Var usingThisMethodAsVar(@NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
-    }
-
-    public Var usingSuperMethodAsVar(@NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
-    }
-
-    public Var usingMethodAsVar(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
-        if (!extraClasses.contains(clazz)) {
-            extraClasses.add(clazz);
-        }
-        boolean hasMethod = false;
-        Method result = null;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && !Modifier.isStatic(method.getModifiers())) {
-                hasMethod = true;
-                result = method;
-                break;
-            }
-        }
-        if (!hasMethod) {
-            throw new RuntimeException("Unknown method of the class " + clazz.getName() + ": " + methodName + "(...);");
-        }
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingStaticMethodAsVar(result, bodyBuilder.toString());
     }
 
     public void returnValue(Var var) {
