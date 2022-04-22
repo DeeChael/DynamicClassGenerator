@@ -18,6 +18,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>release</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -26,6 +30,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.deechael</groupId>
+            <artifactId>Useless</artifactId>
+            <version>1.01.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>

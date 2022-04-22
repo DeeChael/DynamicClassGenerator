@@ -2,8 +2,8 @@ package net.deechael.library.dcg.dynamic;
 
 import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.library.dcg.dynamic.items.*;
-import net.deechael.library.dcg.function.ArgumentOnly;
-import net.deechael.library.dcg.function.BigArgumentOnly;
+import net.deechael.useless.function.parameters.DuParameter;
+import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -143,7 +143,7 @@ public abstract class JExecutable implements JObject {
         operations.add(usingMethod);
     }
 
-    public <T extends Throwable> void tryCatch(Class<T> throwing, String throwableObjectName, ArgumentOnly<JExecutable> tryExecuting, BigArgumentOnly<JExecutable, Var> catchExecuting) {
+    public <T extends Throwable> void tryCatch(Class<T> throwing, String throwableObjectName, Parameter<JExecutable> tryExecuting, DuParameter<JExecutable, Var> catchExecuting) {
         JExecutable4InnerStructure tryBody = new JExecutable4InnerStructure(this, this.parent);
         JExecutable4InnerStructure catchBody = new JExecutable4InnerStructure(this, this.parent);
         throwableObjectName = "jthrowable_" + throwableObjectName;
@@ -177,7 +177,7 @@ public abstract class JExecutable implements JObject {
      * @param ifExecuting The executable body in if block
      * @param elseExecuting The executable body in else block
      */
-    public void ifElse_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
+    public void ifElse_Equal(Var var, Var isEqual, Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting) {
         JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
         JExecutable4InnerStructure elseBody = new JExecutable4InnerStructure(this, this.parent);
         ifExecuting.apply(ifBody);
@@ -186,7 +186,7 @@ public abstract class JExecutable implements JObject {
         operations.add(ifAndElse);
     }
 
-    public void ifElse_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
+    public void ifElse_BooleanVar(Var booleanTypeVar, Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting) {
         if (!(booleanTypeVar.getType() == boolean.class || booleanTypeVar.getType() == Boolean.class)) {
             throw new RuntimeException("The var is not boolean type var");
         }
@@ -198,7 +198,7 @@ public abstract class JExecutable implements JObject {
         operations.add(ifAndElse);
     }
 
-    public void ifElse_Method(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
+    public void ifElse_Method(Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
         Class<?> clazz = var.getType();
         boolean hasMethod = false;
         Method result = null;
@@ -230,7 +230,7 @@ public abstract class JExecutable implements JObject {
         operations.add(ifAndElse);
     }
 
-    public void ifElse_StaticMethod(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    public void ifElse_StaticMethod(Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting, @NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
@@ -264,21 +264,21 @@ public abstract class JExecutable implements JObject {
         operations.add(ifAndElse);
     }
 
-    public void ifOnly_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting) {
+    public void ifOnly_Equal(Var var, Var isEqual, Parameter<JExecutable> ifExecuting) {
         JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
         ifExecuting.apply(ifBody);
         IfOnly ifOnly = new IfOnly(new EqualCheck(var, isEqual), ifBody);
         operations.add(ifOnly);
     }
 
-    public void ifOnly_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting) {
+    public void ifOnly_BooleanVar(Var booleanTypeVar, Parameter<JExecutable> ifExecuting) {
         JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
         ifExecuting.apply(ifBody);
         IfOnly ifOnly = new IfOnly(new BooleanVarCheck(booleanTypeVar.varString()), ifBody);
         operations.add(ifOnly);
     }
 
-    public void ifOnly_Method(ArgumentOnly<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
+    public void ifOnly_Method(Parameter<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
         Class<?> clazz = var.getType();
         boolean hasMethod = false;
         Method result = null;
@@ -308,7 +308,7 @@ public abstract class JExecutable implements JObject {
         operations.add(ifOnly);
     }
 
-    public void ifOnly_StaticMethod(ArgumentOnly<JExecutable> ifExecuting, Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    public void ifOnly_StaticMethod(Parameter<JExecutable> ifExecuting, Class<?> clazz, @NotNull String methodName, Var... arguments) {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
@@ -402,7 +402,7 @@ public abstract class JExecutable implements JObject {
             operations.add(usingMethod);
         }
 
-        public void ifElse_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
+        public void ifElse_Equal(Var var, Var isEqual, Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting) {
             JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
             JExecutable4InnerStructure elseBody = new JExecutable4InnerStructure(this, this.parent);
             ifExecuting.apply(ifBody);
@@ -411,7 +411,7 @@ public abstract class JExecutable implements JObject {
             operations.add(ifAndElse);
         }
 
-        public void ifElse_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting) {
+        public void ifElse_BooleanVar(Var booleanTypeVar, Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting) {
             if (!(booleanTypeVar.getType() == boolean.class || booleanTypeVar.getType() == Boolean.class)) {
                 throw new RuntimeException("The var is not boolean type var");
             }
@@ -423,7 +423,7 @@ public abstract class JExecutable implements JObject {
             operations.add(ifAndElse);
         }
 
-        public void ifElse_Method(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
+        public void ifElse_Method(Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
             Class<?> clazz = var.getType();
             boolean hasMethod = false;
             Method result = null;
@@ -455,7 +455,7 @@ public abstract class JExecutable implements JObject {
             operations.add(ifAndElse);
         }
 
-        public void ifElse_StaticMethod(ArgumentOnly<JExecutable> ifExecuting, ArgumentOnly<JExecutable> elseExecuting, @NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+        public void ifElse_StaticMethod(Parameter<JExecutable> ifExecuting, Parameter<JExecutable> elseExecuting, @NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
             if (!executable.extraClasses.contains(clazz)) {
                 executable.extraClasses.add(clazz);
             }
@@ -489,21 +489,21 @@ public abstract class JExecutable implements JObject {
             operations.add(ifAndElse);
         }
 
-        public void ifOnly_Equal(Var var, Var isEqual, ArgumentOnly<JExecutable> ifExecuting) {
+        public void ifOnly_Equal(Var var, Var isEqual, Parameter<JExecutable> ifExecuting) {
             JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
             ifExecuting.apply(ifBody);
             IfOnly ifOnly = new IfOnly(new EqualCheck(var, isEqual), ifBody);
             operations.add(ifOnly);
         }
 
-        public void ifOnly_BooleanVar(Var booleanTypeVar, ArgumentOnly<JExecutable> ifExecuting) {
+        public void ifOnly_BooleanVar(Var booleanTypeVar, Parameter<JExecutable> ifExecuting) {
             JExecutable4InnerStructure ifBody = new JExecutable4InnerStructure(this, this.parent);
             ifExecuting.apply(ifBody);
             IfOnly ifOnly = new IfOnly(new BooleanVarCheck(booleanTypeVar.varString()), ifBody);
             operations.add(ifOnly);
         }
 
-        public void ifOnly_Method(ArgumentOnly<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
+        public void ifOnly_Method(Parameter<JExecutable> ifExecuting, @NotNull Var var, @NotNull String methodName, Var... arguments) {
             Class<?> clazz = var.getType();
             boolean hasMethod = false;
             Method result = null;
@@ -533,7 +533,7 @@ public abstract class JExecutable implements JObject {
             operations.add(ifOnly);
         }
 
-        public void ifOnly_StaticMethod(ArgumentOnly<JExecutable> ifExecuting, Class<?> clazz, @NotNull String methodName, Var... arguments) {
+        public void ifOnly_StaticMethod(Parameter<JExecutable> ifExecuting, Class<?> clazz, @NotNull String methodName, Var... arguments) {
             if (!executable.extraClasses.contains(clazz)) {
                 executable.extraClasses.add(clazz);
             }
