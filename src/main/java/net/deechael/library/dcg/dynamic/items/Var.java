@@ -1,5 +1,7 @@
 package net.deechael.library.dcg.dynamic.items;
 
+import net.deechael.library.dcg.dynamic.JStringVar;
+import net.deechael.library.dcg.dynamic.body.CreateNewStringVar;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -46,15 +48,15 @@ public class Var {
         return result;
     }
 
-    public static Var objectsFieldAsVar(Var var, String fieldName) {
+    public static Var objectsField(Var var, String fieldName) {
         return new ObjectsFieldVar(var.varString(), fieldName);
     }
 
-    public Var castObjectAsVar(Var originalVar, Class<?> castToClass) {
+    public static Var castObject(Var originalVar, Class<?> castToClass) {
         return new CastingVar(castToClass, originalVar.varString());
     }
 
-    public Var usingMethodAsVar(@NotNull Var var, @NotNull String methodName, Var... arguments) {
+    public static Var usingMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -65,7 +67,7 @@ public class Var {
         return new UsingMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
     }
 
-    public Var usingThisMethodAsVar(@NotNull String methodName, Var... arguments) {
+    public static Var usingThisMethod(@NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -76,7 +78,7 @@ public class Var {
         return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
     }
 
-    public Var usingSuperMethodAsVar(@NotNull String methodName, Var... arguments) {
+    public static Var usingSuperMethodAsVar(@NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -87,7 +89,7 @@ public class Var {
         return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
     }
 
-    public Var usingMethodAsVar(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    public static Var usingMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
         boolean hasMethod = false;
         Method result = null;
         for (Method method : clazz.getDeclaredMethods()) {
@@ -110,6 +112,20 @@ public class Var {
         return new UsingStaticMethodAsVar(result, bodyBuilder.toString());
     }
 
+    public static Var constructor(Class<?> type, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new ConstructorVar(type, bodyBuilder.toString());
+    }
+
+    public static Var stringVar(JStringVar stringValue) {
+        return new Var(stringValue.getType(), null);
+    }
 
 
 }
