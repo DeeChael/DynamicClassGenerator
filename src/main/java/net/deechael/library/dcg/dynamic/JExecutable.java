@@ -8,6 +8,7 @@ import net.deechael.library.dcg.dynamic.items.Var;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,7 @@ import java.util.Map;
  * Executable body which is without parameters
  *
  * @author DeeChael
- * @since 1.0.0
+ * @since 1.00.0
  */
 public abstract class JExecutable implements JObject {
 
@@ -38,6 +39,17 @@ public abstract class JExecutable implements JObject {
         Var createdVar = new Var(type, name);
         operations.add(new CreateVar(type, name, var.varString()));
         return createdVar;
+    }
+
+    public void resetVar(@NotNull Var var, @Nullable Var value) {
+        if (value == null) value = Var.nullVar();
+        this.operations.add(new ResetVar(var.getName(), value.varString()));
+    }
+
+    public JLabel createLabel(String name) {
+        name = "jlabel_" + name;
+        this.operations.add(new Label(name));
+        return new JLabel(name);
     }
 
     /**

@@ -1,6 +1,7 @@
 package net.deechael.library.dcg.dynamic.body;
 
 import net.deechael.library.dcg.dynamic.JExecutable;
+import net.deechael.library.dcg.dynamic.Requirement;
 
 public class WhileLoop implements Operation {
 

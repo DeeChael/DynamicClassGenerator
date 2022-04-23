@@ -1,4 +1,4 @@
-package net.deechael.library.dcg.dynamic.body;
+package net.deechael.library.dcg.dynamic;
 
 import net.deechael.library.dcg.dynamic.items.Var;
 
@@ -7,11 +7,11 @@ public interface Requirement {
     String getString();
 
     static Requirement isInstanceof(Var var, Class<?> clazz) {
-        return new InstanceofCheck(var.varString(), clazz);
+        return () -> var.varString() + " instanceof " + clazz.getName();
     }
 
     static Requirement isEqual(Var var, Var another) {
-        return new EqualCheck(var, another);
+        return () -> var.varString() + " == " + another.varString();
     }
 
     static Requirement usingMethod(Var var, String methodName, Var... parameters) {
@@ -31,7 +31,7 @@ public interface Requirement {
     }
 
     static Requirement booleanVar(Var var) {
-        return new BooleanVarCheck(var.varString());
+        return var::varString;
     }
 
     static Requirement not(Requirement requirement) {

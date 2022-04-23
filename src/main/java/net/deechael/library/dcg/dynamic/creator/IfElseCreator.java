@@ -2,7 +2,7 @@ package net.deechael.library.dcg.dynamic.creator;
 
 import net.deechael.library.dcg.dynamic.JExecutable;
 import net.deechael.library.dcg.dynamic.body.IfElse;
-import net.deechael.library.dcg.dynamic.body.Requirement;
+import net.deechael.library.dcg.dynamic.Requirement;
 import net.deechael.useless.function.parameters.Parameter;
 
 import java.util.AbstractMap;
