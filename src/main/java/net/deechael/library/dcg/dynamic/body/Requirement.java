@@ -34,4 +34,20 @@ public interface Requirement {
         return new BooleanVarCheck(var.varString());
     }
 
+    static Requirement not(Requirement requirement) {
+        return () -> "!(" + requirement.getString() + ")";
+    }
+
+    static Requirement notEqual(Var var, Var another) {
+        return () -> var.varString() + " != " + another.varString();
+    }
+
+    static Requirement notNull(Var var) {
+        return notEqual(var, Var.nullVar());
+    }
+
+    static Requirement isNull(Var var) {
+        return isEqual(var, Var.nullVar());
+    }
+
 }

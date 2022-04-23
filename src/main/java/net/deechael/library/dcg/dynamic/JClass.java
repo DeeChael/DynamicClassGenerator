@@ -308,8 +308,7 @@ public final class JClass implements JObject {
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager javaFileManager = compiler.getStandardFileManager(null, null, null);
-        JJavaFileManager jJavaFileManager = new JJavaFileManager(javaFileManager);
+        JJavaFileManager jJavaFileManager = new JJavaFileManager(compiler.getStandardFileManager(null, null, null));
         JavaCompiler.CompilationTask task = compiler.getTask(null, jJavaFileManager, null, options, null, Collections.singletonList(new StringObject(new URI(className + ".java"), JavaFileObject.Kind.SOURCE, getString())));
         if (task.call()) {
             JJavaFileObject javaFileObject = jJavaFileManager.getLastJavaFileObject();
