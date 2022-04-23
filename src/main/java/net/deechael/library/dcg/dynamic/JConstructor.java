@@ -18,7 +18,6 @@ public final class JConstructor extends JExecutableParametered {
     private String[] parentVars = new String[0];
 
     JConstructor(Level level, JClass parent) {
-        super(parent);
         this.level = level;
         this.className = parent.getSimpleName();
     }
@@ -26,9 +25,6 @@ public final class JConstructor extends JExecutableParametered {
     public void superConstructor(Var... superParameters) {
         List<String> list = new ArrayList<>();
         for (Var var : superParameters) {
-            if (!containsParameter(var)) {
-                throw new RuntimeException("The parameters not exists! Type: " + var.getType().getName() + "; Parameter Name: " + var.getName());
-            }
             list.add(var.varString());
         }
         this.isSuper = true;
@@ -39,9 +35,6 @@ public final class JConstructor extends JExecutableParametered {
     public void thisConstructor(Var... thisParameters) {
         List<String> list = new ArrayList<>();
         for (Var var : thisParameters) {
-            if (!containsParameter(var)) {
-                throw new RuntimeException("The parameters not exists! Type: " + var.getType().getName() + "; Parameter Name: " + var.getName());
-            }
             list.add(var.varString());
         }
         this.isSuper = false;
@@ -96,7 +89,7 @@ public final class JConstructor extends JExecutableParametered {
         }
         base.append("{\n");
         if (isSuper || isThis) {
-            StringBuilder bodyBuilder = new StringBuilder("");
+            StringBuilder bodyBuilder = new StringBuilder();
             for (int i = 0; i < parentVars.length; i++) {
                 String parameterName = parentVars[i];
                 bodyBuilder.append(parameterName);

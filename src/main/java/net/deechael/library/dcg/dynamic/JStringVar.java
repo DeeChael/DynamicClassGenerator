@@ -69,7 +69,7 @@ public class JStringVar extends Var {
 
     public static JStringVar enumVar(Object value) {
         if (!value.getClass().isEnum()) throw new RuntimeException("The value is not a enum type");
-        return new JStringVar(value.getClass(), value.getClass().getName() + "." + value.toString());
+        return new JStringVar(value.getClass(), value.getClass().getName() + "." + value);
     }
 
     public static JStringVar enumVar(Class<?> enumClass, String name) {
@@ -213,7 +213,7 @@ public class JStringVar extends Var {
             if (i != array.length - 1) {
                 base.append(", ");
             }
-;       }
+        }
         base.append("}");
         return new JStringVar(Array.newInstance(clazz, 0).getClass(), base.toString());
     }

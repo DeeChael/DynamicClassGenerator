@@ -1,7 +1,6 @@
 package net.deechael.library.dcg.dynamic.creator;
 
 import net.deechael.library.dcg.dynamic.JExecutable;
-import net.deechael.library.dcg.dynamic.body.TryCatch;
 import net.deechael.library.dcg.dynamic.body.TryCatchInner;
 import net.deechael.library.dcg.dynamic.items.Var;
 import net.deechael.useless.function.parameters.DuParameter;

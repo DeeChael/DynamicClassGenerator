@@ -20,7 +20,6 @@ public class JMethod extends JExecutableParametered {
     }
 
     JMethod(Class<?> returnType, Level level, JClass clazz, String methodName) {
-        super(clazz);
         this.returnType = returnType;
         this.level = level;
         this.parent = clazz;

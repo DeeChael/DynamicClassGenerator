@@ -1,22 +1,17 @@
 package net.deechael.library.dcg.dynamic;
 
-import net.deechael.library.dcg.dynamic.items.*;
+import net.deechael.library.dcg.dynamic.items.Var;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public abstract class JExecutableParametered extends JExecutable {
 
     private final Map<String, Class<?>> parameters = new HashMap<>();
 
     private final List<Class<?>> throwings = new ArrayList<>();
-
-    protected JExecutableParametered(JClass parent) {
-        super(parent);
-    }
 
     public Var addParameter(Class<?> clazz, String parameterName) {
         if (parameterName == null) return null;

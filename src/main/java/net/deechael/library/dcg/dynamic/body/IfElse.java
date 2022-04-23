@@ -12,7 +12,7 @@ public final class IfElse implements Operation {
 
     private final Requirement ifRequirement;
     private final JExecutable ifExecuting;
-    
+
     private final JExecutable elseExecuting;
 
     private final List<Map.Entry<Requirement, JExecutable>> elseifExecutings = new ArrayList<>();

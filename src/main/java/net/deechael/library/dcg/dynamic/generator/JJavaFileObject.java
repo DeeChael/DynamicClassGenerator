@@ -8,7 +8,7 @@ import java.net.URI;
 
 public class JJavaFileObject extends SimpleJavaFileObject {
 
-    private ByteArrayOutputStream byteArrayOutputStream;
+    private final ByteArrayOutputStream byteArrayOutputStream;
 
     protected JJavaFileObject(String className, Kind kind) {
         super(URI.create(className + kind.extension), kind);

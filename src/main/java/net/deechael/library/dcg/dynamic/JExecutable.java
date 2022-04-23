@@ -4,7 +4,7 @@ import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.library.dcg.dynamic.creator.IfElseCreator;
 import net.deechael.library.dcg.dynamic.creator.TryCatchCreator;
 import net.deechael.library.dcg.dynamic.creator.TryCatchInnerCreator;
-import net.deechael.library.dcg.dynamic.items.*;
+import net.deechael.library.dcg.dynamic.items.Var;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
@@ -42,21 +42,21 @@ public abstract class JExecutable implements JObject {
 
     /**
      * Using a method in the executable body
-     *
+     * <p>
      * Tips: If you are using the method which you added by JMethod,
-     *       please add "jmethod_" before your methodName because
-     *       generated code will add the prefix automatically
-     *
+     * please add "jmethod_" before your methodName because
+     * generated code will add the prefix automatically
+     * <p>
      * Generated code looks like: jvar_varName.methodName(arguments);
      *
-     * @param var The var that you want to use the method,
-     *            the method must be contained in the class of the var,
-     *            or else will throw an exception
+     * @param var        The var that you want to use the method,
+     *                   the method must be contained in the class of the var,
+     *                   or else will throw an exception
      * @param methodName The method that you want to use,
      *                   the method must be contained in the class of the var,
      *                   or else will throw an exception
-     * @param arguments The arguments that the method needs,
-     *                  is easier than reflection
+     * @param arguments  The arguments that the method needs,
+     *                   is easier than reflection
      */
     public void usingMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
@@ -72,12 +72,12 @@ public abstract class JExecutable implements JObject {
 
     /**
      * Using a static method
-     *
+     * <p>
      * Generated code looks like: Type.methodName(arguments);
      *
-     * @param clazz The type has the static method
+     * @param clazz      The type has the static method
      * @param methodName The method you want to use
-     * @param arguments The arguments that the method needs
+     * @param arguments  The arguments that the method needs
      */
     public void usingMethod(Class<?> clazz, String methodName, Var... arguments) {
         if (!extraClasses.contains(clazz)) {
@@ -106,11 +106,11 @@ public abstract class JExecutable implements JObject {
 
     /**
      * Using the method which implemented by parent class in child class
-     * 
+     * <p>
      * Generated code looks like: super.methodName(arguments);
-     * 
+     *
      * @param methodName The method name implemented by parent class
-     * @param arguments The arguments that the method needs
+     * @param arguments  The arguments that the method needs
      */
     public void usingSuperMethod(String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
@@ -126,11 +126,11 @@ public abstract class JExecutable implements JObject {
 
     /**
      * Using the method, will execute the method is implemented by this class, if this class didn't implement this method but parent class did, execute the method in parent class
-     *
+     * <p>
      * Generated code looks like: this.methodName(arguments);
      *
      * @param methodName The method name
-     * @param arguments The arguments that the method needs
+     * @param arguments  The arguments that the method needs
      */
     public void usingThisMethod(String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();

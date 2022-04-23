@@ -4,7 +4,6 @@ import net.deechael.library.dcg.dynamic.generator.JClassLoader;
 import net.deechael.library.dcg.dynamic.generator.JJavaFileManager;
 import net.deechael.library.dcg.dynamic.generator.JJavaFileObject;
 import net.deechael.library.dcg.dynamic.generator.StringObject;
-import net.deechael.library.dcg.dynamic.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +19,6 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public final class JClass implements JObject {
 

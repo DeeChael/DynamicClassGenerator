@@ -1,7 +1,5 @@
 package net.deechael.library.dcg.dynamic.items;
 
-import net.deechael.library.dcg.dynamic.body.Requirement;
-
 import java.lang.reflect.Method;
 
 class UsingStaticMethodAsVar extends Var {

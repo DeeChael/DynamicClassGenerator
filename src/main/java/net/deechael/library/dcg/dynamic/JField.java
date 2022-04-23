@@ -1,12 +1,9 @@
 package net.deechael.library.dcg.dynamic;
 
-import net.deechael.library.dcg.dynamic.items.UsingStaticMethodAsVar;
 import net.deechael.library.dcg.dynamic.items.Var;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,34 +49,8 @@ public class JField extends Var implements JObject {
     }
 
     public void initializeByStaticMethod(Class<?> clazz, String methodName, JStringVar... arguments) {
-        boolean hasMethod = false;
-        Method result = null;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && Modifier.isStatic(method.getModifiers())) {
-                hasMethod = true;
-                result = method;
-                break;
-            }
-        }
-        if (!hasMethod) {
-            throw new RuntimeException("Unknown method of the class " + clazz.getName() + ": " + methodName + "(...);");
-        }
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        for (JStringVar argument : arguments) {
-            Class<?> type = argument.getType();
-            while (type.isArray()) {
-                type = type.getComponentType();
-            }
-            this.extraClasses.add(type);
-        }
         needInit = true;
-        initBody = new UsingStaticMethodAsVar(result, bodyBuilder.toString()).varString();
+        initBody = Var.usingMethod(clazz, methodName, arguments).varString();
     }
 
     public boolean isStatic() {

@@ -7,7 +7,10 @@ import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
 import net.deechael.useless.objs.DuObj;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class TryCatchCreator {
 

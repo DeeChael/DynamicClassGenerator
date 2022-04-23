@@ -5,7 +5,7 @@ class ObjectsFieldVar extends Var {
     private final String varName;
     private final String fieldName;
 
-        public ObjectsFieldVar(String varName, String fieldName) {
+    public ObjectsFieldVar(String varName, String fieldName) {
         super(null, null);
         this.varName = varName;
         this.fieldName = fieldName;

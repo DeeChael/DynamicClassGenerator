@@ -10,8 +10,7 @@ public enum Symbol {
     GREATER_OR_EQUAL(">="),
     SMALLER_OR_EQUAL("<="),
     AND("&&"),
-    OR("||")
-    ;
+    OR("||");
 
     private final String symbolString;
 

@@ -33,11 +33,11 @@ public class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager>
             JarFile jarFile = new JarFile(file);
             List<JarEntry> entries = jarFile.stream().filter(jarEntry -> jarEntry.getName().endsWith(".jar")).collect(Collectors.toList());
             JarFile libTempJarFile = null;
-            List<JavaFileObject> onePackgeJavaFiles =  null;
+            List<JavaFileObject> onePackgeJavaFiles = null;
             String packgeName = null;
             for (JarEntry entry : entries) {
                 libTempJarFile = jarFile.getNestedJarFile(jarFile.getEntry(entry.getName()));
-                if(libTempJarFile.getName().contains("tools.jar")){
+                if (libTempJarFile.getName().contains("tools.jar")) {
                     continue;
                 }
                 Enumeration<JarEntry> tempEntriesEnum = libTempJarFile.entries();
@@ -48,7 +48,7 @@ public class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager>
                         continue;
                     }
                     packgeName = classPath.substring(0, jarEntry.getName().lastIndexOf("/"));
-                    onePackgeJavaFiles = CLASS_OBJECT_PACKAGE_MAP.containsKey(packgeName) ? CLASS_OBJECT_PACKAGE_MAP.get(packgeName) :  new ArrayList<>();
+                    onePackgeJavaFiles = CLASS_OBJECT_PACKAGE_MAP.containsKey(packgeName) ? CLASS_OBJECT_PACKAGE_MAP.get(packgeName) : new ArrayList<>();
                     onePackgeJavaFiles.add(new LibraryJavaObject(jarEntry.getName().replace("/", ".").replace(".class", ""),
                             new URL(libTempJarFile.getUrl(), jarEntry.getName()).toURI()));
                     CLASS_OBJECT_PACKAGE_MAP.put(packgeName, onePackgeJavaFiles);
@@ -69,8 +69,8 @@ public class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager>
 
 
         if ("CLASS_PATH".equals(location.getName())) {
-            List<JavaFileObject> result =  CLASS_OBJECT_PACKAGE_MAP.get(packageName);
-            if(result != null){
+            List<JavaFileObject> result = CLASS_OBJECT_PACKAGE_MAP.get(packageName);
+            if (result != null) {
                 return result;
             }
         }
