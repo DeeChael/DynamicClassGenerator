@@ -50,4 +50,28 @@ public interface Requirement {
         return isEqual(var, Var.nullVar());
     }
 
+    static Requirement and(Requirement one, Requirement another) {
+        return () -> "(" + one.getString() + ") && (" + another.getString() + ")";
+    }
+
+    static Requirement or(Requirement one, Requirement another) {
+        return () -> "(" + one.getString() + ") || (" + another.getString() + ")";
+    }
+
+    static Requirement isGreater(Var one, Var another) {
+        return () -> "(" + one.varString() + ") > (" + another.varString() + ")";
+    }
+
+    static Requirement isGreaterOrEqual(Var one, Var another) {
+        return () -> "(" + one.varString() + ") >= (" + another.varString() + ")";
+    }
+
+    static Requirement isSmaller(Var one, Var another) {
+        return () -> "(" + one.varString() + ") < (" + another.varString() + ")";
+    }
+
+    static Requirement isSmallerOrEqual(Var one, Var another) {
+        return () -> "(" + one.varString() + ") <= (" + another.varString() + ")";
+    }
+
 }
