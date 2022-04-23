@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 
-public class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+public final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private JJavaFileObject javaFileObject;
 

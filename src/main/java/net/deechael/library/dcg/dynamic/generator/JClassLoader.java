@@ -3,7 +3,7 @@ package net.deechael.library.dcg.dynamic.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JClassLoader extends ClassLoader {
+public final class JClassLoader extends ClassLoader {
 
     private final Map<String, Class<?>> generated_classes = new HashMap<>();
 

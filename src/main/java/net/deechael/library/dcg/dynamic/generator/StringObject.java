@@ -4,7 +4,7 @@ import javax.tools.SimpleJavaFileObject;
 import java.io.IOException;
 import java.net.URI;
 
-public class StringObject extends SimpleJavaFileObject {
+public final class StringObject extends SimpleJavaFileObject {
 
     private final String content;
 
