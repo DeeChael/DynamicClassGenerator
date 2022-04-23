@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
-public final class JJavaFileObject extends SimpleJavaFileObject {
+final class JJavaFileObject extends SimpleJavaFileObject {
 
     private final ByteArrayOutputStream byteArrayOutputStream;
 
@@ -16,7 +16,7 @@ public final class JJavaFileObject extends SimpleJavaFileObject {
     }
 
     @Override
-    public OutputStream openOutputStream() throws IOException {
+    public OutputStream openOutputStream() {
         return byteArrayOutputStream;
     }
 

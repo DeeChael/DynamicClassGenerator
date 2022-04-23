@@ -4,7 +4,7 @@ import javax.tools.SimpleJavaFileObject;
 import java.io.IOException;
 import java.net.URI;
 
-public final class StringObject extends SimpleJavaFileObject {
+final class StringObject extends SimpleJavaFileObject {
 
     private final String content;
 
@@ -14,7 +14,7 @@ public final class StringObject extends SimpleJavaFileObject {
     }
 
     @Override
-    public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) {
         return content;
     }
 

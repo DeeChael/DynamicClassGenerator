@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 
-public final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     private JJavaFileObject javaFileObject;
 
@@ -32,9 +32,9 @@ public final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
         try {
             JarFile jarFile = new JarFile(file);
             List<JarEntry> entries = jarFile.stream().filter(jarEntry -> jarEntry.getName().endsWith(".jar")).collect(Collectors.toList());
-            JarFile libTempJarFile = null;
-            List<JavaFileObject> onePackgeJavaFiles = null;
-            String packgeName = null;
+            JarFile libTempJarFile;
+            List<JavaFileObject> onePackgeJavaFiles;
+            String packgeName;
             for (JarEntry entry : entries) {
                 libTempJarFile = jarFile.getNestedJarFile(jarFile.getEntry(entry.getName()));
                 if (libTempJarFile.getName().contains("tools.jar")) {
@@ -103,7 +103,7 @@ public final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
+    public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) {
         return javaFileObject = new JJavaFileObject(className, kind);
     }
 
@@ -151,17 +151,17 @@ public final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileMa
         }
 
         @Override
-        public OutputStream openOutputStream() throws IOException {
+        public OutputStream openOutputStream() {
             return null;
         }
 
         @Override
-        public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
+        public CharSequence getCharContent(boolean ignoreEncodingErrors) {
             return null;
         }
 
         @Override
-        public Writer openWriter() throws IOException {
+        public Writer openWriter() {
             return null;
         }
 
