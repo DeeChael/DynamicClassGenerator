@@ -1,4 +1,9 @@
-# Dynamic Class Generator
+# Dynamic Class Generator 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg)
+[![License](https://img.shields.io/github/license/Ocean-Project/DynamicClassGenerator.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![CodeFactor](https://www.codefactor.io/repository/github/ocean-project/dynamicclassgenerator/badge)](https://www.codefactor.io/repository/github/ocean-project/dynamicclassgenerator)
+[![Forks](https://img.shields.io/github/forks/Ocean-Project/DynamicClassGenerator.svg)](https://github.com/Ocean-Project/DynamicClassGenerator/fork)
+[![Stars](https://img.shields.io/github/stars/Ocean-Project/DynamicClassGenerator.svg)]()
 ## Allow you to generate classes while the program is running!
 
 <b>Go to wiki to learn more!</b>
