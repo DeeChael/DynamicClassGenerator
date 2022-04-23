@@ -65,28 +65,6 @@ public class Var {
         return new UsingMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
     }
 
-    public static Var invokeThisMethod(@NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
-    }
-
-    public static Var invokeSuperMethod(@NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
-    }
-
     public static Var invokeMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
         boolean hasMethod = false;
         Method result = null;
@@ -108,6 +86,28 @@ public class Var {
             }
         }
         return new UsingStaticMethodAsVar(result, bodyBuilder.toString());
+    }
+
+    public static Var invokeThisMethod(@NotNull String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
+    }
+
+    public static Var invokeSuperMethod(@NotNull String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
     }
 
     public static Var constructor(Class<?> type, Var... arguments) {
