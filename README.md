@@ -12,7 +12,7 @@
     <dependency>
         <groupId>net.deechael</groupId>
         <artifactId>dcg</artifactId>
-        <version>1.01.0</version>
+        <version>1.02.0</version>
         <scope>compile</scope>
     </dependency>
 
