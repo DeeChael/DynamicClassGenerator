@@ -122,8 +122,8 @@ public class Var {
         return new ConstructorVar(type, bodyBuilder.toString());
     }
 
-    public static Var stringVar(JStringVar stringValue) {
-        return new Var(stringValue.getType(), null);
+    public static Var nullVar() {
+        return new NullVar();
     }
 
 

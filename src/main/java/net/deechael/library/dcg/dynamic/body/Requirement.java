@@ -30,4 +30,8 @@ public interface Requirement {
         return () -> Var.usingSuperMethod(methodName, parameters).varString();
     }
 
+    static Requirement booleanVar(Var var) {
+        return new BooleanVarCheck(var.varString());
+    }
+
 }
