@@ -14,20 +14,20 @@ public interface Requirement {
         return () -> var.varString() + " == " + another.varString();
     }
 
-    static Requirement usingMethod(Var var, String methodName, Var... parameters) {
-        return () -> Var.usingMethod(var, methodName, parameters).varString();
+    static Requirement invokeMethod(Var var, String methodName, Var... parameters) {
+        return () -> Var.invokeMethod(var, methodName, parameters).varString();
     }
 
-    static Requirement usingMethod(Class<?> clazz, String methodName, Var... parameters) {
-        return () -> Var.usingMethod(clazz, methodName, parameters).varString();
+    static Requirement invokeMethod(Class<?> clazz, String methodName, Var... parameters) {
+        return () -> Var.invokeMethod(clazz, methodName, parameters).varString();
     }
 
-    static Requirement usingThisMethod(String methodName, Var... parameters) {
-        return () -> Var.usingThisMethod(methodName, parameters).varString();
+    static Requirement invokeThisMethod(String methodName, Var... parameters) {
+        return () -> Var.invokeThisMethod(methodName, parameters).varString();
     }
 
-    static Requirement usingSuperMethod(String methodName, Var... parameters) {
-        return () -> Var.usingSuperMethod(methodName, parameters).varString();
+    static Requirement invokeSuperMethod(String methodName, Var... parameters) {
+        return () -> Var.invokeSuperMethod(methodName, parameters).varString();
     }
 
     static Requirement booleanVar(Var var) {

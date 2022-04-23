@@ -50,7 +50,7 @@ public class JField extends Var implements JObject {
 
     public void initializeByStaticMethod(Class<?> clazz, String methodName, JStringVar... arguments) {
         needInit = true;
-        initBody = Var.usingMethod(clazz, methodName, arguments).varString();
+        initBody = Var.invokeMethod(clazz, methodName, arguments).varString();
     }
 
     public boolean isStatic() {

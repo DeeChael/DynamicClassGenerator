@@ -54,7 +54,7 @@ public class Var {
         return new CastingVar(castToClass, originalVar.varString());
     }
 
-    public static Var usingMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
+    public static Var invokeMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -65,7 +65,7 @@ public class Var {
         return new UsingMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
     }
 
-    public static Var usingThisMethod(@NotNull String methodName, Var... arguments) {
+    public static Var invokeThisMethod(@NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -76,7 +76,7 @@ public class Var {
         return new UsingMethodAsVar("this", methodName, bodyBuilder.toString());
     }
 
-    public static Var usingSuperMethod(@NotNull String methodName, Var... arguments) {
+    public static Var invokeSuperMethod(@NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -87,7 +87,7 @@ public class Var {
         return new UsingMethodAsVar("super", methodName, bodyBuilder.toString());
     }
 
-    public static Var usingMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    public static Var invokeMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
         boolean hasMethod = false;
         Method result = null;
         for (Method method : clazz.getDeclaredMethods()) {

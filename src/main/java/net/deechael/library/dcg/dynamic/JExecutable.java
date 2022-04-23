@@ -53,7 +53,7 @@ public abstract class JExecutable implements JObject {
     }
 
     /**
-     * Using a method in the executable body
+     * Invoke a method in the executable body
      * <p>
      * Tips: If you are using the method which you added by JMethod,
      * please add "jmethod_" before your methodName because
@@ -70,7 +70,7 @@ public abstract class JExecutable implements JObject {
      * @param arguments  The arguments that the method needs,
      *                   is easier than reflection
      */
-    public void usingMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
+    public void invokeMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -83,7 +83,7 @@ public abstract class JExecutable implements JObject {
     }
 
     /**
-     * Using a static method
+     * Invoke a static method
      * <p>
      * Generated code looks like: Type.methodName(arguments);
      *
@@ -91,7 +91,7 @@ public abstract class JExecutable implements JObject {
      * @param methodName The method you want to use
      * @param arguments  The arguments that the method needs
      */
-    public void usingMethod(Class<?> clazz, String methodName, Var... arguments) {
+    public void invokeMethod(Class<?> clazz, String methodName, Var... arguments) {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
@@ -117,14 +117,14 @@ public abstract class JExecutable implements JObject {
     }
 
     /**
-     * Using the method which implemented by parent class in child class
+     * Invoke the method which implemented by parent class in child class
      * <p>
      * Generated code looks like: super.methodName(arguments);
      *
      * @param methodName The method name implemented by parent class
      * @param arguments  The arguments that the method needs
      */
-    public void usingSuperMethod(String methodName, Var... arguments) {
+    public void invokeSuperMethod(String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -137,14 +137,14 @@ public abstract class JExecutable implements JObject {
     }
 
     /**
-     * Using the method, will execute the method is implemented by this class, if this class didn't implement this method but parent class did, execute the method in parent class
+     * Invoke the method, will execute the method is implemented by this class, if this class didn't implement this method but parent class did, execute the method in parent class
      * <p>
      * Generated code looks like: this.methodName(arguments);
      *
      * @param methodName The method name
      * @param arguments  The arguments that the method needs
      */
-    public void usingThisMethod(String methodName, Var... arguments) {
+    public void invokeThisMethod(String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
