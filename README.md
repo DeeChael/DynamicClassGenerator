@@ -1,5 +1,5 @@
 # Dynamic Class Generator
-## Generate classes when a program is running!
+## Allow you to generate classes while the program is running!
 
 <b>Go to wiki to learn more!</b>
 
