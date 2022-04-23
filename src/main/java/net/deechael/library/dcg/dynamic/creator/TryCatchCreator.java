@@ -33,6 +33,7 @@ public final class TryCatchCreator {
 
     public TryCatchCreator catchIt(String throwableObjectName, DuParameter<JExecutable, Var> catchExecuting, Class<? extends Throwable>... throwings) {
         if (!editable) return this;
+        if (throwings.length == 0) return this;
         throwableObjectName = "jthrowable_" + throwableObjectName;
         JExecutable.JExecutable4InnerStructure catchBody = new JExecutable.JExecutable4InnerStructure();
         Var var = new Var(null, throwableObjectName);
