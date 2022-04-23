@@ -1,8 +1,6 @@
 package net.deechael.dcg;
 
 import net.deechael.dcg.body.*;
-import net.deechael.dcg.dynamic.body.*;
-import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.dcg.creator.IfElseCreator;
 import net.deechael.dcg.creator.TryCatchCreator;
 import net.deechael.dcg.creator.TryCatchInnerCreator;
