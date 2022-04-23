@@ -10,7 +10,7 @@ public final class JJavaFileObject extends SimpleJavaFileObject {
 
     private final ByteArrayOutputStream byteArrayOutputStream;
 
-    protected JJavaFileObject(String className, Kind kind) {
+    JJavaFileObject(String className, Kind kind) {
         super(URI.create(className + kind.extension), kind);
         this.byteArrayOutputStream = new ByteArrayOutputStream();
     }
