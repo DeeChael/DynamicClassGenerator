@@ -1,41 +1,57 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.body.Operation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JMethod extends JExecutableParametered {
+public class JInterfaceMethod implements JObject, InterfaceMethod {
 
     private final Class<?> returnType;
-    private final Level level;
-    private final JClass parent;
-    private final String methodName;
 
-    JMethod(Level level, JClass clazz, String methodName) {
-        this(void.class, level, clazz, methodName);
+    private final String name;
+
+    private final Map<String, Class<?>> parameters = new HashMap<>();
+
+    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    private final List<Class<?>> throwings = new ArrayList<>();
+
+    public JInterfaceMethod(String methodName) {
+        this(void.class, methodName);
     }
 
-    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName) {
+    public JInterfaceMethod(Class<?> returnType, String methodName) {
         this.returnType = returnType;
-        this.level = level;
-        this.parent = clazz;
-        this.methodName = methodName;
+        this.name = methodName;
+    }
+
+    public void throwing(Class<? extends Throwable>... throwables) {
+        if (throwables.length == 0) return;
+        for (Class<? extends Throwable> throwable : throwables) {
+            if (!throwings.contains(throwable)) {
+                throwings.add(throwable);
+            }
+        }
+    }
+
+    protected Map<String, Class<?>> getParameters() {
+        return parameters;
+    }
+
+    public List<Class<?>> getThrowings() {
+        return new ArrayList<>(throwings);
+    }
+
+    protected List<Class<?>> getRequirementTypes() {
+        return new ArrayList<>(parameters.values());
     }
 
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString())
-                .append(level.getString())
-                .append(" ")
-                .append(returnType.getName())
-                .append(" ")
-                .append(methodName)
-                .append("(");
+        base.append(this.annotationString()).append("\n").append(this.returnType.getName()).append(" ").append(this.name).append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);
@@ -55,11 +71,7 @@ public class JMethod extends JExecutableParametered {
                 }
             }
         }
-        base.append(" {\n");
-        for (Operation operation : this.getOperations()) {
-            base.append(operation.getString()).append("\n");
-        }
-        base.append("}").append("\n");
+        base.append(";");
         return base.toString();
     }
 
@@ -77,7 +89,12 @@ public class JMethod extends JExecutableParametered {
             }
             if (!hasConstructor) throw new RuntimeException("This annotation is not for method!");
         }
-        super.addAnnotation(annotation, values);
+        getAnnotations().put(annotation, values);
+    }
+
+    @Override
+    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
+        return this.annotations;
     }
 
 }

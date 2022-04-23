@@ -1,38 +1,15 @@
 package net.deechael.dcg;
 
-import jdk.nashorn.internal.scripts.JO;
-import net.deechael.dcg.generator.JClassLoader;
-import net.deechael.dcg.generator.JJavaFileManager;
-import net.deechael.dcg.generator.JJavaFileObject;
-import net.deechael.dcg.generator.StringObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
-import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
-public final class JClass implements JObject {
-
-    private final static List<File> libraries = new ArrayList<>();
-
-    public static void loadLibrary(File file) {
-        if (file.exists()) {
-            if (file.isFile()) {
-                if (file.getName().endsWith(".jar")) {
-                    libraries.add(file);
-                }
-            }
-        }
-    }
+public final class JClass implements JObject, JGeneratable {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -55,7 +32,7 @@ public final class JClass implements JObject {
 
     private Class<?> generated = null;
 
-    public JClass(@Nullable String packageName, String className, Level level) {
+    public JClass(Level level, @Nullable String packageName, String className) {
         this.packageName = packageName;
         this.className = className;
         this.level = level;
@@ -70,11 +47,6 @@ public final class JClass implements JObject {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("The class not exists!");
         }
-    }
-
-    public void importClass(@NotNull JClass clazz) {
-        if (imports.contains(clazz.className)) return;
-        imports.add(clazz.className);
     }
 
     public void importClass(@NotNull Class<?> clazz) {
@@ -131,11 +103,7 @@ public final class JClass implements JObject {
             }
             if (extending == 2) {
                 if (extending_generated != null) {
-                    try {
-                        return getField_parentClass(name, extending_generated.generate());
-                    } catch (ClassNotFoundException | URISyntaxException e) {
-                        throw new RuntimeException("Cannot find the field!");
-                    }
+                    return getField_jClass(name, extending_generated);
                 }
             }
             throw new RuntimeException("Cannot find the field!");
@@ -150,6 +118,10 @@ public final class JClass implements JObject {
                 throw new RuntimeException("Cannot find the field!");
             }
         }
+    }
+
+    private JField getField_jClass(String name, JClass parent) {
+        return parent.getField(name);
     }
 
     private JField getField_parentClass(String name, Class<?> clazz) {
@@ -204,8 +176,7 @@ public final class JClass implements JObject {
         for (String importClass : imports) {
             base.append("import ").append(importClass).append(";\n");
         }
-        base.append(this.annotationString());
-        base.append(level.getString()).append(" class ").append(className);
+        base.append(this.annotationString()).append(level.getString()).append(" class ").append(className);
         appendExtendsAndImplements(base).append(" {\n");
         appendString(base, fields).append(constructors).append(methods).append("}\n");
         return base.toString();
@@ -247,7 +218,7 @@ public final class JClass implements JObject {
 
     private StringBuilder appendString(StringBuilder stringBuilder, Collection<? extends JObject> objects) {
         for (JObject object : objects) {
-            stringBuilder.append(objects).append("\n");
+            stringBuilder.append(object.getString()).append("\n");
         }
         return stringBuilder;
     }
@@ -267,43 +238,6 @@ public final class JClass implements JObject {
             if (!hasConstructor) throw new RuntimeException("This annotation is not for class!");
         }
         getAnnotations().put(annotation, values);
-    }
-
-    public boolean isGenerated() {
-        return generated != null;
-    }
-
-    public Class<?> generate() throws ClassNotFoundException, URISyntaxException {
-        return isGenerated() ? generated : forceGenerate();
-    }
-
-    public Class<?> forceGenerate() throws ClassNotFoundException, URISyntaxException {
-        Iterable<String> options = null;
-        if (libraries.size() > 0) {
-            StringBuilder classpath_option = new StringBuilder();
-            for (File library : libraries) {
-                classpath_option.append(library.getPath()).append(";");
-            }
-            options = Arrays.asList("-classpath", classpath_option.toString());
-        }
-
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        JJavaFileManager jJavaFileManager = new JJavaFileManager(compiler.getStandardFileManager(null, null, null));
-        JavaCompiler.CompilationTask task = compiler.getTask(null, jJavaFileManager, null, options, null, Collections.singletonList(new StringObject(new URI(className + ".java"), JavaFileObject.Kind.SOURCE, getString())));
-        if (task.call()) {
-            JJavaFileObject javaFileObject = jJavaFileManager.getLastJavaFileObject();
-            String className;
-            if (packageName != null) {
-                className = packageName + "." + this.className;
-            } else {
-                className = this.className;
-            }
-            Class<?> generated = JClassLoader.generate(className, javaFileObject.getBytes());
-            this.generated = generated;
-            return generated;
-        } else {
-            throw new RuntimeException("Failed to generate the class!");
-        }
     }
 
     @Override

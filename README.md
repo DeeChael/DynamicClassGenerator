@@ -105,7 +105,7 @@
 2.<s>Implementing interfaces</s>\
 3.Creating annotation\
 4.Creating enum\
-5.Creating interface\
+5.<s>Creating interface</s>\
 6.<s>Try & Catch</s>\
 7.<s>Try & multi Catch</s>\
 8.<s>Try & 1 Catch with multi exceptions</s>\
@@ -114,4 +114,5 @@
 11.More requirements for If-block and Else If-block\
 12.Convenient variables managing\
 13.<s>Try & Catch & Finally</s>\
+14.Abstract class\
 ...

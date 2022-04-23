@@ -8,21 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JMethod extends JExecutableParametered {
+public class JInterfaceMethodDefaulted extends JExecutableParametered implements InterfaceMethod {
+
 
     private final Class<?> returnType;
-    private final Level level;
-    private final JClass parent;
     private final String methodName;
 
-    JMethod(Level level, JClass clazz, String methodName) {
-        this(void.class, level, clazz, methodName);
+    JInterfaceMethodDefaulted(String methodName) {
+        this(void.class, methodName);
     }
 
-    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName) {
+    JInterfaceMethodDefaulted(Class<?> returnType, String methodName) {
         this.returnType = returnType;
-        this.level = level;
-        this.parent = clazz;
         this.methodName = methodName;
     }
 
@@ -30,8 +27,7 @@ public class JMethod extends JExecutableParametered {
     public String getString() {
         StringBuilder base = new StringBuilder();
         base.append(this.annotationString())
-                .append(level.getString())
-                .append(" ")
+                .append("default ")
                 .append(returnType.getName())
                 .append(" ")
                 .append(methodName)
