@@ -7,24 +7,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public final class TryCatch implements Operation {
+public class TryCatchInner implements Operation {
 
     private final JExecutable tryBody;
     private final List<Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>>> catches = new ArrayList<>();
     private final JExecutable finallyBody;
 
-    public TryCatch(@NotNull JExecutable tryBody, @Nullable List<Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>>> catches, @Nullable JExecutable finallyBody) {
+    private final String varString;
+
+    public TryCatchInner(@NotNull JExecutable tryBody, @Nullable List<Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>>> catches, @Nullable JExecutable finallyBody, @NotNull String varString) {
         this.tryBody = tryBody;
         if (catches != null) {
             this.catches.addAll(catches);
         }
         this.finallyBody = finallyBody;
+        this.varString = varString;
     }
 
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append("try {\n")
+        base.append("try (").append(varString).append(") {\n")
                 .append(tryBody.getString()).append("\n")
                 .append("}");
         for (Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>> entry : catches) {

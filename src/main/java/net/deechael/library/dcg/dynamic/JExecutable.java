@@ -3,6 +3,7 @@ package net.deechael.library.dcg.dynamic;
 import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.library.dcg.dynamic.creator.IfElseCreator;
 import net.deechael.library.dcg.dynamic.creator.TryCatchCreator;
+import net.deechael.library.dcg.dynamic.creator.TryCatchInnerCreator;
 import net.deechael.library.dcg.dynamic.items.*;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
@@ -149,6 +150,10 @@ public abstract class JExecutable implements JObject {
 
     public TryCatchCreator tryCatch(Parameter<JExecutable> tryExecuting) {
         return new TryCatchCreator(this, tryExecuting);
+    }
+
+    public TryCatchInnerCreator tryCatch(Class<?> clazz, String varName, Var var, DuParameter<JExecutable, Var> tryExecuting) {
+        return new TryCatchInnerCreator(this, tryExecuting, clazz, varName, var);
     }
 
     public void whileLoop(Requirement requirement, Parameter<JExecutable4Loop> parameter) {
