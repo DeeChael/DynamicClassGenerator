@@ -44,7 +44,7 @@
     Object instance = cons.newInstance("Test message!", new Human());
     generated.getMethod("testing", Human.class).invoke(instance, new Human());
 
-#### Generated code:
+### Generated code:
     package net.deechael.test;
 
     import java.lang.String;
@@ -94,11 +94,11 @@
 4.Creating enum\
 5.Creating interface\
 6.<s>Try & Catch</s>\
-7.Try & multi Catch\
-8.Try & 1 Catch with multi exceptions\
+7.<s>Try & multi Catch</s>\
+8.<s>Try & 1 Catch with multi exceptions</s>\
 9.<s>If & multi Else-ifs & else</s>\
 10.<s>If & multi Else-ifs</s>\
-11.More requirements for If-block and Else-block\
+11.More requirements for If-block and Else If-block\
 12.Convenient variables managing\
-13.Try & Catch & Finally\
+13.<s>Try & Catch & Finally</s>\
 ...

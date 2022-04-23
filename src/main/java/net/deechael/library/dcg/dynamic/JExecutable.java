@@ -2,6 +2,7 @@ package net.deechael.library.dcg.dynamic;
 
 import net.deechael.library.dcg.dynamic.body.*;
 import net.deechael.library.dcg.dynamic.creator.IfElseCreator;
+import net.deechael.library.dcg.dynamic.creator.TryCatchCreator;
 import net.deechael.library.dcg.dynamic.items.*;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
@@ -142,25 +143,18 @@ public abstract class JExecutable implements JObject {
         operations.add(usingMethod);
     }
 
-    public <T extends Throwable> void tryCatch(Class<T> throwing, String throwableObjectName, Parameter<JExecutable> tryExecuting, DuParameter<JExecutable, Var> catchExecuting) {
-        JExecutable4InnerStructure tryBody = new JExecutable4InnerStructure();
-        JExecutable4InnerStructure catchBody = new JExecutable4InnerStructure();
-        throwableObjectName = "jthrowable_" + throwableObjectName;
-        Var var = new Var(throwing, throwableObjectName);
-        tryExecuting.apply(tryBody);
-        catchExecuting.apply(catchBody, var);
-        TryAndCatch tryAndCatch = new TryAndCatch(throwing, throwableObjectName, tryBody, catchBody);
-        this.operations.add(tryAndCatch);
+    public IfElseCreator ifElse(Requirement requirement, Parameter<JExecutable> ifExecuting) {
+        return new IfElseCreator(this, requirement, ifExecuting);
+    }
+
+    public TryCatchCreator tryCatch(Parameter<JExecutable> tryExecuting) {
+        return new TryCatchCreator(this, tryExecuting);
     }
 
     public void whileLoop(Requirement requirement, Parameter<JExecutable4Loop> parameter) {
         JExecutable4Loop whileBody = new JExecutable4Loop();
         parameter.apply(whileBody);
         operations.add(new WhileLoop(requirement, whileBody));
-    }
-
-    public IfElseCreator ifElse(Requirement requirement, Parameter<JExecutable> ifExecuting) {
-        return new IfElseCreator(this, requirement, ifExecuting);
     }
 
     public void returnValue(Var var) {
