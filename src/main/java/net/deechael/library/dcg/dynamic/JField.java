@@ -35,47 +35,13 @@ public class JField extends Var implements JObject {
         this.isStatic = isStatic;
     }
 
-    public void initializeByValue(JStringVar value) {
-        if (!JStringVar.isSupport(this.type)) {
-            throw new RuntimeException("The type of the field is not support by JStringVar so this field cannot be initialized by value!");
-        }
-        Class<?> type = value.getType();
-        while (type.isArray()) {
-            type = type.getComponentType();
-        }
-        this.extraClasses.add(type);
+    public void initialize(Var var) {
         needInit = true;
-        initBody = "(" + value.varString() + ")";
-    }
-
-    public void initializeByStaticMethod(Class<?> clazz, String methodName, JStringVar... arguments) {
-        needInit = true;
-        initBody = Var.invokeMethod(clazz, methodName, arguments).varString();
+        initBody = var.varString();
     }
 
     public boolean isStatic() {
         return isStatic;
-    }
-
-    public void initializeByConstructor(JStringVar... vars) {
-        needInit = true;
-        StringBuilder argumentBody = new StringBuilder();
-        for (int i = 0; i < vars.length; i++) {
-            argumentBody.append("(");
-            argumentBody.append(vars[i].varString());
-            argumentBody.append(")");
-            if (i != vars.length - 1) {
-                argumentBody.append(", ");
-            }
-        }
-        for (JStringVar argument : vars) {
-            Class<?> type = argument.getType();
-            while (type.isArray()) {
-                type = type.getComponentType();
-            }
-            this.extraClasses.add(type);
-        }
-        initBody = "new " + type.getName() + "(" + argumentBody + ")";
     }
 
     public JClass getParent() {
