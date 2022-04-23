@@ -96,8 +96,8 @@
 6.<s>Try & Catch</s>\
 7.Try & multi Catch\
 8.Try & 1 Catch with multi exceptions\
-9.If & multi Else-ifs & else\
-10.If & multi Else-ifs\
+9.<s>If & multi Else-ifs & else</s>\
+10.<s>If & multi Else-ifs</s>\
 11.More requirements for If-block and Else-block\
 12.Convenient variables managing\
 13.Try & Catch & Finally\
