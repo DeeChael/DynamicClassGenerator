@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.body;
 
-public class SetFieldValue implements Operation {
+public final class SetFieldValue implements Operation {
 
     private final String parentName;
     private final String owner;

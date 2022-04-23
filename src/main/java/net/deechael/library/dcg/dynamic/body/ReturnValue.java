@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.body;
 
-public class ReturnValue implements Operation {
+public final class ReturnValue implements Operation {
 
     private final String varName;
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class TryCatchInner implements Operation {
+public final class TryCatchInner implements Operation {
 
     private final JExecutable tryBody;
     private final List<Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>>> catches = new ArrayList<>();

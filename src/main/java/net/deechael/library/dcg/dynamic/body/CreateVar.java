@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.body;
 
-public class CreateVar implements Operation {
+public final class CreateVar implements Operation {
 
     private final Class<?> type;
     private final String varName;

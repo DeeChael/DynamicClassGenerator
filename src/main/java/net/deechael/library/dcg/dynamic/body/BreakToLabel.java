@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.body;
 
-public class BreakToLabel implements Operation {
+public final class BreakToLabel implements Operation {
 
     private final String labelName;
 
@@ -12,4 +12,5 @@ public class BreakToLabel implements Operation {
     public String getString() {
         return "break " + labelName + ";";
     }
+
 }

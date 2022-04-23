@@ -1,6 +1,6 @@
 package net.deechael.library.dcg.dynamic.body;
 
-public class UsingStaticMethod implements Operation {
+public final class UsingStaticMethod implements Operation {
 
     private final String className;
     private final String methodName;

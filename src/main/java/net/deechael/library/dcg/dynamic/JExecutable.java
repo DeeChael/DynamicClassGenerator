@@ -244,6 +244,10 @@ public abstract class JExecutable implements JObject {
             this.operations.add(new Continue());
         }
 
+        public void continueToLabel(JLabel label) {
+            this.operations.add(new BreakToLabel(label.getName()));
+        }
+
     }
 
 }
