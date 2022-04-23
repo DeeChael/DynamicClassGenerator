@@ -6,7 +6,7 @@
 
     <groupId>net.deechael</groupId>
     <artifactId>dcg</artifactId>
-    <version>1.00.0</version>
+    <version>1.01.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

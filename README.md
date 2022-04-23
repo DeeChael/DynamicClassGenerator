@@ -3,6 +3,14 @@
 
 <b>Go to wiki to learn more!</b>
 
+###Importation:
+    <dependency>
+        <groupId>net.deechael</groupId>
+        <artifactId>dcg</artifactId>
+        <version>1.01.0</version>
+        <scope>compile</scope>
+    </dependency>
+
 ### Example:
     JClass clazz = new JClass("net.deechael.test", "DynamicClassGeneratorTest", Level.PUBLIC);
     //Create field
