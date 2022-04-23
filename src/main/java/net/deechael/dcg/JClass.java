@@ -1,5 +1,6 @@
 package net.deechael.dcg;
 
+import jdk.nashorn.internal.scripts.JO;
 import net.deechael.dcg.generator.JClassLoader;
 import net.deechael.dcg.generator.JJavaFileManager;
 import net.deechael.dcg.generator.JJavaFileObject;
@@ -197,78 +198,58 @@ public final class JClass implements JObject {
 
     @Override
     public String getString() {
+        securityCheck();
+        StringBuilder base = new StringBuilder();
+        if (packageName != null) base.append("package ").append(packageName).append(";\n");
+        for (String importClass : imports) {
+            base.append("import ").append(importClass).append(";\n");
+        }
+        base.append(this.annotationString());
+        base.append(level.getString()).append(" class ").append(className);
+        appendExtendsAndImplements(base).append(" {\n");
+        appendString(base, fields).append(constructors).append(methods).append("}\n");
+        return base.toString();
+    }
+
+    private void securityCheck() {
         if (extending > 0) {
-            if (extending == 1) {
-                if (extending_original == null) {
-                    throw new RuntimeException("The class extended a class, but cannot find the class!");
-                }
-            }
-            if (extending == 2) {
-                if (extending_generated == null) {
-                    throw new RuntimeException("The class extended a class, but cannot find the class");
-                }
+            if (extending == 1 && extending_original == null) {
+                throw new RuntimeException("The class extended a class, but cannot find the class!");
+            } else if (extending == 2 && extending_generated == null) {
+                throw new RuntimeException("The class extended a class, but cannot find the class");
             }
         }
         this.fields.forEach(jConstructor -> jConstructor.getExtraClasses().forEach(this::importClass));
         this.constructors.forEach(jConstructor -> jConstructor.getRequirementTypes().forEach(this::importClass));
         this.methods.forEach(jMethod -> jMethod.getRequirementTypes().forEach(this::importClass));
-        StringBuilder base = new StringBuilder();
-        if (packageName != null) {
-            base.append("package ").append(packageName).append(";\n");
-        }
-        for (String importClass : imports) {
-            base.append("import ").append(importClass).append(";\n");
-        }
-        Map<Class<?>, Map<String, JStringVar>> map = getAnnotations();
-        if (!map.isEmpty()) {
-            for (Map.Entry<Class<?>, Map<String, JStringVar>> entry : map.entrySet()) {
-                base.append("@").append(entry.getKey().getName());
-                if (!entry.getValue().isEmpty()) {
-                    base.append("(");
-                    List<Map.Entry<String, JStringVar>> jStringVars = new ArrayList<>(entry.getValue().entrySet());
-                    for (int i = 0; i < jStringVars.size(); i++) {
-                        Map.Entry<String, JStringVar> subEntry = jStringVars.get(i);
-                        base.append(subEntry.getKey()).append("=").append(subEntry.getValue().varString());
-                        if (i != jStringVars.size() - 1) {
-                            base.append(", ");
-                        }
-                    }
-                    base.append(")\n");
-                } else {
-                    base.append("\n");
-                }
-            }
-        }
-        base.append(level.getString()).append(" class ").append(className);
+    }
+
+    private StringBuilder appendExtendsAndImplements(StringBuilder stringBuilder) {
         if (extending == 1) {
-            base.append(" extends ");
-            base.append(extending_original.getName());
+            stringBuilder.append(" extends ");
+            stringBuilder.append(extending_original.getName());
         } else if (extending == 2) {
-            base.append(" extends ");
-            base.append(extending_generated.getName());
+            stringBuilder.append(" extends ");
+            stringBuilder.append(extending_generated.getName());
         }
         if (implementations.size() > 0) {
-            base.append(" implements ");
+            stringBuilder.append(" implements ");
             Iterator<Class<?>> iterator = implementations.iterator();
             while (iterator.hasNext()) {
-                base.append(iterator.next().getName());
+                stringBuilder.append(iterator.next().getName());
                 if (iterator.hasNext()) {
-                    base.append(", ");
+                    stringBuilder.append(", ");
                 }
             }
         }
-        base.append(" {\n");
-        for (JField field : fields) {
-            base.append(field.getString()).append("\n");
+        return stringBuilder;
+    }
+
+    private StringBuilder appendString(StringBuilder stringBuilder, Collection<? extends JObject> objects) {
+        for (JObject object : objects) {
+            stringBuilder.append(objects).append("\n");
         }
-        for (JConstructor constructor : constructors) {
-            base.append(constructor.getString()).append("\n");
-        }
-        for (JMethod method : methods) {
-            base.append(method.getString()).append("\n");
-        }
-        base.append("}\n");
-        return base.toString();
+        return stringBuilder;
     }
 
     @Override

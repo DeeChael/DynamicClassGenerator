@@ -45,26 +45,7 @@ public final class JConstructor extends JExecutableParametered {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        Map<Class<?>, Map<String, JStringVar>> map = getAnnotations();
-        if (!map.isEmpty()) {
-            for (Map.Entry<Class<?>, Map<String, JStringVar>> entry : map.entrySet()) {
-                base.append("@").append(entry.getKey().getName());
-                if (!entry.getValue().isEmpty()) {
-                    base.append("(");
-                    List<Map.Entry<String, JStringVar>> jStringVars = new ArrayList<>(entry.getValue().entrySet());
-                    for (int i = 0; i < jStringVars.size(); i++) {
-                        Map.Entry<String, JStringVar> subEntry = jStringVars.get(i);
-                        base.append(subEntry.getKey()).append("=").append(subEntry.getValue().varString());
-                        if (i != jStringVars.size() - 1) {
-                            base.append(", ");
-                        }
-                    }
-                    base.append(")\n");
-                } else {
-                    base.append("\n");
-                }
-            }
-        }
+        base.append(this.annotationString());
         base.append(level.getString()).append(" ");
         base.append(className).append(" (");
         List<Map.Entry<String, Class<?>>> entrySet = new ArrayList<>(getParameters().entrySet());
@@ -75,19 +56,18 @@ public final class JConstructor extends JExecutableParametered {
                 base.append(", ");
             }
         }
-        base.append(") ");
+        base.append(")");
         List<Class<?>> throwables = getThrowings();
         if (throwables.size() > 0) {
-            base.append("throws ");
+            base.append(" throws ");
             for (int i = 0; i < throwables.size(); i++) {
                 base.append(throwables.get(i).getName());
                 if (i != throwables.size() - 1) {
                     base.append(", ");
                 }
             }
-            base.append(" ");
         }
-        base.append("{\n");
+        base.append(" {\n");
         if (isSuper || isThis) {
             StringBuilder bodyBuilder = new StringBuilder();
             for (int i = 0; i < parentVars.length; i++) {
@@ -97,16 +77,11 @@ public final class JConstructor extends JExecutableParametered {
                     bodyBuilder.append(", ");
                 }
             }
-            if (isThis) {
-                base.append("this(");
-            } else {
-                base.append("super(");
-            }
-            base.append(bodyBuilder).append(");\n");
+            base.append(isThis ? "this(" : "super(")
+                    .append(bodyBuilder)
+                    .append(");\n");
         }
-        for (Operation operation : this.getOperations()) {
-            base.append(operation.getString()).append("\n");
-        }
+        this.getOperations().forEach(operation -> base.append(operation.getString()).append("\n"));
         base.append("}");
         return base.toString();
     }

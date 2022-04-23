@@ -29,32 +29,13 @@ public class JMethod extends JExecutableParametered {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        Map<Class<?>, Map<String, JStringVar>> map = getAnnotations();
-        if (!map.isEmpty()) {
-            for (Map.Entry<Class<?>, Map<String, JStringVar>> entry : map.entrySet()) {
-                base.append("@").append(entry.getKey().getName());
-                if (!entry.getValue().isEmpty()) {
-                    base.append("(");
-                    List<Map.Entry<String, JStringVar>> jStringVars = new ArrayList<>(entry.getValue().entrySet());
-                    for (int i = 0; i < jStringVars.size(); i++) {
-                        Map.Entry<String, JStringVar> subEntry = jStringVars.get(i);
-                        base.append(subEntry.getKey()).append("=").append(subEntry.getValue().varString());
-                        if (i != jStringVars.size() - 1) {
-                            base.append(", ");
-                        }
-                    }
-                    base.append(")\n");
-                } else {
-                    base.append("\n");
-                }
-            }
-        }
-        base.append(level.getString());
-        base.append(" ");
-        base.append(returnType.getName());
-        base.append(" ");
-        base.append(methodName);
-        base.append("(");
+        base.append(this.annotationString())
+                .append(level.getString())
+                .append(" ")
+                .append(returnType.getName())
+                .append(" ")
+                .append(methodName)
+                .append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);
@@ -77,11 +58,9 @@ public class JMethod extends JExecutableParametered {
         }
         base.append("{\n");
         for (Operation operation : this.getOperations()) {
-            base.append(operation.getString());
-            base.append("\n");
+            base.append(operation.getString()).append("\n");
         }
-        base.append("}");
-        base.append("\n");
+        base.append("}").append("\n");
         return base.toString();
     }
 
