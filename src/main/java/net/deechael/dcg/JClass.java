@@ -1,5 +1,6 @@
 package net.deechael.dcg;
 
+import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class JClass implements JObject, JGeneratable {
+public final class JClass implements JObject, JGeneratable, Var {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -106,8 +107,18 @@ public final class JClass implements JObject, JGeneratable {
         return method;
     }
 
+    @Override
+    public Class<?> getType() {
+        throw new RuntimeException("Generate JClass to get type");
+    }
+
     public String getName() {
         return packageName != null ? (packageName.endsWith(".") ? packageName + className : packageName + "." + className) : className;
+    }
+
+    @Override
+    public String varString() {
+        return this.getName() + ".class";
     }
 
     public JField getField(String name) {

@@ -1,5 +1,6 @@
 package net.deechael.dcg;
 
+import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +9,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class JInterface implements JGeneratable, JObject {
+public final class JInterface implements JGeneratable, JObject, Var {
 
     private final List<String> imports = new ArrayList<>();
 
@@ -136,8 +137,18 @@ public final class JInterface implements JGeneratable, JObject {
     }
 
     @Override
+    public Class<?> getType() {
+        throw new RuntimeException("Generate JInterface to get type");
+    }
+
+    @Override
     public String getName() {
         return packageName != null ? packageName + "." + className : className;
+    }
+
+    @Override
+    public String varString() {
+        return this.getName() + ".class";
     }
 
     @Override

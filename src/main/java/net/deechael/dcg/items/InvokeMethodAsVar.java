@@ -1,13 +1,12 @@
 package net.deechael.dcg.items;
 
-final class InvokeMethodAsVar extends Var {
+final class InvokeMethodAsVar implements Var {
 
     private final String varName;
     private final String methodName;
     private final String body;
 
     public InvokeMethodAsVar(String varName, String methodName, String body) {
-        super(null, null);
         this.varName = varName;
         this.methodName = methodName;
         this.body = body;

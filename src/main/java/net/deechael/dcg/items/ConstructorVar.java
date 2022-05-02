@@ -1,12 +1,18 @@
 package net.deechael.dcg.items;
 
-final class ConstructorVar extends Var {
+final class ConstructorVar implements Var {
 
+    private final Class<?> type;
     private final String bodyString;
 
     public ConstructorVar(Class<?> type, String bodyString) {
-        super(type, null);
+        this.type = type;
         this.bodyString = bodyString;
+    }
+
+    @Override
+    public Class<?> getType() {
+        return this.type;
     }
 
     @Override

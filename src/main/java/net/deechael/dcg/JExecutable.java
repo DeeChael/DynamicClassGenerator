@@ -10,8 +10,6 @@ import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +34,8 @@ public abstract class JExecutable implements JObject {
 
     public Var createVar(@NotNull Class<?> type, @NotNull String name, @NotNull Var var) {
         name = "jvar_" + name;
-        Var createdVar = new Var(type, name);
         operations.add(new CreateVar(type, name, var.varString()));
-        return createdVar;
+        return Var.referringVar(type, name);
     }
 
     public void resetVar(@NotNull Var var, @Nullable Var value) {
@@ -260,6 +257,21 @@ public abstract class JExecutable implements JObject {
         }
 
         public void continueToLabel(JLabel label) {
+            this.operations.add(new BreakToLabel(label.getName()));
+        }
+
+    }
+
+    /**
+     * Be used for switch-case inner structure
+     */
+    public static final class JExecutable4Switch extends JExecutable4InnerStructure {
+
+        public void breakLoop(String a) {
+            this.operations.add(new Break());
+        }
+
+        public void breakToLabel(JLabel label) {
             this.operations.add(new BreakToLabel(label.getName()));
         }
 
