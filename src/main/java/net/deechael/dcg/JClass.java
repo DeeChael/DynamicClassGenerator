@@ -30,7 +30,7 @@ public final class JClass implements JObject, JGeneratable, Var {
     private int extending = 0;
     private Class<?> extending_original = null;
     private JClass extending_generated = null;
-    private final List<Class<?>> implementations = new ArrayList<>();
+    private final List<String> implementations = new ArrayList<>();
 
     private final List<JGeneratable> innerClasses = new ArrayList<>();
     private boolean inner = false;
@@ -58,6 +58,11 @@ public final class JClass implements JObject, JGeneratable, Var {
             clazz = clazz.getComponentType();
         }
         importClass(clazz.getName());
+    }
+
+    public void importClass(@NotNull JGeneratable clazz) {
+        if (imports.contains(clazz.getName())) return;
+        this.imports.add(clazz.getName());
     }
 
     public void importStatic(String path) {
@@ -192,7 +197,13 @@ public final class JClass implements JObject, JGeneratable, Var {
 
     public void implement(Class<?> clazz) {
         if (!Modifier.isInterface(clazz.getModifiers())) throw new RuntimeException("This class is not an interface");
-        implementations.add(clazz);
+        if (implementations.contains(clazz.getName())) return;
+        implementations.add(clazz.getName());
+    }
+
+    public void implement(JInterface clazz) {
+        if (implementations.contains(clazz.getName())) return;
+        implementations.add(clazz.getName());
     }
 
     public void addInner(JGeneratable generatable) {
@@ -228,9 +239,9 @@ public final class JClass implements JObject, JGeneratable, Var {
         }
         if (implementations.size() > 0) {
             stringBuilder.append(" implements ");
-            Iterator<Class<?>> iterator = implementations.iterator();
+            Iterator<String> iterator = implementations.iterator();
             while (iterator.hasNext()) {
-                stringBuilder.append(iterator.next().getName());
+                stringBuilder.append(iterator.next());
                 if (iterator.hasNext()) {
                     stringBuilder.append(", ");
                 }
@@ -281,7 +292,10 @@ public final class JClass implements JObject, JGeneratable, Var {
         }
         base.append(" class ").append(className);
         appendExtendsAndImplements(base).append(" {\n");
-        appendString(base, fields).append(constructors).append(methods).append("}\n");
+        appendString(base, fields);
+        constructors.forEach(constructor -> base.append(constructor.getString()));
+        methods.forEach(method -> base.append(method.getString()));
+        base.append("}\n");
         innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
         return base.toString();
     }

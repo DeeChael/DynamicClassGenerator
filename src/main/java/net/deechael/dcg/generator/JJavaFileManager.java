@@ -28,6 +28,8 @@ final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
         return javaFileObject;
     }
 
+    private final List<JJavaFileObject> cache = new ArrayList<>();
+
     public static void loadLibrary(File file) {
         try {
             JarFile jarFile = new JarFile(file);
@@ -104,7 +106,15 @@ final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
 
     @Override
     public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) {
-        return javaFileObject = new JJavaFileObject(className, kind);
+        JJavaFileObject javaFileObject = new JJavaFileObject(className, kind);
+        this.cache.add(javaFileObject);
+        return this.javaFileObject = javaFileObject;
+    }
+
+    public List<JJavaFileObject> readCache() {
+        List<JJavaFileObject> caches = new ArrayList<>(this.cache);
+        this.cache.clear();
+        return caches;
     }
 
     static class LibraryJavaObject extends SimpleJavaFileObject {

@@ -1,6 +1,8 @@
 package net.deechael.dcg.generator;
 
 import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.annotation.TestFeature;
+import net.deechael.useless.objs.DuObj;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -9,6 +11,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class JGenerator {
 
@@ -24,6 +27,40 @@ public final class JGenerator {
                     libraries.add(file);
                 }
             }
+        }
+    }
+
+    /**
+     * If you have multiple classes, and they are using each other, generate your JClasses with this method
+     *
+     * @param generatables Classes to be generated
+     * @return Generated classes
+     */
+    @TestFeature
+    public static List<Class<?>> generate(JGeneratable[] generatables) {
+        Iterable<String> options = null;
+        if (libraries.size() > 0) {
+            StringBuilder classpath_option = new StringBuilder();
+            for (File library : libraries) {
+                classpath_option.append(library.getPath()).append(";");
+            }
+            options = Arrays.asList("-classpath", classpath_option.toString());
+        }
+        JavaCompiler.CompilationTask task = COMPILER.getTask(null, JAVA_FILE_MANAGER, null, options, null, Arrays.stream(generatables).map(generatable -> new DuObj<>(generatable.getSimpleName(), generatable.getString())).map(obj -> {
+            try {
+                return new StringObject(new URI(obj.getFirst() + ".java"), JavaFileObject.Kind.SOURCE, obj.getSecond());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList()));
+        if (task.call()) {
+            List<Class<?>> classes = new ArrayList<>();
+            for (JJavaFileObject javaFileObject : JAVA_FILE_MANAGER.readCache()) {
+                classes.add(JClassLoader.generate(javaFileObject.getName().replace(".class", ""), javaFileObject.getBytes()));
+            }
+            return classes;
+        } else {
+            throw new RuntimeException("Failed to generate the class!");
         }
     }
 

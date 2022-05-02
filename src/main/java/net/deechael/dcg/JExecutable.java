@@ -27,7 +27,16 @@ public abstract class JExecutable implements JObject {
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
     protected final List<Operation> operations = new ArrayList<>();
-    private final List<Class<?>> extraClasses = new ArrayList<>();
+    private final List<String> extraClasses = new ArrayList<>();
+
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
+    }
 
     public void addOperation(Operation operation) {
         this.operations.add(operation);
@@ -90,8 +99,8 @@ public abstract class JExecutable implements JObject {
      * @param arguments  The arguments that the method needs
      */
     public void invokeMethod(Class<?> clazz, String methodName, Var... arguments) {
-        if (!extraClasses.contains(clazz)) {
-            extraClasses.add(clazz);
+        if (!extraClasses.contains(clazz.getName())) {
+            extraClasses.add(clazz.getName());
         }
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
@@ -103,10 +112,21 @@ public abstract class JExecutable implements JObject {
         operations.add(new InvokeMethod(clazz.getName(), methodName, bodyBuilder.toString()));
     }
 
-    public void invokeMethodDirectly(Class<?> clazz, String methodName, Var... arguments) {
-        if (!extraClasses.contains(clazz)) {
-            extraClasses.add(clazz);
+    public void invokeMethod(JGeneratable clazz, String methodName, Var... arguments) {
+        if (!extraClasses.contains(clazz.getName())) {
+            extraClasses.add(clazz.getName());
         }
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        operations.add(new InvokeMethod(clazz.getName(), methodName, bodyBuilder.toString()));
+    }
+
+    public void invokeMethodDirectly(String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -179,6 +199,10 @@ public abstract class JExecutable implements JObject {
         return new TryCatchInnerCreator(this, tryExecuting, clazz, varName, var);
     }
 
+    public TryCatchInnerCreator tryCatch(JGeneratable clazz, String varName, Var var, DuParameter<JExecutable, Var> tryExecuting) {
+        return new TryCatchInnerCreator(this, tryExecuting, clazz, varName, var);
+    }
+
     public void whileLoop(Requirement requirement, Parameter<JExecutable4Loop> parameter) {
         JExecutable4Loop whileBody = new JExecutable4Loop();
         parameter.apply(whileBody);
@@ -215,7 +239,7 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new SetFieldValue(null, fieldOwner.varString(), field, var.varString(), false));
     }
 
-    protected List<Class<?>> getRequirementTypes() {
+    protected List<String> getRequirementTypes() {
         return new ArrayList<>(extraClasses);
     }
 

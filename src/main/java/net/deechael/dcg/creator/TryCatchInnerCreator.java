@@ -1,6 +1,7 @@
 package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
+import net.deechael.dcg.JGeneratable;
 import net.deechael.dcg.body.TryCatchInner;
 import net.deechael.dcg.items.Var;
 import net.deechael.useless.function.parameters.DuParameter;
@@ -24,18 +25,41 @@ public final class TryCatchInnerCreator {
 
     private boolean editable = true;
 
-
-    private final Class<?> varType;
+    private final String varType;
     private final String varName;
     private final Var varValue;
+
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
+    }
 
     public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, Class<?> clazz, String varName, Var var) {
         varName = "jvar_" + varName;
         this.owner = executable;
         JExecutable.JExecutable4InnerStructure tryBody = new JExecutable.JExecutable4InnerStructure();
-        tryExecuting.apply(tryBody, new Var(clazz, varName));
+        tryExecuting.apply(tryBody, Var.referringVar(clazz, varName));
         this.tryBody = tryBody;
-        this.varType = clazz;
+        String varType = clazz.getName();
+        while (varType.contains("[")) {
+            varType = deal(varType);
+        }
+        this.varType = varType;
+        this.varName = varName;
+        this.varValue = var;
+    }
+
+    public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, JGeneratable clazz, String varName, Var var) {
+        varName = "jvar_" + varName;
+        this.owner = executable;
+        JExecutable.JExecutable4InnerStructure tryBody = new JExecutable.JExecutable4InnerStructure();
+        tryExecuting.apply(tryBody, Var.referringVar(clazz, varName));
+        this.tryBody = tryBody;
+        this.varType = clazz.getName();
         this.varName = varName;
         this.varValue = var;
     }
@@ -45,7 +69,7 @@ public final class TryCatchInnerCreator {
         if (throwings.length == 0) return this;
         throwableObjectName = "jthrowable_" + throwableObjectName;
         JExecutable.JExecutable4InnerStructure catchBody = new JExecutable.JExecutable4InnerStructure();
-        Var var = new Var(null, throwableObjectName);
+        Var var = Var.referringVar((Class<?>) null, throwableObjectName);
         catchExecuting.apply(catchBody, var);
         this.catches.add(new AbstractMap.SimpleEntry<>(throwings, new DuObj<>(throwableObjectName, catchBody)));
         return this;
@@ -62,7 +86,7 @@ public final class TryCatchInnerCreator {
     public void done() {
         if (!editable) return;
         this.editable = false;
-        this.owner.addOperation(new TryCatchInner(tryBody, catches, finallyBody, varType.getName() + " " + varName + " = " + varValue.varString()));
+        this.owner.addOperation(new TryCatchInner(tryBody, catches, finallyBody, varType + " " + varName + " = " + varValue.varString()));
     }
 
 }

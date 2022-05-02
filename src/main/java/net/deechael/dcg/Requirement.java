@@ -22,6 +22,10 @@ public interface Requirement {
         return () -> Var.invokeMethod(clazz, methodName, parameters).varString();
     }
 
+    static Requirement invokeMethod(JGeneratable clazz, String methodName, Var... parameters) {
+        return () -> Var.invokeMethod(clazz, methodName, parameters).varString();
+    }
+
     static Requirement invokeThisMethod(String methodName, Var... parameters) {
         return () -> Var.invokeThisMethod(methodName, parameters).varString();
     }

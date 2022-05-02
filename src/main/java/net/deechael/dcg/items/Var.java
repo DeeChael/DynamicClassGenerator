@@ -1,5 +1,7 @@
 package net.deechael.dcg.items;
 
+import net.deechael.dcg.JClass;
+import net.deechael.dcg.JGeneratable;
 import org.jetbrains.annotations.NotNull;
 
 public interface Var {
@@ -22,6 +24,10 @@ public interface Var {
         return new CastedVar(castToClass, originalVar.varString());
     }
 
+    static Var castObject(Var originalVar, JGeneratable castToClass) {
+        return new CastedVar(castToClass, originalVar.varString());
+    }
+
     static Var invokeMethod(@NotNull Var var, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
@@ -34,6 +40,17 @@ public interface Var {
     }
 
     static Var invokeMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new InvokeMethodAsVar(clazz.getName(), methodName, bodyBuilder.toString());
+    }
+
+    static Var invokeMethod(@NotNull JGeneratable clazz, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -77,6 +94,34 @@ public interface Var {
         return new ConstructorVar(type, bodyBuilder.toString());
     }
 
+    static Var constructor(JClass type, Var... arguments) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
+            }
+        }
+        return new ConstructorVar4JGeneratable(type, bodyBuilder.toString());
+    }
+
+    static Var initializedArray(Class<?> componentType, int length) {
+        return new InitializedArrayVar(componentType, length);
+    }
+
+    static Var initializedArray(Class<?> componentType, Var... vars) {
+        return new InitializedContentArrayVar(componentType, vars);
+    }
+
+    static Var initializedArray(JGeneratable componentType, int length) {
+        return new InitializedArrayVar(componentType, length);
+    }
+
+    static Var initializedArray(JGeneratable componentType, Var... vars) {
+        return new InitializedContentArrayVar(componentType, vars);
+    }
+
+
     static Var custom(String content) {
         return new CustomVar(content);
     }
@@ -87,6 +132,10 @@ public interface Var {
 
     static Var referringVar(Class<?> type, String name) {
         return new ReferringVar(type, name);
+    }
+
+    static Var referringVar(JGeneratable type, String name) {
+        return new ReferringVar4JGeneratable(type, name);
     }
 
     static Var thisVar() {

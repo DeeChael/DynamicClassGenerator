@@ -9,12 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JField extends Var implements JObject {
+public class JField implements JObject, Var {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
     final Level level;
     final Class<?> type;
+    final JGeneratable jType;
     final JClass parent;
     final String name;
     final boolean isFinal;
@@ -26,9 +27,19 @@ public class JField extends Var implements JObject {
     private final List<Class<?>> extraClasses = new ArrayList<>();
 
     JField(Level level, Class<?> type, JClass clazz, String name, boolean isFinal, boolean isStatic) {
-        super(type, name);
         this.level = level;
         this.type = type;
+        this.jType = null;
+        this.parent = clazz;
+        this.name = name;
+        this.isFinal = isFinal;
+        this.isStatic = isStatic;
+    }
+
+    JField(Level level, JGeneratable type, JClass clazz, String name, boolean isFinal, boolean isStatic) {
+        this.level = level;
+        this.type = null;
+        this.jType = type;
         this.parent = clazz;
         this.name = name;
         this.isFinal = isFinal;
@@ -68,7 +79,11 @@ public class JField extends Var implements JObject {
         if (isFinal) {
             base.append("final ");
         }
-        base.append(type.getName());
+        if (type != null) {
+            base.append(type.getName());
+        } else if (jType != null) {
+            base.append(jType.getName());
+        }
         base.append(" ");
         base.append(name);
         if (needInit) {
@@ -101,7 +116,11 @@ public class JField extends Var implements JObject {
     }
 
     public Class<?> getType() {
-        return type;
+        if (this.type != null) {
+            return this.type;
+        } else {
+            throw new RuntimeException("This is a JGeneratable type field");
+        }
     }
 
     public String getName() {

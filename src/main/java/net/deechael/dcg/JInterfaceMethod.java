@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class JInterfaceMethod implements JObject, InterfaceMethod {
 
-    private final Class<?> returnType;
+    private final String returnType;
 
     private final String name;
 
@@ -23,8 +23,26 @@ public class JInterfaceMethod implements JObject, InterfaceMethod {
     }
 
     public JInterfaceMethod(Class<?> returnType, String methodName) {
-        this.returnType = returnType;
+        String returnTypeString = returnType.getName();
+        while (returnTypeString.contains("[")) {
+            returnTypeString = deal(returnTypeString);
+        }
+        this.returnType = returnTypeString;
         this.name = methodName;
+    }
+
+    public JInterfaceMethod(JGeneratable returnType, String methodName) {
+        this.returnType = returnType.getName();
+        this.name = methodName;
+    }
+
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
     }
 
     public void throwing(Class<? extends Throwable>... throwables) {
@@ -51,7 +69,7 @@ public class JInterfaceMethod implements JObject, InterfaceMethod {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.returnType.getName()).append(" ").append(this.name).append("(");
+        base.append(this.annotationString()).append("\n").append(this.returnType).append(" ").append(this.name).append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);

@@ -14,7 +14,20 @@ public final class CreateVar implements Operation {
 
     @Override
     public String getString() {
-        return type.getName() + " " + varName + " = " + "(" + body + ");";
+        String typeName = type.getName();
+        while (typeName.contains("[")) {
+            typeName = deal(typeName);
+        }
+        return typeName + " " + varName + " = " + "(" + body + ");";
+    }
+
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
     }
 
 }

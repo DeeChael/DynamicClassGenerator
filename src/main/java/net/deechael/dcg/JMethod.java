@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class JMethod extends JExecutableParametered {
 
-    private final Class<?> returnType;
+    private final String returnType;
     private final Level level;
     private final JClass parent;
     private final String methodName;
@@ -20,10 +20,30 @@ public class JMethod extends JExecutableParametered {
     }
 
     JMethod(Class<?> returnType, Level level, JClass clazz, String methodName) {
-        this.returnType = returnType;
+        String returnTypeString = returnType.getName();
+        while (returnTypeString.contains("[")) {
+            returnTypeString = deal(returnTypeString);
+        }
+        this.returnType = returnTypeString;
         this.level = level;
         this.parent = clazz;
         this.methodName = methodName;
+    }
+
+    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName) {
+        this.returnType = returnType.getName();
+        this.level = level;
+        this.parent = clazz;
+        this.methodName = methodName;
+    }
+
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
     }
 
     @Override
@@ -32,24 +52,24 @@ public class JMethod extends JExecutableParametered {
         base.append(this.annotationString())
                 .append(level.getString())
                 .append(" ")
-                .append(returnType.getName())
+                .append(returnType)
                 .append(" ")
                 .append(methodName)
                 .append("(");
-        List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
+        List<Map.Entry<String, String>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
-            Map.Entry<String, Class<?>> entry = entries.get(i);
-            base.append(entry.getValue().getName()).append(" ").append(entry.getKey());
+            Map.Entry<String, String> entry = entries.get(i);
+            base.append(entry.getValue()).append(" ").append(entry.getKey());
             if (i != entries.size() - 1) {
                 base.append(", ");
             }
         }
         base.append(")");
-        List<Class<?>> throwables = getThrowings();
+        List<String> throwables = getThrowings();
         if (throwables.size() > 0) {
             base.append(" throws ");
             for (int i = 0; i < throwables.size(); i++) {
-                base.append(throwables.get(i).getName());
+                base.append(throwables.get(i));
                 if (i != throwables.size() - 1) {
                     base.append(", ");
                 }

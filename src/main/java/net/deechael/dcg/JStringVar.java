@@ -4,19 +4,29 @@ import net.deechael.dcg.items.Var;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
-public class JStringVar extends Var {
+public class JStringVar implements Var {
 
+    private final Class<?> type;
     private final String value;
 
     private JStringVar(Class<?> type, String value) {
-        super(type, null);
+        this.type = type;
         this.value = value;
     }
 
     public String getValueString() {
         return value;
+    }
+
+    @Override
+    public Class<?> getType() {
+        return this.type;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 
     public String varString() {
@@ -67,6 +77,10 @@ public class JStringVar extends Var {
         return new JStringVar(Class.class, value.getName());
     }
 
+    public static JStringVar classVar(JGeneratable generatable) {
+        return new JStringVar(Class.class, generatable.getName());
+    }
+
     public static JStringVar enumVar(Object value) {
         if (!value.getClass().isEnum()) throw new RuntimeException("The value is not a enum type");
         return new JStringVar(value.getClass(), value.getClass().getName() + "." + value);
@@ -83,123 +97,123 @@ public class JStringVar extends Var {
     }
 
     public static JStringVar arrayVar(String[] array) {
-        return new JStringVar(String[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(String[][] array) {
-        return new JStringVar(String[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(String[][][] array) {
-        return new JStringVar(String[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(int[] array) {
-        return new JStringVar(int[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(int[][] array) {
-        return new JStringVar(int[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(int[][][] array) {
-        return new JStringVar(int[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(byte[] array) {
-        return new JStringVar(byte[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(byte[][] array) {
-        return new JStringVar(byte[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(byte[][][] array) {
-        return new JStringVar(byte[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(short[] array) {
-        return new JStringVar(short[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(short[][] array) {
-        return new JStringVar(short[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(short[][][] array) {
-        return new JStringVar(short[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(char[] array) {
-        return new JStringVar(char[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(char[][] array) {
-        return new JStringVar(char[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(char[][][] array) {
-        return new JStringVar(char[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(long[] array) {
-        return new JStringVar(long[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(long[][] array) {
-        return new JStringVar(long[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(long[][][] array) {
-        return new JStringVar(long[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(float[] array) {
-        return new JStringVar(float[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(float[][] array) {
-        return new JStringVar(float[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(float[][][] array) {
-        return new JStringVar(float[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(double[] array) {
-        return new JStringVar(double[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(double[][] array) {
-        return new JStringVar(double[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(double[][][] array) {
-        return new JStringVar(double[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(boolean[] array) {
-        return new JStringVar(boolean[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(boolean[][] array) {
-        return new JStringVar(boolean[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(boolean[][][] array) {
-        return new JStringVar(boolean[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(Class[] array) {
-        return new JStringVar(Class[].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(Class[][] array) {
-        return new JStringVar(Class[][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(Class[][][] array) {
-        return new JStringVar(Class[][][].class, Arrays.toString(array));
+        return arrayVar(array);
     }
 
     public static JStringVar arrayVar(Object[] array) {
