@@ -25,6 +25,7 @@ final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> 
     }
 
     public JJavaFileObject getLastJavaFileObject() {
+        this.cache.remove(this.javaFileObject);
         return javaFileObject;
     }
 
