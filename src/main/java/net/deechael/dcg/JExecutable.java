@@ -225,6 +225,22 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new ForLoop(clazz, tempVarName, initializedValue, requirement, operation, forBody));
     }
 
+    public void forEachLoop(@NotNull Class<?> clazz, @NotNull String tempVarName, @NotNull Var iterable, @NotNull DuParameter<@NotNull Var, @NotNull JExecutable4Loop> forExecuting) {
+        tempVarName = "jforloop_" + tempVarName;
+        Var referringVar = Var.referringVar(clazz, tempVarName);
+        JExecutable4Loop forBody = new JExecutable4Loop();
+        forExecuting.apply(referringVar, forBody);
+        this.operations.add(new ForEachLoop(clazz, tempVarName, iterable, forBody));
+    }
+
+    public void forEachLoop(@NotNull JGeneratable clazz, @NotNull String tempVarName, @NotNull Var iterable, @NotNull DuParameter<@NotNull Var, @NotNull JExecutable4Loop> forExecuting) {
+        tempVarName = "jforloop_" + tempVarName;
+        Var referringVar = Var.referringVar(clazz, tempVarName);
+        JExecutable4Loop forBody = new JExecutable4Loop();
+        forExecuting.apply(referringVar, forBody);
+        this.operations.add(new ForEachLoop(clazz, tempVarName, iterable, forBody));
+    }
+
     public void returnValue(Var var) {
         this.operations.add(new ReturnValue(var.varString()));
     }
