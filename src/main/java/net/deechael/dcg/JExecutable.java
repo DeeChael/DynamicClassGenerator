@@ -2,6 +2,7 @@ package net.deechael.dcg;
 
 import net.deechael.dcg.body.*;
 import net.deechael.dcg.creator.IfElseCreator;
+import net.deechael.dcg.creator.SwitchCaseCreator;
 import net.deechael.dcg.creator.TryCatchCreator;
 import net.deechael.dcg.creator.TryCatchInnerCreator;
 import net.deechael.dcg.items.Var;
@@ -164,6 +165,10 @@ public abstract class JExecutable implements JObject {
 
     public IfElseCreator ifElse(Requirement requirement, Parameter<JExecutable> ifExecuting) {
         return new IfElseCreator(this, requirement, ifExecuting);
+    }
+
+    public SwitchCaseCreator switchCase(Var toBeCased) {
+        return new SwitchCaseCreator(this, toBeCased);
     }
 
     public TryCatchCreator tryCatch(Parameter<JExecutable> tryExecuting) {
