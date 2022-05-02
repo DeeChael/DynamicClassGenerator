@@ -1,6 +1,6 @@
 package net.deechael.dcg.items;
 
-class NullVar extends Var {
+final class NullVar extends Var {
 
     public NullVar() {
         super(null, null);

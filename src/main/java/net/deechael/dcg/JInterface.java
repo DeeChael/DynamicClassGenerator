@@ -22,6 +22,9 @@ public final class JInterface implements JGeneratable, JObject {
 
     private final List<InterfaceMethod> methods = new ArrayList<>();
 
+    private final List<JGeneratable> innerClasses = new ArrayList<>();
+    private boolean inner = false;
+
     public JInterface(Level level, @Nullable String packageName, String className) {
         this.packageName = packageName;
         this.className = className;
@@ -71,7 +74,25 @@ public final class JInterface implements JGeneratable, JObject {
         return method;
     }
 
+    void setInner() {
+        this.inner = true;
+    }
 
+    public void extend(Class<?> interfaceClass) {
+        if (!Modifier.isInterface(interfaceClass.getModifiers())) throw new RuntimeException("This class is not an interface");
+        extensions.add(interfaceClass);
+    }
+
+    public void addInner(JGeneratable generatable) {
+        if (generatable.getLevel() == Level.PRIVATE || generatable.getLevel() == Level.PROTECTED) throw new RuntimeException("Interface not supports private or protected inner classes");
+        if (generatable instanceof JClass) {
+            ((JClass) generatable).setInner();
+            this.innerClasses.add(generatable);
+        } else if (generatable instanceof JInterface) {
+            ((JInterface) generatable).setInner();
+            this.innerClasses.add(generatable);
+        }
+    }
     public String getPackage() {
         return packageName;
     }
@@ -80,9 +101,9 @@ public final class JInterface implements JGeneratable, JObject {
         return className;
     }
 
-    public void extend(Class<?> interfaceClass) {
-        if (!Modifier.isInterface(interfaceClass.getModifiers())) throw new RuntimeException("This class is not an interface");
-        extensions.add(interfaceClass);
+    @Override
+    public Level getLevel() {
+        return level;
     }
 
     @Override
@@ -92,7 +113,11 @@ public final class JInterface implements JGeneratable, JObject {
         for (String importClass : imports) {
             base.append("import ").append(importClass).append(";\n");
         }
-        base.append(this.annotationString()).append(level.getString()).append(" class ").append(className);
+        base.append(this.annotationString()).append(level.getString());
+        if (this.inner) {
+            base.append(" static");
+        }
+        base.append(" interface ").append(className);
         if (extensions.size() > 0) {
             base.append(" extends ");
             Iterator<Class<?>> iterator = extensions.iterator();
@@ -105,6 +130,7 @@ public final class JInterface implements JGeneratable, JObject {
         }
         base.append(" {\n");
         methods.forEach(jInterfaceMethod -> base.append(jInterfaceMethod.getString()).append("\n"));
+        innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
         base.append("}\n");
         return base.toString();
     }

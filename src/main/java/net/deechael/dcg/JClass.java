@@ -20,6 +20,7 @@ public final class JClass implements JObject, JGeneratable {
     private final Level level;
 
     private final List<String> imports = new ArrayList<>();
+    private final List<String> importStatics = new ArrayList<>();
 
     private final List<JField> fields = new ArrayList<>();
     private final List<JConstructor> constructors = new ArrayList<>();
@@ -30,7 +31,8 @@ public final class JClass implements JObject, JGeneratable {
     private JClass extending_generated = null;
     private final List<Class<?>> implementations = new ArrayList<>();
 
-    private Class<?> generated = null;
+    private final List<JGeneratable> innerClasses = new ArrayList<>();
+    private boolean inner = false;
 
     public JClass(Level level, @Nullable String packageName, String className) {
         this.packageName = packageName;
@@ -45,7 +47,7 @@ public final class JClass implements JObject, JGeneratable {
             if (clazz.isPrimitive()) return;
             imports.add(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("The class not exists!");
+            imports.add(className);
         }
     }
 
@@ -57,12 +59,22 @@ public final class JClass implements JObject, JGeneratable {
         importClass(clazz.getName());
     }
 
+    public void importStatic(String path) {
+        if (importStatics.contains(path)) return;
+        importStatics.add(path);
+    }
+
     public String getPackage() {
         return packageName;
     }
 
     public String getSimpleName() {
         return className;
+    }
+
+    @Override
+    public Level getLevel() {
+        return level;
     }
 
     public JField addField(Level level, Class<?> type, String name, boolean isFinal, boolean isStatic) {
@@ -76,6 +88,10 @@ public final class JClass implements JObject, JGeneratable {
         JConstructor constructor = new JConstructor(level, this);
         this.constructors.add(constructor);
         return constructor;
+    }
+
+    void setInner() {
+        this.inner = true;
     }
 
     public JMethod addMethod(Level level, String name) {
@@ -168,18 +184,14 @@ public final class JClass implements JObject, JGeneratable {
         implementations.add(clazz);
     }
 
-    @Override
-    public String getString() {
-        securityCheck();
-        StringBuilder base = new StringBuilder();
-        if (packageName != null) base.append("package ").append(packageName).append(";\n");
-        for (String importClass : imports) {
-            base.append("import ").append(importClass).append(";\n");
+    public void addInner(JGeneratable generatable) {
+        if (generatable instanceof JClass) {
+            ((JClass) generatable).setInner();
+            this.innerClasses.add(generatable);
+        } else if (generatable instanceof JInterface) {
+            ((JInterface) generatable).setInner();
+            this.innerClasses.add(generatable);
         }
-        base.append(this.annotationString()).append(level.getString()).append(" class ").append(className);
-        appendExtendsAndImplements(base).append(" {\n");
-        appendString(base, fields).append(constructors).append(methods).append("}\n");
-        return base.toString();
     }
 
     private void securityCheck() {
@@ -243,6 +255,24 @@ public final class JClass implements JObject, JGeneratable {
     @Override
     public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
         return annotations;
+    }
+
+    @Override
+    public String getString() {
+        securityCheck();
+        StringBuilder base = new StringBuilder();
+        if (packageName != null) base.append("package ").append(packageName).append(";\n");
+        imports.forEach(importClass -> base.append("import ").append(importClass).append(";\n"));
+        importStatics.forEach(importStatic -> base.append("import static ").append(importStatic).append(";\n"));
+        base.append(this.annotationString()).append(level.getString());
+        if (this.inner) {
+            base.append(" static");
+        }
+        base.append(" class ").append(className);
+        appendExtendsAndImplements(base).append(" {\n");
+        appendString(base, fields).append(constructors).append(methods).append("}\n");
+        innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
+        return base.toString();
     }
 
 }

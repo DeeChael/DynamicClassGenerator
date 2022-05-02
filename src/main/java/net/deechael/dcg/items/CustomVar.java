@@ -1,6 +1,6 @@
 package net.deechael.dcg.items;
 
-class CustomVar extends Var {
+final class CustomVar extends Var {
 
     private final String varValue;
 

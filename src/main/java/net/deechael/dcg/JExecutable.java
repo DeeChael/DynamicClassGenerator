@@ -78,8 +78,8 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        UsingMethod usingMethod = new UsingMethod(var.varString(), methodName, bodyBuilder.toString());
-        operations.add(usingMethod);
+        InvokeMethod invokeMethod = new InvokeMethod(var.varString(), methodName, bodyBuilder.toString());
+        operations.add(invokeMethod);
     }
 
     /**
@@ -95,15 +95,19 @@ public abstract class JExecutable implements JObject {
         if (!extraClasses.contains(clazz)) {
             extraClasses.add(clazz);
         }
-        boolean hasMethod = false;
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && Modifier.isStatic(method.getModifiers())) {
-                hasMethod = true;
-                break;
+        StringBuilder bodyBuilder = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            bodyBuilder.append(arguments[i].varString());
+            if (i != arguments.length - 1) {
+                bodyBuilder.append(", ");
             }
         }
-        if (!hasMethod) {
-            throw new RuntimeException("Unknown method of the class " + clazz.getName() + ": " + methodName + "(...);");
+        operations.add(new InvokeMethod(clazz.getName(), methodName, bodyBuilder.toString()));
+    }
+
+    public void invokeMethodDirectly(Class<?> clazz, String methodName, Var... arguments) {
+        if (!extraClasses.contains(clazz)) {
+            extraClasses.add(clazz);
         }
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
@@ -112,8 +116,7 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        UsingStaticMethod usingMethod = new UsingStaticMethod(clazz.getName(), methodName, bodyBuilder.toString());
-        operations.add(usingMethod);
+        operations.add(new InvokeMethodDirectly(methodName, bodyBuilder.toString()));
     }
 
     /**
@@ -132,8 +135,8 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        UsingMethod usingMethod = new UsingMethod("super", methodName, bodyBuilder.toString());
-        operations.add(usingMethod);
+        InvokeMethod invokeMethod = new InvokeMethod("super", methodName, bodyBuilder.toString());
+        operations.add(invokeMethod);
     }
 
     /**
@@ -152,8 +155,14 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        UsingMethod usingMethod = new UsingMethod("this", methodName, bodyBuilder.toString());
-        operations.add(usingMethod);
+        InvokeMethod invokeMethod = new InvokeMethod("this", methodName, bodyBuilder.toString());
+        operations.add(invokeMethod);
+    }
+
+    public void addExecutableStructure(Parameter<JExecutable> parameter) {
+        JExecutable4InnerStructure executableStructure = new JExecutable4InnerStructure();
+        parameter.apply(executableStructure);
+        this.operations.add(new ExecutableStructure(executableStructure));
     }
 
     public IfElseCreator ifElse(Requirement requirement, Parameter<JExecutable> ifExecuting) {
@@ -172,6 +181,12 @@ public abstract class JExecutable implements JObject {
         JExecutable4Loop whileBody = new JExecutable4Loop();
         parameter.apply(whileBody);
         operations.add(new WhileLoop(requirement, whileBody));
+    }
+
+    public void doWhileLoop(Parameter<JExecutable4Loop> parameter, Requirement requirement) {
+        JExecutable4Loop doBody = new JExecutable4Loop();
+        parameter.apply(doBody);
+        operations.add(new DoWhileLoop(doBody, requirement));
     }
 
     public void returnValue(Var var) {

@@ -1,11 +1,11 @@
 package net.deechael.dcg.items;
 
-class CastingVar extends Var {
+final class CastedVar extends Var {
 
     private final Class<?> type;
     private final String originalVarString;
 
-    public CastingVar(Class<?> type, String originalVarString) {
+    public CastedVar(Class<?> type, String originalVarString) {
         super(type, null);
         this.type = type;
         this.originalVarString = originalVarString;

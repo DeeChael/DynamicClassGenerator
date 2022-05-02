@@ -8,4 +8,6 @@ public interface JGeneratable {
 
     String getSimpleName();
 
+    Level getLevel();
+
 }
