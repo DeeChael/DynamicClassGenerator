@@ -1,6 +1,6 @@
 package net.deechael.dcg;
 
-public enum Symbol {
+public enum JudgementSymbol {
 
     EQUAL("=="),
     NOT("!"),
@@ -14,7 +14,7 @@ public enum Symbol {
 
     private final String symbolString;
 
-    Symbol(String symbolString) {
+    JudgementSymbol(String symbolString) {
         this.symbolString = symbolString;
     }
 

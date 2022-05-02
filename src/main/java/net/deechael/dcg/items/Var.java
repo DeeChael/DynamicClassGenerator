@@ -1,5 +1,6 @@
 package net.deechael.dcg.items;
 
+import net.deechael.dcg.DigitOperator;
 import net.deechael.dcg.JClass;
 import net.deechael.dcg.JGeneratable;
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +122,6 @@ public interface Var {
         return new InitializedContentArrayVar(componentType, vars);
     }
 
-
     static Var custom(String content) {
         return new CustomVar(content);
     }
@@ -140,6 +140,77 @@ public interface Var {
 
     static Var thisVar() {
         return new CustomVar("this");
+    }
+
+    static Var add(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.PLUS, another);
+    }
+
+    static Var subtract(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.MINUS, another);
+    }
+
+    static Var multiply(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.MULTIPLY, another);
+    }
+
+    static Var divide(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.DIVIDE, another);
+    }
+
+    static Var remainder(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.REMINDER, another);
+    }
+
+    static Var bitwiseOR(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_OR, another);
+    }
+
+    static Var bitwiseAND(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_AND, another);
+    }
+
+    static Var bitwiseXOR(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_XOR, another);
+    }
+
+    static Var bitwiseLeftShift(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_LEFT_SHIFT, another);
+    }
+
+    static Var bitwiseRightShift(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_RIGHT_SHIFT, another);
+    }
+
+    static Var bitwiseRightLogicalShift(Var var, Var another) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_RIGHT_LOGICAL_SHIFT, another);
+    }
+
+    static Var bitwiseNOT(Var var) {
+        return new DigitOperatedVar(var, DigitOperator.BITWISE_NOT, null);
+    }
+
+    static Var increaseLeft(Var var) {
+        return new DigitOperatedVar(null, DigitOperator.INCREASE, var);
+    }
+
+    static Var increaseRight(Var var) {
+        return new DigitOperatedVar(var, DigitOperator.INCREASE, null);
+    }
+
+    static Var decreaseLeft(Var var) {
+        return new DigitOperatedVar(null, DigitOperator.DECREASE, var);
+    }
+
+    static Var decreaseRight(Var var) {
+        return new DigitOperatedVar(var, DigitOperator.DECREASE, null);
+    }
+
+    static Var setValueVar(Var referringVar, Var any) {
+        if (!(referringVar instanceof ReferringVar || referringVar instanceof ReferringVar4JGeneratable)) {
+            throw new RuntimeException("Unacceptable var");
+        }
+        return new SetValueVar(referringVar.getName(), any);
     }
 
 }

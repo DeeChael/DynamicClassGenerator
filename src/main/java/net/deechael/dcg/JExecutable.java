@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Executable body which is without parameters
@@ -213,6 +214,15 @@ public abstract class JExecutable implements JObject {
         JExecutable4Loop doBody = new JExecutable4Loop();
         parameter.apply(doBody);
         operations.add(new DoWhileLoop(doBody, requirement));
+    }
+
+    public void forLoop(@Nullable Class<?> clazz, @Nullable String tempVarName, @Nullable Var initializedValue, @Nullable Function<Var, Requirement> judgement, @Nullable Var operation, @NotNull DuParameter<@Nullable Var, @NotNull JExecutable4Loop> forExecuting) {
+        tempVarName = tempVarName != null ? "jforloop_" + tempVarName : null;
+        Var referringVar = (clazz != null && tempVarName != null) ? Var.referringVar(clazz, tempVarName) : null;
+        Requirement requirement = judgement != null ? judgement.apply(referringVar) : null;
+        JExecutable4Loop forBody = new JExecutable4Loop();
+        forExecuting.apply(referringVar, forBody);
+        this.operations.add(new ForLoop(clazz, tempVarName, initializedValue, requirement, operation, forBody));
     }
 
     public void returnValue(Var var) {

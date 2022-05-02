@@ -10,6 +10,11 @@ public interface Requirement {
         return () -> var.varString() + " instanceof " + clazz.getName();
     }
 
+    static Requirement isInstanceof(Var var, JGeneratable clazz) {
+        return () -> var.varString() + " instanceof " + clazz.getName();
+    }
+
+
     static Requirement isEqual(Var var, Var another) {
         return () -> var.varString() + " == " + another.varString();
     }
