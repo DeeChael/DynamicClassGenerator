@@ -3,6 +3,7 @@ package net.deechael.dcg.items;
 import net.deechael.dcg.DigitOperator;
 import net.deechael.dcg.JClass;
 import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JAnonymousClass;
 import org.jetbrains.annotations.NotNull;
 
 public interface Var {
@@ -211,6 +212,10 @@ public interface Var {
             throw new RuntimeException("Unacceptable var");
         }
         return new SetValueVar(referringVar.getName(), any);
+    }
+
+    static JAnonymousClass anonymousClass(@NotNull Class<?> type, @NotNull Var[] arguments) {
+        return new JAnonymousClass(type, arguments);
     }
 
 }

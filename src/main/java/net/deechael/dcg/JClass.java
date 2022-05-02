@@ -35,11 +35,33 @@ public final class JClass implements JObject, JGeneratable, Var {
     private final List<JGeneratable> innerClasses = new ArrayList<>();
     private boolean inner = false;
 
+    private final boolean isAbstract;
+    private final boolean isFinal;
+
     public JClass(Level level, @Nullable String packageName, String className) {
+        this(level, packageName, className, false, false);
+    }
+
+    public JClass(Level level, @Nullable String packageName, String className, boolean isAbstract) {
+        this(level, packageName, className, isAbstract, false);
+    }
+
+    public JClass(Level level, @Nullable String packageName, String className, boolean isAbstract, boolean isFinal) {
         this.packageName = packageName;
         this.className = className;
         this.level = level;
+        if (isAbstract) {
+            this.isAbstract = true;
+            this.isFinal = false;
+        } else if (isFinal) {
+            this.isAbstract = false;
+            this.isFinal = true;
+        } else {
+            this.isAbstract = false;
+            this.isFinal = false;
+        }
     }
+
 
     public void importClass(String className) {
         if (imports.contains(className)) return;
@@ -100,14 +122,14 @@ public final class JClass implements JObject, JGeneratable, Var {
         this.inner = true;
     }
 
-    public JMethod addMethod(Level level, String name) {
-        JMethod method = new JMethod(level, this, name);
+    public JMethod addMethod(Level level, String name, boolean isStatic, boolean isFinal) {
+        JMethod method = new JMethod(level, this, name, isStatic, isFinal);
         this.methods.add(method);
         return method;
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name) {
-        JMethod method = new JMethod(returnType, level, this, name);
+    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal) {
+        JMethod method = new JMethod(returnType, level, this, name, isStatic, isFinal);
         this.methods.add(method);
         return method;
     }
@@ -289,6 +311,11 @@ public final class JClass implements JObject, JGeneratable, Var {
         base.append(this.annotationString()).append(level.getString());
         if (this.inner) {
             base.append(" static");
+        }
+        if (isAbstract) {
+            base.append(" abstract");
+        } else if (isFinal) {
+            base.append(" final");
         }
         base.append(" class ").append(className);
         appendExtendsAndImplements(base).append(" {\n");

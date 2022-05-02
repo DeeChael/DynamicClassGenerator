@@ -15,11 +15,14 @@ public class JMethod extends JExecutableParametered {
     private final JClass parent;
     private final String methodName;
 
-    JMethod(Level level, JClass clazz, String methodName) {
-        this(void.class, level, clazz, methodName);
+    private final boolean isStatic;
+    private final boolean isFinal;
+
+    JMethod(Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
+        this(void.class, level, clazz, methodName, isStatic, isFinal);
     }
 
-    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName) {
+    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
         String returnTypeString = returnType.getName();
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
@@ -28,13 +31,17 @@ public class JMethod extends JExecutableParametered {
         this.level = level;
         this.parent = clazz;
         this.methodName = methodName;
+        this.isStatic = isStatic;
+        this.isFinal = isFinal;
     }
 
-    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName) {
+    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
         this.returnType = returnType.getName();
         this.level = level;
         this.parent = clazz;
         this.methodName = methodName;
+        this.isStatic = isStatic;
+        this.isFinal = isFinal;
     }
 
     private String deal(String typeName) {
@@ -49,13 +56,13 @@ public class JMethod extends JExecutableParametered {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString())
-                .append(level.getString())
-                .append(" ")
-                .append(returnType)
-                .append(" ")
-                .append(methodName)
-                .append("(");
+        base.append(this.annotationString()).append(level.getString()).append(" ");
+        if (isStatic) {
+            base.append("static ");
+        } else if (isFinal) {
+            base.append("final ");
+        }
+        base.append(returnType).append(" ").append(methodName).append("(");
         List<Map.Entry<String, String>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, String> entry = entries.get(i);
