@@ -80,7 +80,7 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
         if (isStatic) {
             base.append(" static");
         }
-        ;base.append(" native ").append(this.returnType).append(" ").append(this.name).append("(");
+        base.append(" native ").append(this.returnType).append(" ").append(this.name).append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.parameters.entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);

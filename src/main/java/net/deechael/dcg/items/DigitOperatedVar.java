@@ -29,18 +29,12 @@ final class DigitOperatedVar implements Var {
 
     @Override
     public String varString() {
-        if (operator == DigitOperator.PLUS || operator == DigitOperator.MINUS || operator == DigitOperator.MULTIPLY || operator == DigitOperator.DIVIDE || operator == DigitOperator.REMINDER || operator == DigitOperator.BITWISE_OR || operator == DigitOperator.BITWISE_AND || operator == DigitOperator.BITWISE_XOR || operator == DigitOperator.BITWISE_LEFT_SHIFT || operator == DigitOperator.BITWISE_RIGHT_SHIFT || operator == DigitOperator.BITWISE_RIGHT_LOGICAL_SHIFT) {
+        if (operator.isMath()) {
             return "(" + first.varString() + " " + operator.getSymbol() + " " + second.varString() + ")";
         } else if (operator == DigitOperator.BITWISE_NOT) {
             return "(~" + first.varString() + ")";
         } else if (operator == DigitOperator.INCREASE || operator == DigitOperator.DECREASE) {
-            if (first != null) {
-                return "(" + first.varString() + "++)";
-            } else if (second != null) {
-                return "(++" + first.varString() + ")";
-            } else {
-                return "0";
-            }
+            return first != null ? "(" + first.varString() + "++)" : (second != null ? "(++" + second.varString() + ")" : "0");
         } else {
             throw new RuntimeException("HOW!!!");
         }
