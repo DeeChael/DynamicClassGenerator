@@ -18,7 +18,7 @@ public final class JClass implements JObject, JGeneratable, Var {
 
     private final String className;
 
-    private final Level level;
+    Level level;
 
     private final List<String> imports = new ArrayList<>();
     private final List<String> importStatics = new ArrayList<>();
@@ -35,8 +35,8 @@ public final class JClass implements JObject, JGeneratable, Var {
     private final List<JGeneratable> innerClasses = new ArrayList<>();
     private boolean inner = false;
 
-    private final boolean isAbstract;
-    private final boolean isFinal;
+    boolean isAbstract;
+    boolean isFinal;
 
     public JClass(Level level, @Nullable String packageName, String className) {
         this(level, packageName, className, false, false);
@@ -122,14 +122,14 @@ public final class JClass implements JObject, JGeneratable, Var {
         this.inner = true;
     }
 
-    public JMethod addMethod(Level level, String name, boolean isStatic, boolean isFinal) {
-        JMethod method = new JMethod(level, this, name, isStatic, isFinal);
+    public JMethod addMethod(Level level, String name, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+        JMethod method = new JMethod(level, this, name, isStatic, isFinal, isSynchronized);
         this.methods.add(method);
         return method;
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal) {
-        JMethod method = new JMethod(returnType, level, this, name, isStatic, isFinal);
+    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+        JMethod method = new JMethod(returnType, level, this, name, isStatic, isFinal, isSynchronized);
         this.methods.add(method);
         return method;
     }

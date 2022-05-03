@@ -18,7 +18,7 @@ public final class SwitchCaseCreator {
 
     private boolean editable = true;
 
-    private final List<Map.Entry<Var, JExecutable>> caseBodies = new ArrayList<>();
+    private final List<Map.Entry<Var[], JExecutable>> caseBodies = new ArrayList<>();
 
     private JExecutable defaultCaseBody;
 
@@ -27,7 +27,7 @@ public final class SwitchCaseCreator {
         this.toBeCased = toBeCased;
     }
 
-    public SwitchCaseCreator caseVar(Var var, Parameter<JExecutable.JExecutable4Switch> parameter) {
+    public SwitchCaseCreator caseVar(Var[] var, Parameter<JExecutable.JExecutable4Switch> parameter) {
         if (!editable) return this;
         JExecutable.JExecutable4Switch caseBody = new JExecutable.JExecutable4Switch();
         parameter.apply(caseBody);

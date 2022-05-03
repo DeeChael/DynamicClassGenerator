@@ -184,6 +184,12 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new ExecutableStructure(executableStructure));
     }
 
+    public void addSynchronizedStructure(Var object, Parameter<JExecutable> parameter) {
+        JExecutable4InnerStructure executableStructure = new JExecutable4InnerStructure();
+        parameter.apply(executableStructure);
+        this.operations.add(new SynchronizedStructure(object, executableStructure));
+    }
+
     public IfElseCreator ifElse(Requirement requirement, Parameter<JExecutable> ifExecuting) {
         return new IfElseCreator(this, requirement, ifExecuting);
     }

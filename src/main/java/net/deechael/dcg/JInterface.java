@@ -13,7 +13,7 @@ public final class JInterface implements JGeneratable, JObject, Var {
 
     private final List<String> imports = new ArrayList<>();
 
-    private final Level level;
+    Level level;
     private final String packageName;
     private final String className;
 
@@ -111,9 +111,11 @@ public final class JInterface implements JGeneratable, JObject, Var {
         if (generatable.getLevel() == Level.PRIVATE || generatable.getLevel() == Level.PROTECTED) throw new RuntimeException("Interface not supports private or protected inner classes");
         if (generatable instanceof JClass) {
             ((JClass) generatable).setInner();
+            ((JClass) generatable).level = Level.UNNAMED;
             this.innerClasses.add(generatable);
         } else if (generatable instanceof JInterface) {
             ((JInterface) generatable).setInner();
+            ((JInterface) generatable).level = Level.UNNAMED;
             this.innerClasses.add(generatable);
         }
     }

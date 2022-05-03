@@ -15,6 +15,8 @@ public final class JAnonymousClass implements Var {
     private final List<JField> fields = new ArrayList<>();
     private final List<JMethod> methods = new ArrayList<>();
 
+    private final List<JClass> innerClasses = new ArrayList<>();
+
     public JAnonymousClass(@NotNull Class<?> type, @NotNull Var[] arguments) {
         this.type = type.getName();
         this.arguments = arguments;
@@ -40,14 +42,20 @@ public final class JAnonymousClass implements Var {
         return field;
     }
 
-    public JMethod addMethod(Level level, String name, boolean isFinal) {
-        return this.addMethod(void.class, level, name, isFinal);
+    public JMethod addMethod(Level level, String name, boolean isFinal, boolean isSynchronized) {
+        return this.addMethod(void.class, level, name, isFinal, isSynchronized);
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isFinal) {
-        JMethod method = new JMethod(returnType, level, null, name, false, isFinal);
+    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isFinal, boolean isSynchronized) {
+        JMethod method = new JMethod(returnType, level, null, name, false, isFinal, isSynchronized);
         this.methods.add(method);
         return method;
+    }
+
+    public void addInner(JClass generatable) {
+        generatable.setInner();
+        generatable.level = Level.UNNAMED;
+        this.innerClasses.add(generatable);
     }
 
     @Override
@@ -72,8 +80,9 @@ public final class JAnonymousClass implements Var {
             }
         }
         base.append(bodyBuilder).append(") {\n");
-        fields.forEach(field -> base.append(field.getString()));
-        methods.forEach(method -> base.append(method.getString()));
+        fields.forEach(field -> base.append(field.getString()).append("\n"));
+        methods.forEach(method -> base.append(method.getString()).append("\n"));
+        innerClasses.forEach(clazz -> base.append(clazz.getString()).append("\n"));
         return base.append("})").toString();
     }
 }

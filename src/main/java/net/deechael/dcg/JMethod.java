@@ -17,12 +17,13 @@ public class JMethod extends JExecutableParametered {
 
     private final boolean isStatic;
     private final boolean isFinal;
+    private final boolean isSynchronized;
 
-    JMethod(Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
-        this(void.class, level, clazz, methodName, isStatic, isFinal);
+    JMethod(Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+        this(void.class, level, clazz, methodName, isStatic, isFinal, isSynchronized);
     }
 
-    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
+    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         String returnTypeString = returnType.getName();
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
@@ -33,15 +34,17 @@ public class JMethod extends JExecutableParametered {
         this.methodName = methodName;
         this.isStatic = isStatic;
         this.isFinal = isFinal;
+        this.isSynchronized = isSynchronized;
     }
 
-    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal) {
+    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         this.returnType = returnType.getName();
         this.level = level;
         this.parent = clazz;
         this.methodName = methodName;
         this.isStatic = isStatic;
         this.isFinal = isFinal;
+        this.isSynchronized = isSynchronized;
     }
 
     private String deal(String typeName) {
@@ -61,6 +64,9 @@ public class JMethod extends JExecutableParametered {
             base.append("static ");
         } else if (isFinal) {
             base.append("final ");
+        }
+        if (isSynchronized) {
+            base.append("synchronized ");
         }
         base.append(returnType).append(" ").append(methodName).append("(");
         List<Map.Entry<String, String>> entries = new ArrayList<>(this.getParameters().entrySet());
