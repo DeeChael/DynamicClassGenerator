@@ -27,6 +27,11 @@ public final class SwitchCaseCreator {
         this.toBeCased = toBeCased;
     }
 
+    public SwitchCaseCreator caseVar(Var var, Parameter<JExecutable.JExecutable4Switch> parameter) {
+        return this.caseVar(new Var[] {var}, parameter);
+    }
+
+
     public SwitchCaseCreator caseVar(Var[] var, Parameter<JExecutable.JExecutable4Switch> parameter) {
         if (!editable) return this;
         JExecutable.JExecutable4Switch caseBody = new JExecutable.JExecutable4Switch();
