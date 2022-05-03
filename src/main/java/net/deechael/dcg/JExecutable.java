@@ -11,10 +11,7 @@ import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -46,6 +43,18 @@ public abstract class JExecutable implements JObject {
     public Var createVar(@NotNull Class<?> type, @NotNull String name, @NotNull Var var) {
         name = "jvar_" + name;
         operations.add(new CreateVar(type, name, var.varString()));
+        return Var.referringVar(type, name);
+    }
+
+    public Var createTypeVar(@NotNull Class<?> type, Class<?>[] types, @NotNull String name, @NotNull Var var) {
+        name = "jvar_" + name;
+        operations.add(new CreateVar(type, Arrays.stream(types).map(Class::getName).toArray(String[]::new), name, var.varString()));
+        return Var.referringVar(type, name);
+    }
+
+    public Var createTypeVar(@NotNull Class<?> type, JGeneratable[] types, @NotNull String name, @NotNull Var var) {
+        name = "jvar_" + name;
+        operations.add(new CreateVar(type, Arrays.stream(types).map(JGeneratable::getName).toArray(String[]::new), name, var.varString()));
         return Var.referringVar(type, name);
     }
 

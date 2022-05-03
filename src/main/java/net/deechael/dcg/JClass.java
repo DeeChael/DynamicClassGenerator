@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class JClass implements JObject, JGeneratable, Var {
+public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -47,9 +47,9 @@ public final class JClass implements JObject, JGeneratable, Var {
     }
 
     public JClass(Level level, @Nullable String packageName, String className, boolean isAbstract, boolean isFinal) {
+        this.level = level;
         this.packageName = packageName;
         this.className = className;
-        this.level = level;
         if (isAbstract) {
             this.isAbstract = true;
             this.isFinal = false;
@@ -61,7 +61,6 @@ public final class JClass implements JObject, JGeneratable, Var {
             this.isFinal = false;
         }
     }
-
 
     public void importClass(String className) {
         if (imports.contains(className)) return;
@@ -247,6 +246,9 @@ public final class JClass implements JObject, JGeneratable, Var {
         } else if (generatable instanceof JInterface) {
             ((JInterface) generatable).setInner();
             this.innerClasses.add(generatable);
+        } else if (generatable instanceof JEnum) {
+            ((JEnum) generatable).setInner();
+            this.innerClasses.add(generatable);
         }
     }
 
@@ -329,10 +331,10 @@ public final class JClass implements JObject, JGeneratable, Var {
         base.append(" class ").append(className);
         appendExtendsAndImplements(base).append(" {\n");
         appendString(base, fields);
-        constructors.forEach(constructor -> base.append(constructor.getString()));
-        methods.forEach(method -> base.append(method.getString()));
-        base.append("}\n");
+        appendString(base, constructors);
+        methods.forEach(method -> base.append(method.getString()).append("\n"));
         innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
+        base.append("}\n");
         return base.toString();
     }
 

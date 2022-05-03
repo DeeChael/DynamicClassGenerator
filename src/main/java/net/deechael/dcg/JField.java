@@ -16,7 +16,7 @@ public class JField implements JObject, Var {
     final Level level;
     final Class<?> type;
     final JGeneratable jType;
-    final JClass parent;
+    final FieldOwnable parent;
     final String name;
     final boolean isFinal;
     final boolean isStatic;
@@ -24,7 +24,7 @@ public class JField implements JObject, Var {
     private boolean needInit = false;
     private String initBody = "";
 
-    JField(Level level, Class<?> type, JClass clazz, String name, boolean isFinal, boolean isStatic) {
+    JField(Level level, Class<?> type, FieldOwnable clazz, String name, boolean isFinal, boolean isStatic) {
         this.level = level;
         this.type = type;
         this.jType = null;
@@ -34,7 +34,7 @@ public class JField implements JObject, Var {
         this.isStatic = isStatic;
     }
 
-    JField(Level level, JGeneratable type, JClass clazz, String name, boolean isFinal, boolean isStatic) {
+    JField(Level level, JGeneratable type, FieldOwnable clazz, String name, boolean isFinal, boolean isStatic) {
         this.level = level;
         this.type = null;
         this.jType = type;
@@ -53,7 +53,7 @@ public class JField implements JObject, Var {
         return isStatic;
     }
 
-    public JClass getParent() {
+    public FieldOwnable getParent() {
         return parent;
     }
 

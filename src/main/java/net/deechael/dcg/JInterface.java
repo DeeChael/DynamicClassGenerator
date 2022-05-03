@@ -117,6 +117,10 @@ public final class JInterface implements JGeneratable, JObject, Var {
             ((JInterface) generatable).setInner();
             ((JInterface) generatable).level = Level.UNNAMED;
             this.innerClasses.add(generatable);
+        } else if (generatable instanceof JEnum) {
+            ((JEnum) generatable).setInner();
+            ((JEnum) generatable).level = Level.UNNAMED;
+            this.innerClasses.add(generatable);
         }
     }
     public String getPackage() {

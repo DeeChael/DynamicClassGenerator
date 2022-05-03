@@ -4,8 +4,9 @@ import net.deechael.dcg.items.Var;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
-public class JStringVar implements Var {
+public final class JStringVar implements Var {
 
     private final Class<?> type;
     private final String value;
@@ -97,123 +98,143 @@ public class JStringVar implements Var {
     }
 
     public static JStringVar arrayVar(String[] array) {
-        return arrayVar(array);
+        return arrayVar((Object[]) array);
     }
 
     public static JStringVar arrayVar(String[][] array) {
-        return arrayVar(array);
+        return arrayVar((Object[][]) array);
     }
 
     public static JStringVar arrayVar(String[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(int[] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).boxed().toArray());
     }
 
     public static JStringVar arrayVar(int[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(int[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(byte[] array) {
-        return arrayVar(array);
+        Byte[] bytes = new Byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            bytes[i] = array[i];
+        }
+        return arrayVar(Arrays.stream(bytes).toArray());
     }
 
     public static JStringVar arrayVar(byte[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(byte[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(short[] array) {
-        return arrayVar(array);
+        Short[] shorts = new Short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            shorts[i] = array[i];
+        }
+        return arrayVar(Arrays.stream(shorts).toArray());
     }
 
     public static JStringVar arrayVar(short[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(short[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(char[] array) {
-        return arrayVar(array);
+        Character[] chars = new Character[array.length];
+        for (int i = 0; i < array.length; i++) {
+            chars[i] = array[i];
+        }
+        return arrayVar(Arrays.stream(chars).toArray());
     }
 
     public static JStringVar arrayVar(char[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(char[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(long[] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).boxed().toArray());
     }
 
     public static JStringVar arrayVar(long[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(long[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(float[] array) {
-        return arrayVar(array);
+        Float[] floats = new Float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            floats[i] = array[i];
+        }
+        return arrayVar(Arrays.stream(floats).toArray());
     }
 
     public static JStringVar arrayVar(float[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(float[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(double[] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).boxed().toArray());
     }
 
     public static JStringVar arrayVar(double[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(double[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(boolean[] array) {
-        return arrayVar(array);
+        Boolean[] booleans = new Boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            booleans[i] = array[i];
+        }
+        return arrayVar(Arrays.stream(booleans).toArray());
     }
 
     public static JStringVar arrayVar(boolean[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(boolean[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(Class[] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(Class[][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(Class[][][] array) {
-        return arrayVar(array);
+        return arrayVar(Arrays.stream(array).toArray());
     }
 
     public static JStringVar arrayVar(Object[] array) {

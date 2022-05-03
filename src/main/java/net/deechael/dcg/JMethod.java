@@ -8,22 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JMethod extends JExecutableParametered implements ClassMethod {
+public final class JMethod extends JExecutableParametered implements ClassMethod {
 
     private final String returnType;
     private final Level level;
-    private final JClass parent;
+    private final MethodOwnable parent;
     private final String methodName;
 
     private final boolean isStatic;
     private final boolean isFinal;
     private final boolean isSynchronized;
 
-    JMethod(Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+    JMethod(Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         this(void.class, level, clazz, methodName, isStatic, isFinal, isSynchronized);
     }
 
-    JMethod(Class<?> returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+    JMethod(Class<?> returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         String returnTypeString = returnType.getName();
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
@@ -37,7 +37,7 @@ public class JMethod extends JExecutableParametered implements ClassMethod {
         this.isSynchronized = isSynchronized;
     }
 
-    JMethod(JGeneratable returnType, Level level, JClass clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+    JMethod(JGeneratable returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         this.returnType = returnType.getName();
         this.level = level;
         this.parent = clazz;

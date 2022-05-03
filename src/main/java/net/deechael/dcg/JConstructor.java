@@ -17,7 +17,7 @@ public final class JConstructor extends JExecutableParametered {
     private boolean isThis = false;
     private String[] parentVars = new String[0];
 
-    JConstructor(Level level, JClass parent) {
+    JConstructor(Level level, ConstructorOwnable parent) {
         this.level = level;
         this.className = parent.getSimpleName();
     }

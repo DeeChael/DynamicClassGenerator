@@ -1,9 +1,6 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.DigitOperator;
-import net.deechael.dcg.JClass;
-import net.deechael.dcg.JGeneratable;
-import net.deechael.dcg.JAnonymousClass;
+import net.deechael.dcg.*;
 import org.jetbrains.annotations.NotNull;
 
 public interface Var {
@@ -216,6 +213,30 @@ public interface Var {
 
     static JAnonymousClass anonymousClass(@NotNull Class<?> type, @NotNull Var[] arguments) {
         return new JAnonymousClass(type, arguments);
+    }
+
+    static Var enumVar(@NotNull Class<?> enumClass, @NotNull String enumItemName) {
+        return new EnumVar(enumClass, enumItemName);
+    }
+
+    static Var enumVar(@NotNull JEnum enumClass, @NotNull String enumItemName) {
+        return new EnumVar(enumClass, enumItemName);
+    }
+
+    static Var lambda(Class<?> clazz, String method) {
+        return new LambdaVar(clazz, method);
+    }
+
+    static Var lambda(JGeneratable clazz, String method) {
+        return new LambdaVar(clazz, method);
+    }
+
+    static Var lambda(Class<?> clazz) {
+        return new LambdaVar(clazz, "new");
+    }
+
+    static Var lambda(JClass clazz) {
+        return new LambdaVar(clazz, "new");
     }
 
 }

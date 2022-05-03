@@ -9,12 +9,18 @@
 <b>Go to wiki to learn more!</b>
 
 ### Importation:
+#### For Maven
     <dependency>
         <groupId>net.deechael</groupId>
         <artifactId>dcg</artifactId>
         <version>1.02.0</version>
         <scope>compile</scope>
     </dependency>
+#### For Gradle
+    dependencies {
+        ...
+        implementation 'net.deechael:dcg:1.02.0'
+    }
 
 ### Example:
     JClass clazz = new JClass("net.deechael.test", "DynamicClassGeneratorTest", Level.PUBLIC);
@@ -104,7 +110,7 @@
 1.<s>Extending class</s>\
 2.<s>Implementing interfaces</s>\
 3.Creating annotation\
-4.Creating enum\
+4.<s>Creating enum</s>\
 5.<s>Creating interface</s>\
 6.<s>Try & Catch</s>\
 7.<s>Try & multi Catch</s>\
