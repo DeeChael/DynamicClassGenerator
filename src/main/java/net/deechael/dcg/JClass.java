@@ -25,7 +25,7 @@ public final class JClass implements JObject, JGeneratable, Var {
 
     private final List<JField> fields = new ArrayList<>();
     private final List<JConstructor> constructors = new ArrayList<>();
-    private final List<JMethod> methods = new ArrayList<>();
+    private final List<ClassMethod> methods = new ArrayList<>();
 
     private int extending = 0;
     private Class<?> extending_original = null;
@@ -130,6 +130,18 @@ public final class JClass implements JObject, JGeneratable, Var {
 
     public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         JMethod method = new JMethod(returnType, level, this, name, isStatic, isFinal, isSynchronized);
+        this.methods.add(method);
+        return method;
+    }
+
+    public JAbstractMethod addAbstractMethod(Class<?> returnType, Level level, String name) {
+        JAbstractMethod method = new JAbstractMethod(level, returnType, name);
+        this.methods.add(method);
+        return method;
+    }
+
+    public JNativeMethod addNativeMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal) {
+        JNativeMethod method = new JNativeMethod(level, returnType, name, isFinal, isStatic);
         this.methods.add(method);
         return method;
     }
@@ -246,9 +258,6 @@ public final class JClass implements JObject, JGeneratable, Var {
                 throw new RuntimeException("The class extended a class, but cannot find the class");
             }
         }
-        this.fields.forEach(jConstructor -> jConstructor.getExtraClasses().forEach(this::importClass));
-        this.constructors.forEach(jConstructor -> jConstructor.getRequirementTypes().forEach(this::importClass));
-        this.methods.forEach(jMethod -> jMethod.getRequirementTypes().forEach(this::importClass));
     }
 
     private StringBuilder appendExtendsAndImplements(StringBuilder stringBuilder) {

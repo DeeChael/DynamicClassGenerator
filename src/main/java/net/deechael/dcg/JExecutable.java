@@ -271,10 +271,6 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new SetFieldValue(null, fieldOwner.varString(), field, var.varString(), false));
     }
 
-    protected List<String> getRequirementTypes() {
-        return new ArrayList<>(extraClasses);
-    }
-
     @Override
     public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);

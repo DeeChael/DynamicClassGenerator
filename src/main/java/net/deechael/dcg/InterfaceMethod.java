@@ -1,7 +1,5 @@
 package net.deechael.dcg;
 
-public interface InterfaceMethod {
-
-    String getString();
+public interface InterfaceMethod extends NonStructureMethod {
 
 }

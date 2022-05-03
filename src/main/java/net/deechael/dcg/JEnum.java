@@ -1,4 +1,4 @@
 package net.deechael.dcg;
 
-public class JEnum {
+public final class JEnum {
 }

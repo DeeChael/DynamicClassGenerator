@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class JInterfaceMethod implements JObject, InterfaceMethod {
+public final class JNativeMethod implements ClassMethod, NonStructureMethod, JObject {
 
     private final String returnType;
 
@@ -18,22 +18,33 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
 
-    public JInterfaceMethod(String methodName) {
-        this(void.class, methodName);
+    private final Level level;
+
+    private final boolean isFinal;
+    private final boolean isStatic;
+
+    public JNativeMethod(Level level, String methodName, boolean isFinal, boolean isStatic) {
+        this(level, void.class, methodName, isFinal, isStatic);
     }
 
-    public JInterfaceMethod(Class<?> returnType, String methodName) {
+    public JNativeMethod(Level level, Class<?> returnType, String methodName, boolean isFinal, boolean isStatic) {
         String returnTypeString = returnType.getName();
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
         }
         this.returnType = returnTypeString;
         this.name = methodName;
+        this.level = level;
+        this.isFinal = isFinal;
+        this.isStatic = isStatic;
     }
 
-    public JInterfaceMethod(JGeneratable returnType, String methodName) {
+    public JNativeMethod(Level level, JGeneratable returnType, String methodName, boolean isFinal, boolean isStatic) {
         this.returnType = returnType.getName();
         this.name = methodName;
+        this.level = level;
+        this.isFinal = isFinal;
+        this.isStatic = isStatic;
     }
 
     private String deal(String typeName) {
@@ -45,6 +56,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         return typeName;
     }
 
+
     public void throwing(Class<? extends Throwable>... throwables) {
         if (throwables.length == 0) return;
         for (Class<? extends Throwable> throwable : throwables) {
@@ -54,23 +66,22 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         }
     }
 
-    protected Map<String, Class<?>> getParameters() {
-        return parameters;
-    }
-
     public List<Class<?>> getThrowings() {
         return new ArrayList<>(throwings);
-    }
-
-    protected List<Class<?>> getRequirementTypes() {
-        return new ArrayList<>(parameters.values());
     }
 
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.returnType).append(" ").append(this.name).append("(");
-        List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
+        base.append(this.annotationString()).append("\n").append(this.level.getString());
+        if (isFinal) {
+            base.append(" final");
+        }
+        if (isStatic) {
+            base.append(" static");
+        }
+        ;base.append(" native ").append(this.returnType).append(" ").append(this.name).append("(");
+        List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.parameters.entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);
             base.append(entry.getValue().getName()).append(" ").append(entry.getKey());

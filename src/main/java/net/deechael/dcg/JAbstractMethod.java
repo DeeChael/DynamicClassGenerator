@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class JInterfaceMethod implements JObject, InterfaceMethod {
+public final class JAbstractMethod implements ClassMethod, NonStructureMethod, JObject {
 
     private final String returnType;
 
@@ -18,22 +18,26 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
 
-    public JInterfaceMethod(String methodName) {
-        this(void.class, methodName);
+    private final Level level;
+
+    public JAbstractMethod(Level level, String methodName) {
+        this(level, void.class, methodName);
     }
 
-    public JInterfaceMethod(Class<?> returnType, String methodName) {
+    public JAbstractMethod(Level level, Class<?> returnType, String methodName) {
         String returnTypeString = returnType.getName();
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
         }
         this.returnType = returnTypeString;
         this.name = methodName;
+        this.level = level;
     }
 
-    public JInterfaceMethod(JGeneratable returnType, String methodName) {
+    public JAbstractMethod(Level level, JGeneratable returnType, String methodName) {
         this.returnType = returnType.getName();
         this.name = methodName;
+        this.level = level;
     }
 
     private String deal(String typeName) {
@@ -44,6 +48,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         }
         return typeName;
     }
+
 
     public void throwing(Class<? extends Throwable>... throwables) {
         if (throwables.length == 0) return;
@@ -69,7 +74,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.returnType).append(" ").append(this.name).append("(");
+        base.append(this.annotationString()).append("\n").append(this.level.getString()).append(" abstract ").append(this.returnType).append(" ").append(this.name).append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);

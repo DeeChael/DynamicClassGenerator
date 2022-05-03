@@ -24,8 +24,6 @@ public class JField implements JObject, Var {
     private boolean needInit = false;
     private String initBody = "";
 
-    private final List<Class<?>> extraClasses = new ArrayList<>();
-
     JField(Level level, Class<?> type, JClass clazz, String name, boolean isFinal, boolean isStatic) {
         this.level = level;
         this.type = type;
@@ -125,10 +123,6 @@ public class JField implements JObject, Var {
 
     public String getName() {
         return name;
-    }
-
-    public List<Class<?>> getExtraClasses() {
-        return extraClasses;
     }
 
 }

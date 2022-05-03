@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JInterfaceMethodDefaulted extends JExecutableParametered implements InterfaceMethod {
+public final class JInterfaceMethodDefaulted extends JExecutableParametered implements InterfaceMethod {
 
 
     private final String returnType;

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JMethod extends JExecutableParametered {
+public class JMethod extends JExecutableParametered implements ClassMethod {
 
     private final String returnType;
     private final Level level;
@@ -60,10 +60,11 @@ public class JMethod extends JExecutableParametered {
     public String getString() {
         StringBuilder base = new StringBuilder();
         base.append(this.annotationString()).append(level.getString()).append(" ");
+        if (isFinal) {
+            base.append("final ");
+        }
         if (isStatic) {
             base.append("static ");
-        } else if (isFinal) {
-            base.append("final ");
         }
         if (isSynchronized) {
             base.append("synchronized ");
