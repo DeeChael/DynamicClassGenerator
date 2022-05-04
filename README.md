@@ -13,13 +13,13 @@
     <dependency>
         <groupId>net.deechael</groupId>
         <artifactId>dcg</artifactId>
-        <version>1.03.1</version>
+        <version>1.03.2</version>
         <scope>compile</scope>
     </dependency>
 #### For Gradle
     dependencies {
         ...
-        implementation 'net.deechael:dcg:1.03.1'
+        implementation 'net.deechael:dcg:1.03.2'
     }
 
 ### Example:

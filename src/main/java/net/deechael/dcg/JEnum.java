@@ -90,8 +90,8 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
         return field;
     }
 
-    public JConstructor addConstructor(Level level) {
-        JConstructor constructor = new JConstructor(level, this);
+    public JConstructor addConstructor() {
+        JConstructor constructor = new JConstructor(Level.PRIVATE, this);
         this.constructors.add(constructor);
         return constructor;
     }
