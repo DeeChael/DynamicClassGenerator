@@ -125,7 +125,7 @@ public interface Var {
     }
 
     static Var nullVar() {
-        return new CustomVar("this");
+        return new CustomVar("null");
     }
 
     static Var referringVar(Class<?> type, String name) {
