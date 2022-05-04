@@ -10,103 +10,111 @@
 
 ### Importation:
 #### For Maven
-    <dependency>
-        <groupId>net.deechael</groupId>
-        <artifactId>dcg</artifactId>
-        <version>1.03.2</version>
-        <scope>compile</scope>
-    </dependency>
+```xml
+<dependency>
+    <groupId>net.deechael</groupId>
+    <artifactId>dcg</artifactId>
+    <version>1.03.2</version>
+    <scope>compile</scope>
+</dependency>
+```
 #### For Gradle
-    dependencies {
-        ...
-        implementation 'net.deechael:dcg:1.03.2'
-    }
+```kotlin
+dependencies { 
+    ...
+    implementation 'net.deechael:dcg:1.03.2'
+}
+```
 
 ### Example:
-    JClass clazz = new JClass(Level.PUBLIC, "net.deechael.test", "DynamicClassGeneratorTest");
-    JField field = clazz.addField(Level.PUBLIC, String.class, "parent", false, false);
-    field.initialize(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
-    JConstructor constructor = clazz.addConstructor(Level.PUBLIC);
-    Var testing = constructor.addParameter(String.class, "testing");
-    Var human = constructor.addParameter(Human.class, "human");
-    Var second = constructor.createVar(String.class, "second", Var.constructor(String.class, testing));
-    Var age = constructor.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
-    Var name = constructor.createVar(String.class, "name", Var.invokeMethod(human, "getName"));
-    constructor.invokeMethod(human, "print", testing);
-    constructor.invokeMethod(human, "print", second);
-    constructor.invokeMethod(human, "print", human);
-    constructor.invokeMethod(human, "print", age);
-    constructor.invokeMethod(human, "print", name);
-    constructor.ifElse(Requirement.isEqual(age, JStringVar.intVar(16)), (executable) -> {
-        executable.invokeMethod(human, "print", JStringVar.stringVar("You entered if executable body"));
-    }).setElse(((executable) -> {
-        executable.invokeMethod(human, "print", JStringVar.stringVar("You entered else executable body"));
-    }));
+```java
+JClass clazz = new JClass(Level.PUBLIC, "net.deechael.test", "DynamicClassGeneratorTest");
+JField field = clazz.addField(Level.PUBLIC, String.class, "parent", false, false);
+field.initialize(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
+JConstructor constructor = clazz.addConstructor(Level.PUBLIC);
+Var testing = constructor.addParameter(String.class, "testing");
+Var human = constructor.addParameter(Human.class, "human");
+Var second = constructor.createVar(String.class, "second", Var.constructor(String.class, testing));
+Var age = constructor.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
+Var name = constructor.createVar(String.class, "name", Var.invokeMethod(human, "getName"));
+constructor.invokeMethod(human, "print", testing);
+constructor.invokeMethod(human, "print", second);
+constructor.invokeMethod(human, "print", human);
+constructor.invokeMethod(human, "print", age);
+constructor.invokeMethod(human, "print", name);
+constructor.ifElse(Requirement.isEqual(age, JStringVar.intVar(16)), (executable) -> {
+executable.invokeMethod(human, "print", JStringVar.stringVar("You entered if executable body"));
+}).setElse(((executable) -> {
+executable.invokeMethod(human, "print", JStringVar.stringVar("You entered else executable body"));
+}));
 
-    JMethod method = clazz.addMethod(Level.PUBLIC, "testing", false, false, false);
-    Var method_human = method.addParameter(Human.class, "human");
-    Var method_age = method.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
-    method.invokeMethod(method_human, "print", JStringVar.stringVar("Method testing"));
-    method.ifElse(Requirement.isEqual(method_age, JStringVar.intVar(16)), (executable) -> {
-        executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method if body"));
-    }).setElse((executable) -> {
-        executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method else body"));
-    });
-    method.invokeMethod(method_human, "print", field);
-    method.setFieldValue(field, JStringVar.stringVar("bbbbbbbbbbbbbbbbbbbb"));
-    method.invokeMethod(method_human, "print", field);
+JMethod method = clazz.addMethod(Level.PUBLIC, "testing", false, false, false);
+Var method_human = method.addParameter(Human.class, "human");
+Var method_age = method.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
+method.invokeMethod(method_human, "print", JStringVar.stringVar("Method testing"));
+method.ifElse(Requirement.isEqual(method_age, JStringVar.intVar(16)), (executable) -> {
+executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method if body"));
+}).setElse((executable) -> {
+executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method else body"));
+});
+method.invokeMethod(method_human, "print", field);
+method.setFieldValue(field, JStringVar.stringVar("bbbbbbbbbbbbbbbbbbbb"));
+method.invokeMethod(method_human, "print", field);
 
-    Class<?> generated = JGenerator.generate(clazz);
-    Constructor<?> cons = generated.getConstructor(String.class, Human.class);
-    Object instance = cons.newInstance("Test message!", new Human("Name", 16));
-    generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 16));
-    generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 39));
+Class<?> generated = JGenerator.generate(clazz);
+Constructor<?> cons = generated.getConstructor(String.class, Human.class);
+Object instance = cons.newInstance("Test message!", new Human("Name", 16));
+generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 16));
+generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 39));
+```
 
 ### Generated code:
-    package net.deechael.test;
+```java
+package net.deechael.test;
 
-    import java.lang.String;
-    import net.deechael.library.dcg.test.Human;
+import java.lang.String;
+import net.deechael.library.dcg.test.Human;
 
-    /**
-     * The generated code as you can see is formatted by hand,
-     * there is no space at the start of the lines in the real generated code
-     */
-    public class DynamicClassGeneratorTest {
+/**
+ * The generated code as you can see is formatted by hand,
+ * there is no space at the start of the lines in the real generated code
+ */
+public class DynamicClassGeneratorTest {
 
-        public java.lang.String jfield_parent = ("aaaaaaaaaaaaaaaaaaaaaaa");
+    public java.lang.String jfield_parent = ("aaaaaaaaaaaaaaaaaaaaaaa");
 
-        public DynamicClassGeneratorTest (java.lang.String jparam_testing, net.deechael.library.dcg.test.Human jparam_human) {
-            java.lang.String jvar_second = new java.lang.String(jparam_testing);
-            int jvar_age = jparam_human.getAge();
-            java.lang.String jvar_name = jparam_human.getName();
-            jparam_human.print(jparam_testing);
-            jparam_human.print(jvar_second);
-            jparam_human.print(jparam_human);
-            jparam_human.print(jvar_age);
-            jparam_human.print(jvar_name);
-            if (jvar_age == 16) {
-                jparam_human.print("You entered if executable body");
-            } else {
-                jparam_human.print("You entered else executable body");
-            }
+    public DynamicClassGeneratorTest (java.lang.String jparam_testing, net.deechael.library.dcg.test.Human jparam_human) {
+        java.lang.String jvar_second = new java.lang.String(jparam_testing);
+        int jvar_age = jparam_human.getAge();
+        java.lang.String jvar_name = jparam_human.getName();
+        jparam_human.print(jparam_testing);
+        jparam_human.print(jvar_second);
+        jparam_human.print(jparam_human);
+        jparam_human.print(jvar_age);
+        jparam_human.print(jvar_name);
+        if (jvar_age == 16) {
+            jparam_human.print("You entered if executable body");
+        } else {
+            jparam_human.print("You entered else executable body");
         }
-
-        public void testing(net.deechael.library.dcg.test.Human jparam_human) {
-            int jvar_age = jparam_human.getAge();
-            jparam_human.print("Method testing");
-            if (jvar_age == 16) {
-                jparam_human.print("Method if body");
-            } else {
-                jparam_human.print("Method else body");
-            }
-    
-            jparam_human.print(this.jfield_parent);
-            this.jfield_parent = ("bbbbbbbbbbbbbbbbbbbb");
-            jparam_human.print(this.jfield_parent);
-        }
-    
     }
+
+    public void testing(net.deechael.library.dcg.test.Human jparam_human) {
+        int jvar_age = jparam_human.getAge();
+        jparam_human.print("Method testing");
+        if (jvar_age == 16) {
+            jparam_human.print("Method if body");
+        } else {
+            jparam_human.print("Method else body");
+        }
+
+        jparam_human.print(this.jfield_parent);
+        this.jfield_parent = ("bbbbbbbbbbbbbbbbbbbb");
+        jparam_human.print(this.jfield_parent);
+    }
+
+}
+```
 
 ### Coming Soon:
 
