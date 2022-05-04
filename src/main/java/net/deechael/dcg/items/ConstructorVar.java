@@ -22,7 +22,7 @@ final class ConstructorVar implements Var {
 
     @Override
     public String varString() {
-        return "new " + getType().getName() + (hasTypes(this.type) ? "<>" : "") + "(" + bodyString + ")";
+        return "new " + getType().getName().replace("$", ".") + (hasTypes(this.type) ? "<>" : "") + "(" + bodyString + ")";
     }
 
     private boolean hasTypes(Class<?> clazz) {

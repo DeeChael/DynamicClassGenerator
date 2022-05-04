@@ -13,55 +13,54 @@
     <dependency>
         <groupId>net.deechael</groupId>
         <artifactId>dcg</artifactId>
-        <version>1.02.0</version>
+        <version>1.03.1</version>
         <scope>compile</scope>
     </dependency>
 #### For Gradle
     dependencies {
         ...
-        implementation 'net.deechael:dcg:1.02.0'
+        implementation 'net.deechael:dcg:1.03.1'
     }
 
 ### Example:
-    JClass clazz = new JClass("net.deechael.test", "DynamicClassGeneratorTest", Level.PUBLIC);
-    //Create field
+    JClass clazz = new JClass(Level.PUBLIC, "net.deechael.test", "DynamicClassGeneratorTest");
     JField field = clazz.addField(Level.PUBLIC, String.class, "parent", false, false);
-    field.initializeByValue(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
-    //Create constructor
+    field.initialize(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
     JConstructor constructor = clazz.addConstructor(Level.PUBLIC);
     Var testing = constructor.addParameter(String.class, "testing");
     Var human = constructor.addParameter(Human.class, "human");
-    Var second = constructor.createNewInstanceVar(String.class, "second", testing);
-    Var age = constructor.usingMethodAndCreateVar("age", human, "getAge");
-    Var name = constructor.usingMethodAndCreateVar("name", human, "getName");
-    constructor.usingMethod(human, "print", testing);
-    constructor.usingMethod(human, "print", second);
-    constructor.usingMethod(human, "print", human);
-    constructor.usingMethod(human, "print", age);
-    constructor.usingMethod(human, "print", name);
-    constructor.ifElse_Equal(age, JStringVar.intVar(16), executable -> {
-        executable.usingMethod(human, "print", JStringVar.stringVar("You entered if executable body"));
-    }, executable -> {
-        executable.usingMethod(human, "print", JStringVar.stringVar("You entered else executable body"));
-    });
-    //Create method
-    JMethod method = clazz.addMethod(Level.PUBLIC, "testing");
+    Var second = constructor.createVar(String.class, "second", Var.constructor(String.class, testing));
+    Var age = constructor.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
+    Var name = constructor.createVar(String.class, "name", Var.invokeMethod(human, "getName"));
+    constructor.invokeMethod(human, "print", testing);
+    constructor.invokeMethod(human, "print", second);
+    constructor.invokeMethod(human, "print", human);
+    constructor.invokeMethod(human, "print", age);
+    constructor.invokeMethod(human, "print", name);
+    constructor.ifElse(Requirement.isEqual(age, JStringVar.intVar(16)), (executable) -> {
+        executable.invokeMethod(human, "print", JStringVar.stringVar("You entered if executable body"));
+    }).setElse(((executable) -> {
+        executable.invokeMethod(human, "print", JStringVar.stringVar("You entered else executable body"));
+    }));
+
+    JMethod method = clazz.addMethod(Level.PUBLIC, "testing", false, false, false);
     Var method_human = method.addParameter(Human.class, "human");
-    Var method_age = method.usingMethodAndCreateVar("age", human, "getAge");
-    method.usingMethod(method_human, "print", JStringVar.stringVar("Method testing"));
-    method.ifElse_Equal(method_age, JStringVar.intVar(16), executable -> {
-        executable.usingMethod(human, "print", JStringVar.stringVar("Method if body"));
-    }, executable -> {
-        executable.usingMethod(human, "print", JStringVar.stringVar("Method else body"));
+    Var method_age = method.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
+    method.invokeMethod(method_human, "print", JStringVar.stringVar("Method testing"));
+    method.ifElse(Requirement.isEqual(method_age, JStringVar.intVar(16)), (executable) -> {
+        executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method if body"));
+    }).setElse((executable) -> {
+        executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method else body"));
     });
-    method.usingMethod(method_human, "print", field);
+    method.invokeMethod(method_human, "print", field);
     method.setFieldValue(field, JStringVar.stringVar("bbbbbbbbbbbbbbbbbbbb"));
-    method.usingMethod(method_human, "print", field);
-    //Generate class and use it by reflection
-    Class<?> generated = clazz.generate();
+    method.invokeMethod(method_human, "print", field);
+
+    Class<?> generated = JGenerator.generate(clazz);
     Constructor<?> cons = generated.getConstructor(String.class, Human.class);
-    Object instance = cons.newInstance("Test message!", new Human());
-    generated.getMethod("testing", Human.class).invoke(instance, new Human());
+    Object instance = cons.newInstance("Test message!", new Human("Name", 16));
+    generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 16));
+    generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 39));
 
 ### Generated code:
     package net.deechael.test;
@@ -69,6 +68,10 @@
     import java.lang.String;
     import net.deechael.library.dcg.test.Human;
 
+    /**
+     * The generated code as you can see is formatted by hand,
+     * there is no space at the start of the lines in the real generated code
+     */
     public class DynamicClassGeneratorTest {
 
         public java.lang.String jfield_parent = ("aaaaaaaaaaaaaaaaaaaaaaa");
@@ -120,5 +123,5 @@
 11.More requirements for If-block and Else If-block\
 12.Convenient variables managing\
 13.<s>Try & Catch & Finally</s>\
-14.Abstract class\
+14.<s>Abstract class</s>\
 ...

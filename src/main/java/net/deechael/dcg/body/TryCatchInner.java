@@ -37,7 +37,7 @@ public final class TryCatchInner implements Operation {
             if (throwings.length < 1) continue;
             Iterator<Class<? extends Throwable>> iterator = Arrays.stream(throwings).iterator();
             while (iterator.hasNext()) {
-                base.append(iterator.next().getName());
+                base.append(iterator.next().getName().replace("$", "."));
                 if (iterator.hasNext()) {
                     base.append(" | ");
                 }

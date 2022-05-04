@@ -73,6 +73,7 @@ public final class JGenerator {
             }
             options = Arrays.asList("-classpath", classpath_option.toString());
         }
+        System.out.println(generatable.getString());
         JavaCompiler.CompilationTask task = COMPILER.getTask(null, JAVA_FILE_MANAGER, null, options, null, Collections.singletonList(new StringObject(new URI(generatable.getSimpleName() + ".java"), JavaFileObject.Kind.SOURCE, generatable.getString())));
         if (task.call()) {
             JJavaFileObject javaFileObject = JAVA_FILE_MANAGER.getLastJavaFileObject();

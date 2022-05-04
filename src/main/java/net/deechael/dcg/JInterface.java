@@ -152,7 +152,7 @@ public final class JInterface implements JGeneratable, JObject, Var {
             base.append(" extends ");
             Iterator<String> iterator = extensions.iterator();
             while (iterator.hasNext()) {
-                base.append(iterator.next());
+                base.append(iterator.next().replace("$", "."));
                 if (iterator.hasNext()) {
                     base.append(", ");
                 }

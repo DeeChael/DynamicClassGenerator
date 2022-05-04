@@ -109,9 +109,6 @@ public abstract class JExecutable implements JObject {
      * @param arguments  The arguments that the method needs
      */
     public void invokeMethod(Class<?> clazz, String methodName, Var... arguments) {
-        if (!extraClasses.contains(clazz.getName())) {
-            extraClasses.add(clazz.getName());
-        }
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -119,7 +116,7 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        operations.add(new InvokeMethod(clazz.getName(), methodName, bodyBuilder.toString()));
+        operations.add(new InvokeMethod(clazz.getName().replace("$", "."), methodName, bodyBuilder.toString()));
     }
 
     public void invokeMethod(JGeneratable clazz, String methodName, Var... arguments) {

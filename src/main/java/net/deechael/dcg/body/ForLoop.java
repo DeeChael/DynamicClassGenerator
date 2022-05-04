@@ -18,7 +18,7 @@ public final class ForLoop implements Operation {
     private final JExecutable body;
 
     public ForLoop(Class<?> type, String varName, Var initialized, Requirement requirement, Var operation, JExecutable body) {
-        this.type = type != null ? type.getName() : null;
+        this.type = type != null ? type.getName().replace("$", ".") : null;
         this.varName = varName;
         this.initialized = initialized;
         this.requirement = requirement;

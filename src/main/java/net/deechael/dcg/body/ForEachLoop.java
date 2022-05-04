@@ -12,7 +12,7 @@ public final class ForEachLoop implements Operation {
     private final JExecutable body;
 
     public ForEachLoop(Class<?> type, String varName, Var iterable, JExecutable body) {
-        this.type = type != null ? type.getName() : null;
+        this.type = type != null ? type.getName().replace("$", ".") : null;
         this.varName = varName;
         this.iterable = iterable;
         this.body = body;

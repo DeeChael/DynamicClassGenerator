@@ -25,7 +25,7 @@ public abstract class JExecutableParametered extends JExecutable {
     public Var addParameter(Class<?> clazz, String parameterName) {
         if (parameterName == null) return null;
         parameterName = "jparam_" + parameterName;
-        String className = clazz.getName();
+        String className = clazz.getName().replace("$", ".");
         while (className.contains("[")) {
             className = deal(className);
         }

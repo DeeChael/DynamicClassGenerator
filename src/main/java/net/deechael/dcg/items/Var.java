@@ -35,7 +35,7 @@ public interface Var {
                 bodyBuilder.append(", ");
             }
         }
-        return new InvokeMethodAsVar(var.varString(), methodName, bodyBuilder.toString());
+        return new InvokeMethodAsVar(var.varString().replace("$", "."), methodName, bodyBuilder.toString());
     }
 
     static Var invokeMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
@@ -46,7 +46,7 @@ public interface Var {
                 bodyBuilder.append(", ");
             }
         }
-        return new InvokeMethodAsVar(clazz.getName(), methodName, bodyBuilder.toString());
+        return new InvokeMethodAsVar(clazz.getName().replace("$", "."), methodName, bodyBuilder.toString());
     }
 
     static Var invokeMethod(@NotNull JGeneratable clazz, @NotNull String methodName, Var... arguments) {

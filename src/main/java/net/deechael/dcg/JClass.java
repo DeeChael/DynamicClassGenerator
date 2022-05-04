@@ -265,7 +265,7 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
     private StringBuilder appendExtendsAndImplements(StringBuilder stringBuilder) {
         if (extending == 1) {
             stringBuilder.append(" extends ");
-            stringBuilder.append(extending_original.getName());
+            stringBuilder.append(extending_original.getName().replace("$", "."));
         } else if (extending == 2) {
             stringBuilder.append(" extends ");
             stringBuilder.append(extending_generated.getName());
@@ -274,7 +274,7 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
             stringBuilder.append(" implements ");
             Iterator<String> iterator = implementations.iterator();
             while (iterator.hasNext()) {
-                stringBuilder.append(iterator.next());
+                stringBuilder.append(iterator.next().replace("$", "."));
                 if (iterator.hasNext()) {
                     stringBuilder.append(", ");
                 }

@@ -10,7 +10,7 @@ final class InitializedContentArrayVar implements Var {
     private final Var[] vars;
 
     public InitializedContentArrayVar(Class<?> type, Var... vars) {
-        this.type = type.getName();
+        this.type = type.getName().replace("$", ".");
         this.vars = vars;
     }
 

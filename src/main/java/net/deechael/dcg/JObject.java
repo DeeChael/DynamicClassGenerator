@@ -17,7 +17,7 @@ public interface JObject {
         Map<Class<?>, Map<String, JStringVar>> map = getAnnotations();
         if (!map.isEmpty()) {
             for (Map.Entry<Class<?>, Map<String, JStringVar>> entry : map.entrySet()) {
-                base.append("@").append(entry.getKey().getName());
+                base.append("@").append(entry.getKey().getName().replace("$", "."));
                 if (!entry.getValue().isEmpty()) {
                     base.append("(");
                     List<Map.Entry<String, JStringVar>> jStringVars = new ArrayList<>(entry.getValue().entrySet());

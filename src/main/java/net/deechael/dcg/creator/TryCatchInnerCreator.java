@@ -44,7 +44,7 @@ public final class TryCatchInnerCreator {
         JExecutable.JExecutable4InnerStructure tryBody = new JExecutable.JExecutable4InnerStructure();
         tryExecuting.apply(tryBody, Var.referringVar(clazz, varName));
         this.tryBody = tryBody;
-        String varType = clazz.getName();
+        String varType = clazz.getName().replace("$", ".");
         while (varType.contains("[")) {
             varType = deal(varType);
         }

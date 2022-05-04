@@ -28,7 +28,7 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
     }
 
     public JNativeMethod(Level level, Class<?> returnType, String methodName, boolean isFinal, boolean isStatic) {
-        String returnTypeString = returnType.getName();
+        String returnTypeString = returnType.getName().replace("$", ".");
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
         }

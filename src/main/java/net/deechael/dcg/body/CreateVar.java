@@ -1,25 +1,41 @@
 package net.deechael.dcg.body;
 
+import net.deechael.dcg.JGeneratable;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
 public final class CreateVar implements Operation {
 
-    private final Class<?> type;
+    private final String type;
     private final String varName;
     private final String body;
 
     private final String[] types;
 
     public CreateVar(Class<?> type, String varName, String body) {
-        this.type = type;
+        this.type = type.getName().replace("$", ".");
         this.varName = varName;
         this.body = body;
         this.types = null;
     }
 
     public CreateVar(Class<?> type, String[] types, String varName, String body) {
-        this.type = type;
+        this.type = type.getName().replace("$", ".");
+        this.varName = varName;
+        this.body = body;
+        this.types = types;
+    }
+
+    public CreateVar(JGeneratable type, String varName, String body) {
+        this.type = type.getName();
+        this.varName = varName;
+        this.body = body;
+        this.types = null;
+    }
+
+    public CreateVar(JGeneratable type, String[] types, String varName, String body) {
+        this.type = type.getName();
         this.varName = varName;
         this.body = body;
         this.types = types;
@@ -27,7 +43,7 @@ public final class CreateVar implements Operation {
 
     @Override
     public String getString() {
-        String typeName = type.getName();
+        String typeName = type;
         while (typeName.contains("[")) {
             typeName = deal(typeName);
         }

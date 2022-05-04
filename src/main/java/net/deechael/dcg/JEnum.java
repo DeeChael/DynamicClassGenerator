@@ -241,7 +241,7 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
             base.append(" implements ");
             Iterator<String> iterator = implementations.iterator();
             while (iterator.hasNext()) {
-                base.append(iterator.next());
+                base.append(iterator.next().replace("$", "."));
                 if (iterator.hasNext()) {
                     base.append(", ");
                 }

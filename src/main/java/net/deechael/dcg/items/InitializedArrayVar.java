@@ -8,7 +8,7 @@ final class InitializedArrayVar implements Var {
     private final int length;
 
     public InitializedArrayVar(Class<?> type, int length) {
-        this.type = type.getName();
+        this.type = type.getName().replace("$", ".");
         this.length = length;
     }
 

@@ -24,7 +24,7 @@ public final class JMethod extends JExecutableParametered implements ClassMethod
     }
 
     JMethod(Class<?> returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
-        String returnTypeString = returnType.getName();
+        String returnTypeString = returnType.getName().replace("$", ".");
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
         }

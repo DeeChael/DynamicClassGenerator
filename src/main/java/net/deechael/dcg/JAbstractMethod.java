@@ -25,7 +25,7 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
     }
 
     public JAbstractMethod(Level level, Class<?> returnType, String methodName) {
-        String returnTypeString = returnType.getName();
+        String returnTypeString = returnType.getName().replace("$", ".");
         while (returnTypeString.contains("[")) {
             returnTypeString = deal(returnTypeString);
         }
