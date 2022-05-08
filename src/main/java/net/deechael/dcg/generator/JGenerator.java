@@ -30,6 +30,10 @@ public final class JGenerator {
         }
     }
 
+    public static void addContextLoader(ClassLoader classLoader) {
+
+    }
+
     /**
      * If you have multiple classes, and they are using each other, generate your JClasses with this method
      *
