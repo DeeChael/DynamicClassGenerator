@@ -31,7 +31,7 @@ public final class JGenerator {
     }
 
     public static void addContextLoader(ClassLoader classLoader) {
-
+        JClassLoader.addLoader(classLoader);
     }
 
     /**
