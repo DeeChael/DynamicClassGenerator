@@ -9,7 +9,7 @@
 <b>Go to wiki to learn more!</b>
 
 ### Known Issues:
-1. Cannot load a class from other class loaders, so even generated the class, maybe it will cause NoDefClassException
+1. <s>Cannot load a class from other class loaders, so even generated the class, maybe it will cause NoDefClassException</s>
 
 ### Importation:
 #### For Maven

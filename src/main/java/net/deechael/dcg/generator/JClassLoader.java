@@ -47,7 +47,7 @@ final class JClassLoader extends ClassLoader {
         } catch (ClassNotFoundException e) {
             for (ClassLoader loader : contextLoaders) {
                 try {
-                    Method method = ClassLoader.class.getMethod("findClass", String.class);
+                    Method method = ClassLoader.class.getDeclaredMethod("findClass", String.class);
                     method.setAccessible(true);
                     return (Class<?>) method.invoke(loader, name);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
