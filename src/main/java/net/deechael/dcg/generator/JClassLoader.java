@@ -16,6 +16,7 @@ final class JClassLoader extends ClassLoader {
     private final static JClassLoader instance = new JClassLoader();
 
     private JClassLoader() {
+        super(Thread.currentThread().getContextClassLoader());
     }
 
     @Override
