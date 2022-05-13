@@ -1,17 +1,19 @@
 package net.deechael.dcg.items;
 
+import net.deechael.dcg.JType;
+
 final class ReferringVar implements Var {
 
-    private final Class<?> type;
+    private final JType type;
     private final String name;
 
-    public ReferringVar(Class<?> type, String name) {
+    public ReferringVar(JType type, String name) {
         this.type = type;
         this.name = name;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         return this.type;
     }
 

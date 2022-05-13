@@ -1,5 +1,7 @@
 package net.deechael.dcg.items;
 
+import net.deechael.dcg.JType;
+
 final class SetValueVar implements Var {
 
     private final String originalTarget;
@@ -13,7 +15,7 @@ final class SetValueVar implements Var {
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

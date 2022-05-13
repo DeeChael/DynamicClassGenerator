@@ -1,24 +1,19 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 
 public final class LambdaVar implements Var {
 
     private final String type;
     private final String content;
 
-    public LambdaVar(Class<?> clazz, String content) {
-        this.type = clazz.getName();
-        this.content = content;
-    }
-
-    public LambdaVar(JGeneratable clazz, String content) {
-        this.type = clazz.getName();
+    public LambdaVar(JType clazz, String content) {
+        this.type = clazz.typeString();
         this.content = content;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

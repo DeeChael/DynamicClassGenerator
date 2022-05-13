@@ -16,7 +16,6 @@ final class JClassLoader extends ClassLoader {
     private final static JClassLoader instance = new JClassLoader();
 
     private JClassLoader() {
-        super(Thread.currentThread().getContextClassLoader());
     }
 
     @Override
@@ -24,15 +23,15 @@ final class JClassLoader extends ClassLoader {
         if (generated_classes.containsKey(name)) {
             return generated_classes.get(name);
         }
+        for (ClassLoader loader : contextLoaders) {
+            try {
+                return loader.loadClass(name);
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
         try {
             return super.loadClass(name);
-        } catch (ClassNotFoundException e) {
-            for (ClassLoader loader : contextLoaders) {
-                try {
-                    return loader.loadClass(name);
-                } catch (ClassNotFoundException ignored) {
-                }
-            }
+        } catch (ClassNotFoundException ex) {
             throw new RuntimeException("DCG can't load the class");
         }
     }
@@ -42,17 +41,17 @@ final class JClassLoader extends ClassLoader {
         if (generated_classes.containsKey(name)) {
             return generated_classes.get(name);
         }
+        for (ClassLoader loader : contextLoaders) {
+            try {
+                Method method = ClassLoader.class.getDeclaredMethod("findClass", String.class);
+                method.setAccessible(true);
+                return (Class<?>) method.invoke(loader, name);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            }
+        }
         try {
             return super.findClass(name);
         } catch (ClassNotFoundException e) {
-            for (ClassLoader loader : contextLoaders) {
-                try {
-                    Method method = ClassLoader.class.getDeclaredMethod("findClass", String.class);
-                    method.setAccessible(true);
-                    return (Class<?>) method.invoke(loader, name);
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-                }
-            }
             throw new RuntimeException("DCG can't find the class");
         }
     }

@@ -1,9 +1,6 @@
 package net.deechael.dcg.test;
 
-import net.deechael.dcg.JClass;
-import net.deechael.dcg.JConstructor;
-import net.deechael.dcg.JGeneratable;
-import net.deechael.dcg.Level;
+import net.deechael.dcg.*;
 import net.deechael.dcg.generator.JGenerator;
 import net.deechael.dcg.items.Var;
 

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class JInterface implements JGeneratable, JObject, Var {
+public final class JInterface implements JType, JGeneratable, JObject, Var {
 
     private final List<String> imports = new ArrayList<>();
 
@@ -56,13 +56,7 @@ public final class JInterface implements JGeneratable, JObject, Var {
         this.imports.add(clazz.getName());
     }
 
-    public JInterfaceMethod addMethod(Class<?> returnType, String methodName) {
-        JInterfaceMethod method = new JInterfaceMethod(returnType, methodName);
-        this.methods.add(method);
-        return method;
-    }
-
-    public JInterfaceMethod addMethod(JGeneratable returnType, String methodName) {
+    public JInterfaceMethod addMethod(JType returnType, String methodName) {
         JInterfaceMethod method = new JInterfaceMethod(returnType, methodName);
         this.methods.add(method);
         return method;
@@ -74,13 +68,7 @@ public final class JInterface implements JGeneratable, JObject, Var {
         return method;
     }
 
-    public JInterfaceMethodDefaulted addDefaultedMethod(Class<?> returnType, String methodName) {
-        JInterfaceMethodDefaulted method = new JInterfaceMethodDefaulted(returnType, methodName);
-        this.methods.add(method);
-        return method;
-    }
-
-    public JInterfaceMethodDefaulted addDefaultedMethod(JGeneratable returnType, String methodName) {
+    public JInterfaceMethodDefaulted addDefaultedMethod(JType returnType, String methodName) {
         JInterfaceMethodDefaulted method = new JInterfaceMethodDefaulted(returnType, methodName);
         this.methods.add(method);
         return method;
@@ -96,15 +84,9 @@ public final class JInterface implements JGeneratable, JObject, Var {
         this.inner = true;
     }
 
-    public void extend(Class<?> interfaceClass) {
-        if (!Modifier.isInterface(interfaceClass.getModifiers())) throw new RuntimeException("This class is not an interface");
-        if (extensions.contains(interfaceClass.getName())) return;
-        extensions.add(interfaceClass.getName());
-    }
-
-    public void extend(JInterface interfaceClass) {
-        if (extensions.contains(interfaceClass.getName())) return;
-        extensions.add(interfaceClass.getName());
+    public void extend(JType interfaceClass) {
+        if (extensions.contains(interfaceClass.typeString())) return;
+        extensions.add(interfaceClass.typeString());
     }
 
     public void addInner(JGeneratable generatable) {
@@ -166,7 +148,7 @@ public final class JInterface implements JGeneratable, JObject, Var {
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("Generate JInterface to get type");
     }
 
@@ -200,6 +182,11 @@ public final class JInterface implements JGeneratable, JObject, Var {
     @Override
     public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
         return annotations;
+    }
+
+    @Override
+    public String typeString() {
+        return this.getName();
     }
 
 }

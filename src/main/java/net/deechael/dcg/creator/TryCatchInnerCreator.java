@@ -1,7 +1,7 @@
 package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 import net.deechael.dcg.body.TryCatchInner;
 import net.deechael.dcg.items.Var;
 import net.deechael.useless.function.parameters.DuParameter;
@@ -38,28 +38,13 @@ public final class TryCatchInnerCreator {
         return typeName;
     }
 
-    public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, Class<?> clazz, String varName, Var var) {
+    public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, JType clazz, String varName, Var var) {
         varName = "jvar_" + varName;
         this.owner = executable;
         JExecutable.JExecutable4InnerStructure tryBody = new JExecutable.JExecutable4InnerStructure();
         tryExecuting.apply(tryBody, Var.referringVar(clazz, varName));
         this.tryBody = tryBody;
-        String varType = clazz.getName().replace("$", ".");
-        while (varType.contains("[")) {
-            varType = deal(varType);
-        }
-        this.varType = varType;
-        this.varName = varName;
-        this.varValue = var;
-    }
-
-    public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, JGeneratable clazz, String varName, Var var) {
-        varName = "jvar_" + varName;
-        this.owner = executable;
-        JExecutable.JExecutable4InnerStructure tryBody = new JExecutable.JExecutable4InnerStructure();
-        tryExecuting.apply(tryBody, Var.referringVar(clazz, varName));
-        this.tryBody = tryBody;
-        this.varType = clazz.getName();
+        this.varType = clazz.typeString();
         this.varName = varName;
         this.varValue = var;
     }
@@ -69,7 +54,7 @@ public final class TryCatchInnerCreator {
         if (throwings.length == 0) return this;
         throwableObjectName = "jthrowable_" + throwableObjectName;
         JExecutable.JExecutable4InnerStructure catchBody = new JExecutable.JExecutable4InnerStructure();
-        Var var = Var.referringVar((Class<?>) null, throwableObjectName);
+        Var var = Var.referringVar(null, throwableObjectName);
         catchExecuting.apply(catchBody, var);
         this.catches.add(new AbstractMap.SimpleEntry<>(throwings, new DuObj<>(throwableObjectName, catchBody)));
         return this;

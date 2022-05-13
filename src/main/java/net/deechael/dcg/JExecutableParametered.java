@@ -13,30 +13,10 @@ public abstract class JExecutableParametered extends JExecutable {
 
     private final List<String> throwings = new ArrayList<>();
 
-    private String deal(String typeName) {
-        if (typeName.startsWith("[L")) {
-            return typeName.substring(2) + "[]";
-        } else if (typeName.startsWith("[")) {
-            return typeName.substring(1) + "[]";
-        }
-        return typeName;
-    }
-
-    public Var addParameter(Class<?> clazz, String parameterName) {
+    public Var addParameter(JType clazz, String parameterName) {
         if (parameterName == null) return null;
         parameterName = "jparam_" + parameterName;
-        String className = clazz.getName().replace("$", ".");
-        while (className.contains("[")) {
-            className = deal(className);
-        }
-        this.parameters.put(parameterName, className);
-        return Var.referringVar(clazz, parameterName);
-    }
-
-    public Var addParameter(JGeneratable clazz, String parameterName) {
-        if (parameterName == null) return null;
-        parameterName = "jparam_" + parameterName;
-        this.parameters.put(parameterName, clazz.getName());
+        this.parameters.put(parameterName, clazz.typeString());
         return Var.referringVar(clazz, parameterName);
     }
 

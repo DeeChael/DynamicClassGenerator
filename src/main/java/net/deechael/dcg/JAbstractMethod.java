@@ -21,34 +21,14 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
     private final Level level;
 
     public JAbstractMethod(Level level, String methodName) {
-        this(level, void.class, methodName);
+        this(level, JType.classType(void.class), methodName);
     }
 
-    public JAbstractMethod(Level level, Class<?> returnType, String methodName) {
-        String returnTypeString = returnType.getName().replace("$", ".");
-        while (returnTypeString.contains("[")) {
-            returnTypeString = deal(returnTypeString);
-        }
-        this.returnType = returnTypeString;
+    public JAbstractMethod(Level level, JType returnType, String methodName) {
+        this.returnType = returnType.typeString();
         this.name = methodName;
         this.level = level;
     }
-
-    public JAbstractMethod(Level level, JGeneratable returnType, String methodName) {
-        this.returnType = returnType.getName();
-        this.name = methodName;
-        this.level = level;
-    }
-
-    private String deal(String typeName) {
-        if (typeName.startsWith("[L")) {
-            return typeName.substring(2) + "[]";
-        } else if (typeName.startsWith("[")) {
-            return typeName.substring(1) + "[]";
-        }
-        return typeName;
-    }
-
 
     public void throwing(Class<? extends Throwable>... throwables) {
         if (throwables.length == 0) return;
@@ -59,7 +39,7 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
         }
     }
 
-    protected Map<String, Class<?>> getParameters() {
+    private Map<String, Class<?>> getParameters() {
         return parameters;
     }
 
@@ -67,7 +47,7 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
         return new ArrayList<>(throwings);
     }
 
-    protected List<Class<?>> getRequirementTypes() {
+    private List<Class<?>> getRequirementTypes() {
         return new ArrayList<>(parameters.values());
     }
 

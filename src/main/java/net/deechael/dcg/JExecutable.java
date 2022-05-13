@@ -40,21 +40,9 @@ public abstract class JExecutable implements JObject {
         this.operations.add(operation);
     }
 
-    public Var createVar(@NotNull Class<?> type, @NotNull String name, @NotNull Var var) {
+    public Var createVar(@NotNull JType type, @NotNull String name, @NotNull Var var) {
         name = "jvar_" + name;
         operations.add(new CreateVar(type, name, var.varString()));
-        return Var.referringVar(type, name);
-    }
-
-    public Var createTypeVar(@NotNull Class<?> type, Class<?>[] types, @NotNull String name, @NotNull Var var) {
-        name = "jvar_" + name;
-        operations.add(new CreateVar(type, Arrays.stream(types).map(Class::getName).toArray(String[]::new), name, var.varString()));
-        return Var.referringVar(type, name);
-    }
-
-    public Var createTypeVar(@NotNull Class<?> type, JGeneratable[] types, @NotNull String name, @NotNull Var var) {
-        name = "jvar_" + name;
-        operations.add(new CreateVar(type, Arrays.stream(types).map(JGeneratable::getName).toArray(String[]::new), name, var.varString()));
         return Var.referringVar(type, name);
     }
 
@@ -108,20 +96,9 @@ public abstract class JExecutable implements JObject {
      * @param methodName The method you want to use
      * @param arguments  The arguments that the method needs
      */
-    public void invokeMethod(Class<?> clazz, String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        operations.add(new InvokeMethod(clazz.getName().replace("$", "."), methodName, bodyBuilder.toString()));
-    }
-
-    public void invokeMethod(JGeneratable clazz, String methodName, Var... arguments) {
-        if (!extraClasses.contains(clazz.getName())) {
-            extraClasses.add(clazz.getName());
+    public void invokeMethod(JType clazz, String methodName, Var... arguments) {
+        if (!extraClasses.contains(clazz.typeString())) {
+            extraClasses.add(clazz.typeString());
         }
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
@@ -130,7 +107,7 @@ public abstract class JExecutable implements JObject {
                 bodyBuilder.append(", ");
             }
         }
-        operations.add(new InvokeMethod(clazz.getName(), methodName, bodyBuilder.toString()));
+        operations.add(new InvokeMethod(clazz.typeString(), methodName, bodyBuilder.toString()));
     }
 
     public void invokeMethodDirectly(String methodName, Var... arguments) {
@@ -208,11 +185,7 @@ public abstract class JExecutable implements JObject {
         return new TryCatchCreator(this, tryExecuting);
     }
 
-    public TryCatchInnerCreator tryCatch(Class<?> clazz, String varName, Var var, DuParameter<JExecutable, Var> tryExecuting) {
-        return new TryCatchInnerCreator(this, tryExecuting, clazz, varName, var);
-    }
-
-    public TryCatchInnerCreator tryCatch(JGeneratable clazz, String varName, Var var, DuParameter<JExecutable, Var> tryExecuting) {
+    public TryCatchInnerCreator tryCatch(JType clazz, String varName, Var var, DuParameter<JExecutable, Var> tryExecuting) {
         return new TryCatchInnerCreator(this, tryExecuting, clazz, varName, var);
     }
 
@@ -228,7 +201,7 @@ public abstract class JExecutable implements JObject {
         operations.add(new DoWhileLoop(doBody, requirement));
     }
 
-    public void forLoop(@Nullable Class<?> clazz, @Nullable String tempVarName, @Nullable Var initializedValue, @Nullable Function<Var, Requirement> judgement, @Nullable Var operation, @NotNull DuParameter<@Nullable Var, @NotNull JExecutable4Loop> forExecuting) {
+    public void forLoop(@Nullable JType clazz, @Nullable String tempVarName, @Nullable Var initializedValue, @Nullable Function<Var, Requirement> judgement, @Nullable Var operation, @NotNull DuParameter<@Nullable Var, @NotNull JExecutable4Loop> forExecuting) {
         tempVarName = tempVarName != null ? "jforloop_" + tempVarName : null;
         Var referringVar = (clazz != null && tempVarName != null) ? Var.referringVar(clazz, tempVarName) : null;
         Requirement requirement = judgement != null ? judgement.apply(referringVar) : null;
@@ -237,16 +210,8 @@ public abstract class JExecutable implements JObject {
         this.operations.add(new ForLoop(clazz, tempVarName, initializedValue, requirement, operation, forBody));
     }
 
-    public void forEachLoop(@NotNull Class<?> clazz, @NotNull String tempVarName, @NotNull Var iterable, @NotNull DuParameter<@NotNull Var, @NotNull JExecutable4Loop> forExecuting) {
-        tempVarName = "jforloop_" + tempVarName;
-        Var referringVar = Var.referringVar(clazz, tempVarName);
-        JExecutable4Loop forBody = new JExecutable4Loop();
-        forExecuting.apply(referringVar, forBody);
-        this.operations.add(new ForEachLoop(clazz, tempVarName, iterable, forBody));
-    }
-
-    public void forEachLoop(@NotNull JGeneratable clazz, @NotNull String tempVarName, @NotNull Var iterable, @NotNull DuParameter<@NotNull Var, @NotNull JExecutable4Loop> forExecuting) {
-        tempVarName = "jforloop_" + tempVarName;
+    public void forEachLoop(@NotNull JType clazz, @NotNull String tempVarName, @NotNull Var iterable, @NotNull DuParameter<@NotNull Var, @NotNull JExecutable4Loop> forExecuting) {
+        tempVarName = "jforeachloop_" + tempVarName;
         Var referringVar = Var.referringVar(clazz, tempVarName);
         JExecutable4Loop forBody = new JExecutable4Loop();
         forExecuting.apply(referringVar, forBody);

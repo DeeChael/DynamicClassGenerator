@@ -6,12 +6,8 @@ public interface Requirement {
 
     String getString();
 
-    static Requirement isInstanceof(Var var, Class<?> clazz) {
-        return () -> var.varString() + " instanceof " + clazz.getName();
-    }
-
-    static Requirement isInstanceof(Var var, JGeneratable clazz) {
-        return () -> var.varString() + " instanceof " + clazz.getName();
+    static Requirement isInstanceof(Var var, JType clazz) {
+        return () -> var.varString() + " instanceof " + clazz.typeString();
     }
 
 
@@ -23,11 +19,7 @@ public interface Requirement {
         return () -> Var.invokeMethod(var, methodName, parameters).varString();
     }
 
-    static Requirement invokeMethod(Class<?> clazz, String methodName, Var... parameters) {
-        return () -> Var.invokeMethod(clazz, methodName, parameters).varString();
-    }
-
-    static Requirement invokeMethod(JGeneratable clazz, String methodName, Var... parameters) {
+    static Requirement invokeMethod(JType clazz, String methodName, Var... parameters) {
         return () -> Var.invokeMethod(clazz, methodName, parameters).varString();
     }
 

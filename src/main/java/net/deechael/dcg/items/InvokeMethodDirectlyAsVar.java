@@ -1,5 +1,7 @@
 package net.deechael.dcg.items;
 
+import net.deechael.dcg.JType;
+
 final class InvokeMethodDirectlyAsVar implements Var {
 
     private final String methodName;
@@ -11,7 +13,7 @@ final class InvokeMethodDirectlyAsVar implements Var {
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("InvokeMethodDirectlyAsVar cannot get type!");
     }
 

@@ -20,25 +20,11 @@ public final class JMethod extends JExecutableParametered implements ClassMethod
     private final boolean isSynchronized;
 
     JMethod(Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
-        this(void.class, level, clazz, methodName, isStatic, isFinal, isSynchronized);
+        this(JType.classType(void.class), level, clazz, methodName, isStatic, isFinal, isSynchronized);
     }
 
-    JMethod(Class<?> returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
-        String returnTypeString = returnType.getName().replace("$", ".");
-        while (returnTypeString.contains("[")) {
-            returnTypeString = deal(returnTypeString);
-        }
-        this.returnType = returnTypeString;
-        this.level = level;
-        this.parent = clazz;
-        this.methodName = methodName;
-        this.isStatic = isStatic;
-        this.isFinal = isFinal;
-        this.isSynchronized = isSynchronized;
-    }
-
-    JMethod(JGeneratable returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
-        this.returnType = returnType.getName();
+    JMethod(JType returnType, Level level, MethodOwnable clazz, String methodName, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+        this.returnType = returnType.typeString();
         this.level = level;
         this.parent = clazz;
         this.methodName = methodName;

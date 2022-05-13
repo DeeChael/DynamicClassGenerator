@@ -1,6 +1,6 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 
 import java.util.Arrays;
 
@@ -9,18 +9,13 @@ final class InitializedContentArrayVar implements Var {
     private final String type;
     private final Var[] vars;
 
-    public InitializedContentArrayVar(Class<?> type, Var... vars) {
-        this.type = type.getName().replace("$", ".");
-        this.vars = vars;
-    }
-
-    public InitializedContentArrayVar(JGeneratable type, Var... vars) {
-        this.type = type.getName();
+    public InitializedContentArrayVar(JType type, Var... vars) {
+        this.type = type.typeString();
         this.vars = vars;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

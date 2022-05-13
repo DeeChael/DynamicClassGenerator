@@ -1,6 +1,7 @@
 package net.deechael.dcg.items;
 
 import net.deechael.dcg.DigitOperator;
+import net.deechael.dcg.JType;
 import org.jetbrains.annotations.NotNull;
 
 final class DigitOperatedVar implements Var {
@@ -18,8 +19,8 @@ final class DigitOperatedVar implements Var {
     }
 
     @Override
-    public Class<?> getType() {
-        return int.class;
+    public JType getType() {
+        return JType.classType(int.class);
     }
 
     @Override

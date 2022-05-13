@@ -1,7 +1,7 @@
 package net.deechael.dcg.body;
 
 import net.deechael.dcg.JExecutable;
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 import net.deechael.dcg.Requirement;
 import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
@@ -17,17 +17,8 @@ public final class ForLoop implements Operation {
 
     private final JExecutable body;
 
-    public ForLoop(Class<?> type, String varName, Var initialized, Requirement requirement, Var operation, JExecutable body) {
-        this.type = type != null ? type.getName().replace("$", ".") : null;
-        this.varName = varName;
-        this.initialized = initialized;
-        this.requirement = requirement;
-        this.operation = operation;
-        this.body = body;
-    }
-
-    public ForLoop(@Nullable JGeneratable type, @Nullable String varName, @Nullable Var initialized, @Nullable Requirement requirement, @Nullable Var operation, @NotNull JExecutable body) {
-        this.type = type != null ? type.getName() : null;
+    public ForLoop(@Nullable JType type, @Nullable String varName, @Nullable Var initialized, @Nullable Requirement requirement, @Nullable Var operation, @NotNull JExecutable body) {
+        this.type = type != null ? type.typeString() : null;
         this.varName = varName;
         this.initialized = initialized;
         this.requirement = requirement;

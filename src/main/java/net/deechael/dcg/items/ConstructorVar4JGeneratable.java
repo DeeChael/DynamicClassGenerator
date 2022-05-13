@@ -1,23 +1,23 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 
 final class ConstructorVar4JGeneratable implements Var {
 
-    private final JGeneratable type;
+    private final JType type;
     private final String bodyString;
 
-    public ConstructorVar4JGeneratable(JGeneratable type, String bodyString) {
+    public ConstructorVar4JGeneratable(JType type, String bodyString) {
         this.type = type;
         this.bodyString = bodyString;
     }
 
-    public JGeneratable getJGeneratableType() {
+    public JType getJGeneratableType() {
         return this.type;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("Please invoke getJGeneratableType()");
     }
 
@@ -28,7 +28,7 @@ final class ConstructorVar4JGeneratable implements Var {
 
     @Override
     public String varString() {
-        return "new " + getType().getName() + "(" + bodyString + ")";
+        return "new " + this.type.typeString() + "(" + bodyString + ")";
     }
 
 }

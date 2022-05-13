@@ -1,6 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.body.Operation;
 import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,24 +16,19 @@ public final class JAnonymousClass implements Var {
 
     private final List<JClass> innerClasses = new ArrayList<>();
 
-    public JAnonymousClass(@NotNull Class<?> type, @NotNull Var[] arguments) {
-        this.type = type.getName();
+    public JAnonymousClass(@NotNull JType type, @NotNull Var[] arguments) {
+        this.type = type.typeString();
         this.arguments = arguments;
     }
 
-    public JAnonymousClass(@NotNull JGeneratable type, @NotNull Var[] arguments) {
-        this.type = type.getName();
-        this.arguments = arguments;
-    }
-
-    public JField addField(Level level, Class<?> type, String name) {
+    public JField addField(Level level, JType type, String name) {
         name = "jfield_" + name;
         JField field = new JField(level, type, null, name, false, false);
         this.fields.add(field);
         return field;
     }
 
-    public JField addFinalField(Level level, Class<?> type, String name, Var initialedValue) {
+    public JField addFinalField(Level level, JType type, String name, Var initialedValue) {
         name = "jfield_" + name;
         JField field = new JField(level, type, null, name, true, false);
         field.initialize(initialedValue);
@@ -43,10 +37,10 @@ public final class JAnonymousClass implements Var {
     }
 
     public JMethod addMethod(Level level, String name, boolean isFinal, boolean isSynchronized) {
-        return this.addMethod(void.class, level, name, isFinal, isSynchronized);
+        return this.addMethod(JType.classType(void.class), level, name, isFinal, isSynchronized);
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isFinal, boolean isSynchronized) {
+    public JMethod addMethod(JType returnType, Level level, String name, boolean isFinal, boolean isSynchronized) {
         JMethod method = new JMethod(returnType, level, null, name, false, isFinal, isSynchronized);
         this.methods.add(method);
         return method;
@@ -59,7 +53,7 @@ public final class JAnonymousClass implements Var {
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

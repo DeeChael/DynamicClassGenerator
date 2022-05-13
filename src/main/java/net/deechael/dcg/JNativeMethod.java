@@ -24,23 +24,11 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
     private final boolean isStatic;
 
     public JNativeMethod(Level level, String methodName, boolean isFinal, boolean isStatic) {
-        this(level, void.class, methodName, isFinal, isStatic);
+        this(level, JType.classType(void.class), methodName, isFinal, isStatic);
     }
 
-    public JNativeMethod(Level level, Class<?> returnType, String methodName, boolean isFinal, boolean isStatic) {
-        String returnTypeString = returnType.getName().replace("$", ".");
-        while (returnTypeString.contains("[")) {
-            returnTypeString = deal(returnTypeString);
-        }
-        this.returnType = returnTypeString;
-        this.name = methodName;
-        this.level = level;
-        this.isFinal = isFinal;
-        this.isStatic = isStatic;
-    }
-
-    public JNativeMethod(Level level, JGeneratable returnType, String methodName, boolean isFinal, boolean isStatic) {
-        this.returnType = returnType.getName();
+    public JNativeMethod(Level level, JType returnType, String methodName, boolean isFinal, boolean isStatic) {
+        this.returnType = returnType.typeString();
         this.name = methodName;
         this.level = level;
         this.isFinal = isFinal;

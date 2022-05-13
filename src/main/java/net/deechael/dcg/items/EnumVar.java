@@ -1,16 +1,12 @@
 package net.deechael.dcg.items;
 
 import net.deechael.dcg.JEnum;
+import net.deechael.dcg.JType;
 
 final class EnumVar implements Var {
 
     private final String enumClass;
     private final String enumItemName;
-
-    public EnumVar(Class<?> enumClass, String enumItemName) {
-        this.enumClass = enumClass.getName();
-        this.enumItemName = enumItemName;
-    }
 
     public EnumVar(JEnum enumClass, String enumItemName) {
         this.enumClass = enumClass.getName();
@@ -18,7 +14,7 @@ final class EnumVar implements Var {
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

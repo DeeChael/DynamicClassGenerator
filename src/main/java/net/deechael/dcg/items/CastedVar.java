@@ -1,29 +1,19 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 
 final class CastedVar implements Var {
 
     private final String type;
     private final String originalVarString;
 
-    public CastedVar(Class<?> type, String originalVarString) {
-        String typeName = type.getName();
-        while (typeName.contains("[")) {
-            typeName = deal(typeName);
-        }
-        this.type = typeName;
+    public CastedVar(JType type, String originalVarString) {
+        this.type = type.typeString();
         this.originalVarString = originalVarString;
     }
-
-    public CastedVar(JGeneratable type, String originalVarString) {
-        this.type = type.getName();
-        this.originalVarString = originalVarString;
-    }
-
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("No type");
     }
 

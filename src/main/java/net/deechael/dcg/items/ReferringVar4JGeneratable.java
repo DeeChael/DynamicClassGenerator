@@ -1,23 +1,23 @@
 package net.deechael.dcg.items;
 
-import net.deechael.dcg.JGeneratable;
+import net.deechael.dcg.JType;
 
 final class ReferringVar4JGeneratable implements Var {
 
-    private final JGeneratable type;
+    private final JType type;
     private final String name;
 
-    public ReferringVar4JGeneratable(JGeneratable type, String name) {
+    public ReferringVar4JGeneratable(JType type, String name) {
         this.type = type;
         this.name = name;
     }
 
-    public JGeneratable getJGeneratableType() {
+    public JType getJGeneratableType() {
         return this.type;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("Please invoke getJGeneratableType()");
     }
 

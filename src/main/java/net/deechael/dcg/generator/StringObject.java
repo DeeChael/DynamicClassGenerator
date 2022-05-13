@@ -1,7 +1,6 @@
 package net.deechael.dcg.generator;
 
 import javax.tools.SimpleJavaFileObject;
-import java.io.IOException;
 import java.net.URI;
 
 final class StringObject extends SimpleJavaFileObject {

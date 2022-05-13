@@ -19,30 +19,12 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     private final List<Class<?>> throwings = new ArrayList<>();
 
     public JInterfaceMethod(String methodName) {
-        this(void.class, methodName);
+        this(JType.classType(void.class), methodName);
     }
 
-    public JInterfaceMethod(Class<?> returnType, String methodName) {
-        String returnTypeString = returnType.getName();
-        while (returnTypeString.contains("[")) {
-            returnTypeString = deal(returnTypeString);
-        }
-        this.returnType = returnTypeString;
+    public JInterfaceMethod(JType returnType, String methodName) {
+        this.returnType = returnType.typeString();
         this.name = methodName;
-    }
-
-    public JInterfaceMethod(JGeneratable returnType, String methodName) {
-        this.returnType = returnType.getName();
-        this.name = methodName;
-    }
-
-    private String deal(String typeName) {
-        if (typeName.startsWith("[L")) {
-            return typeName.substring(2) + "[]";
-        } else if (typeName.startsWith("[")) {
-            return typeName.substring(1) + "[]";
-        }
-        return typeName;
     }
 
     public void throwing(Class<? extends Throwable>... throwables) {

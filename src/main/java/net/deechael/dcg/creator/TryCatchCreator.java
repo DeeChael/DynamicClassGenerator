@@ -36,7 +36,7 @@ public final class TryCatchCreator {
         if (throwings.length == 0) return this;
         throwableObjectName = "jthrowable_" + throwableObjectName;
         JExecutable.JExecutable4InnerStructure catchBody = new JExecutable.JExecutable4InnerStructure();
-        Var var = Var.referringVar((Class<?>) null, throwableObjectName);
+        Var var = Var.referringVar(null, throwableObjectName);
         catchExecuting.apply(catchBody, var);
         this.catches.add(new AbstractMap.SimpleEntry<>(throwings, new DuObj<>(throwableObjectName, catchBody)));
         return this;

@@ -5,11 +5,15 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Var {
 
-    Class<?> getType();
+    JType getType();
 
     String getName();
 
     String varString();
+
+    static Var directField(Var var, String fieldName) {
+        return new FieldVar(var.varString(), fieldName);
+    }
 
     static Var objectsField(Var var, String fieldName) {
         return new FieldVar(var.varString(), fieldName);
@@ -19,11 +23,11 @@ public interface Var {
         return new FieldVar(clazz.getName(), fieldName);
     }
 
-    static Var castObject(Var originalVar, Class<?> castToClass) {
-        return new CastedVar(castToClass, originalVar.varString());
+    static Var staticField(JGeneratable clazz, String fieldName) {
+        return new FieldVar(clazz.getName(), fieldName);
     }
 
-    static Var castObject(Var originalVar, JGeneratable castToClass) {
+    static Var castObject(Var originalVar, JType castToClass) {
         return new CastedVar(castToClass, originalVar.varString());
     }
 
@@ -38,7 +42,7 @@ public interface Var {
         return new InvokeMethodAsVar(var.varString().replace("$", "."), methodName, bodyBuilder.toString());
     }
 
-    static Var invokeMethod(@NotNull Class<?> clazz, @NotNull String methodName, Var... arguments) {
+    static Var invokeMethod(@NotNull JType clazz, @NotNull String methodName, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -46,18 +50,7 @@ public interface Var {
                 bodyBuilder.append(", ");
             }
         }
-        return new InvokeMethodAsVar(clazz.getName().replace("$", "."), methodName, bodyBuilder.toString());
-    }
-
-    static Var invokeMethod(@NotNull JGeneratable clazz, @NotNull String methodName, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new InvokeMethodAsVar(clazz.getName(), methodName, bodyBuilder.toString());
+        return new InvokeMethodAsVar(clazz.typeString(), methodName, bodyBuilder.toString());
     }
 
     static Var invokeThisMethod(@NotNull String methodName, Var... arguments) {
@@ -82,18 +75,7 @@ public interface Var {
         return new InvokeMethodAsVar("super", methodName, bodyBuilder.toString());
     }
 
-    static Var constructor(Class<?> type, Var... arguments) {
-        StringBuilder bodyBuilder = new StringBuilder();
-        for (int i = 0; i < arguments.length; i++) {
-            bodyBuilder.append(arguments[i].varString());
-            if (i != arguments.length - 1) {
-                bodyBuilder.append(", ");
-            }
-        }
-        return new ConstructorVar(type, bodyBuilder.toString());
-    }
-
-    static Var constructor(JClass type, Var... arguments) {
+    static Var constructor(JType type, Var... arguments) {
         StringBuilder bodyBuilder = new StringBuilder();
         for (int i = 0; i < arguments.length; i++) {
             bodyBuilder.append(arguments[i].varString());
@@ -104,19 +86,11 @@ public interface Var {
         return new ConstructorVar4JGeneratable(type, bodyBuilder.toString());
     }
 
-    static Var initializedArray(Class<?> componentType, int length) {
+    static Var initializedArray(JType componentType, int length) {
         return new InitializedArrayVar(componentType, length);
     }
 
-    static Var initializedArray(Class<?> componentType, Var... vars) {
-        return new InitializedContentArrayVar(componentType, vars);
-    }
-
-    static Var initializedArray(JGeneratable componentType, int length) {
-        return new InitializedArrayVar(componentType, length);
-    }
-
-    static Var initializedArray(JGeneratable componentType, Var... vars) {
+    static Var initializedArray(JType componentType, Var... vars) {
         return new InitializedContentArrayVar(componentType, vars);
     }
 
@@ -128,11 +102,7 @@ public interface Var {
         return new CustomVar("null");
     }
 
-    static Var referringVar(Class<?> type, String name) {
-        return new ReferringVar(type, name);
-    }
-
-    static Var referringVar(JGeneratable type, String name) {
+    static Var referringVar(JType type, String name) {
         return new ReferringVar4JGeneratable(type, name);
     }
 
@@ -211,31 +181,19 @@ public interface Var {
         return new SetValueVar(referringVar.getName(), any);
     }
 
-    static JAnonymousClass anonymousClass(@NotNull Class<?> type, @NotNull Var[] arguments) {
+    static JAnonymousClass anonymousClass(@NotNull JType type, @NotNull Var[] arguments) {
         return new JAnonymousClass(type, arguments);
-    }
-
-    static Var enumVar(@NotNull Class<?> enumClass, @NotNull String enumItemName) {
-        return new EnumVar(enumClass, enumItemName);
     }
 
     static Var enumVar(@NotNull JEnum enumClass, @NotNull String enumItemName) {
         return new EnumVar(enumClass, enumItemName);
     }
 
-    static Var lambda(Class<?> clazz, String method) {
+    static Var lambda(JType clazz, String method) {
         return new LambdaVar(clazz, method);
     }
 
-    static Var lambda(JGeneratable clazz, String method) {
-        return new LambdaVar(clazz, method);
-    }
-
-    static Var lambda(Class<?> clazz) {
-        return new LambdaVar(clazz, "new");
-    }
-
-    static Var lambda(JClass clazz) {
+    static Var lambda(JType clazz) {
         return new LambdaVar(clazz, "new");
     }
 

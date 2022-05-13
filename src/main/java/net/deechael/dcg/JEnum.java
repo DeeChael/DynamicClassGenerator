@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
-public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodOwnable, ConstructorOwnable {
+public final class JEnum implements JObject, JGeneratable, JType, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -83,7 +83,7 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
         return level;
     }
 
-    public JField addField(Level level, Class<?> type, String name, boolean isFinal, boolean isStatic) {
+    public JField addField(Level level, JType type, String name, boolean isFinal, boolean isStatic) {
         name = "jfield_" + name;
         JField field = new JField(level, type, this, name, isFinal, isStatic);
         this.fields.add(field);
@@ -113,13 +113,13 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
         return method;
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isSynchronized) {
+    public JMethod addMethod(JType returnType, Level level, String name, boolean isStatic, boolean isSynchronized) {
         JMethod method = new JMethod(returnType, level, this, name, isStatic, false, isSynchronized);
         this.methods.add(method);
         return method;
     }
 
-    public JNativeMethod addNativeMethod(Class<?> returnType, Level level, String name, boolean isStatic) {
+    public JNativeMethod addNativeMethod(JType returnType, Level level, String name, boolean isStatic) {
         JNativeMethod method = new JNativeMethod(level, returnType, name, false, isStatic);
         this.methods.add(method);
         return method;
@@ -130,26 +130,12 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
     }
 
     public JField getField(String name) {
-        if (name.startsWith("jfield_")) {
-            for (JField field : this.fields) {
-                if (Objects.equals(field.getName(), name)) {
-                    return field;
-                }
-            }
-            throw new RuntimeException("Cannot find the field!");
-        }
-        throw new RuntimeException("Cannot find the field!");
+        return new JField(null, null, this, name, false, false);
     }
 
-    public void implement(Class<?> clazz) {
-        if (!Modifier.isInterface(clazz.getModifiers())) throw new RuntimeException("This class is not an interface");
-        if (implementations.contains(clazz.getName())) return;
-        implementations.add(clazz.getName());
-    }
-
-    public void implement(JInterface clazz) {
-        if (implementations.contains(clazz.getName())) return;
-        implementations.add(clazz.getName());
+    public void implement(JType clazz) {
+        if (implementations.contains(clazz.typeString())) return;
+        implementations.add(clazz.typeString());
     }
 
     public void addInner(JGeneratable generatable) {
@@ -255,6 +241,11 @@ public final class JEnum implements JObject, JGeneratable, FieldOwnable, MethodO
         innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
         base.append("}\n");
         return base.toString();
+    }
+
+    @Override
+    public String typeString() {
+        return this.getName();
     }
 
 }

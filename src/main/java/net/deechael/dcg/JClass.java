@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
+public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
@@ -27,9 +27,8 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
     private final List<JConstructor> constructors = new ArrayList<>();
     private final List<ClassMethod> methods = new ArrayList<>();
 
-    private int extending = 0;
-    private Class<?> extending_original = null;
-    private JClass extending_generated = null;
+    private boolean extending = false;
+    private JType extended = null;
     private final List<String> implementations = new ArrayList<>();
 
     private final List<JGeneratable> innerClasses = new ArrayList<>();
@@ -104,7 +103,7 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
         return level;
     }
 
-    public JField addField(Level level, Class<?> type, String name, boolean isFinal, boolean isStatic) {
+    public JField addField(Level level, JType type, String name, boolean isFinal, boolean isStatic) {
         name = "jfield_" + name;
         JField field = new JField(level, type, this, name, isFinal, isStatic);
         this.fields.add(field);
@@ -127,26 +126,26 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
         return method;
     }
 
-    public JMethod addMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal, boolean isSynchronized) {
+    public JMethod addMethod(JType returnType, Level level, String name, boolean isStatic, boolean isFinal, boolean isSynchronized) {
         JMethod method = new JMethod(returnType, level, this, name, isStatic, isFinal, isSynchronized);
         this.methods.add(method);
         return method;
     }
 
-    public JAbstractMethod addAbstractMethod(Class<?> returnType, Level level, String name) {
+    public JAbstractMethod addAbstractMethod(JType returnType, Level level, String name) {
         JAbstractMethod method = new JAbstractMethod(level, returnType, name);
         this.methods.add(method);
         return method;
     }
 
-    public JNativeMethod addNativeMethod(Class<?> returnType, Level level, String name, boolean isStatic, boolean isFinal) {
+    public JNativeMethod addNativeMethod(JType returnType, Level level, String name, boolean isStatic, boolean isFinal) {
         JNativeMethod method = new JNativeMethod(level, returnType, name, isFinal, isStatic);
         this.methods.add(method);
         return method;
     }
 
     @Override
-    public Class<?> getType() {
+    public JType getType() {
         throw new RuntimeException("Generate JClass to get type");
     }
 
@@ -160,83 +159,17 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
     }
 
     public JField getField(String name) {
-        if (name.startsWith("jfield_")) {
-            for (JField field : this.fields) {
-                if (Objects.equals(field.getName(), name)) {
-                    return field;
-                }
-            }
-            if (extending == 2) {
-                if (extending_generated != null) {
-                    return getField_jClass(name, extending_generated);
-                }
-            }
-            throw new RuntimeException("Cannot find the field!");
-        } else {
-            if (extending == 1) {
-                if (extending_original != null) {
-                    return getField_parentClass(name, extending_original);
-                } else {
-                    throw new RuntimeException("Cannot find the field!");
-                }
-            } else {
-                throw new RuntimeException("Cannot find the field!");
-            }
-        }
+        return new JField(null, null, this, name, false, false);
     }
 
-    private JField getField_jClass(String name, JClass parent) {
-        return parent.getField(name);
+    public void extend(JType clazz) {
+        this.extending = true;
+        this.extended = clazz;
     }
 
-    private JField getField_parentClass(String name, Class<?> clazz) {
-        try {
-            Field field = clazz.getDeclaredField(name);
-            return new JField(Modifier.isPublic(field.getModifiers()) ? Level.PUBLIC : (Modifier.isPrivate(field.getModifiers()) ? Level.PRIVATE : (Modifier.isProtected(field.getModifiers()) ? Level.PROTECTED : Level.UNNAMED)), field.getType(), this, name, Modifier.isFinal(field.getModifiers()), Modifier.isStatic(field.getModifiers()));
-        } catch (NoSuchFieldException e) {
-            Class<?> parent = clazz.getSuperclass();
-            if (parent == null) {
-                throw new RuntimeException("Cannot find the field!");
-            } else {
-                if (parent == Object.class) {
-                    throw new RuntimeException("Cannot find the field!");
-                } else {
-                    return getField_parentClass(name, parent);
-                }
-            }
-        }
-    }
-
-    private static boolean classExists(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public void extend(Class<?> clazz) {
-        this.extending = 1;
-        this.extending_original = clazz;
-        this.extending_generated = null;
-    }
-
-    public void extend(JClass clazz) {
-        this.extending = 1;
-        this.extending_original = null;
-        this.extending_generated = clazz;
-    }
-
-    public void implement(Class<?> clazz) {
-        if (!Modifier.isInterface(clazz.getModifiers())) throw new RuntimeException("This class is not an interface");
-        if (implementations.contains(clazz.getName())) return;
-        implementations.add(clazz.getName());
-    }
-
-    public void implement(JInterface clazz) {
-        if (implementations.contains(clazz.getName())) return;
-        implementations.add(clazz.getName());
+    public void implement(JType clazz) {
+        if (implementations.contains(clazz.typeString())) return;
+        implementations.add(clazz.typeString());
     }
 
     public void addInner(JGeneratable generatable) {
@@ -252,29 +185,16 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
         }
     }
 
-    private void securityCheck() {
-        if (extending > 0) {
-            if (extending == 1 && extending_original == null) {
-                throw new RuntimeException("The class extended a class, but cannot find the class!");
-            } else if (extending == 2 && extending_generated == null) {
-                throw new RuntimeException("The class extended a class, but cannot find the class");
-            }
-        }
-    }
-
     private StringBuilder appendExtendsAndImplements(StringBuilder stringBuilder) {
-        if (extending == 1) {
+        if (extending) {
             stringBuilder.append(" extends ");
-            stringBuilder.append(extending_original.getName().replace("$", "."));
-        } else if (extending == 2) {
-            stringBuilder.append(" extends ");
-            stringBuilder.append(extending_generated.getName());
+            stringBuilder.append(extended.typeString());
         }
         if (implementations.size() > 0) {
             stringBuilder.append(" implements ");
             Iterator<String> iterator = implementations.iterator();
             while (iterator.hasNext()) {
-                stringBuilder.append(iterator.next().replace("$", "."));
+                stringBuilder.append(iterator.next());
                 if (iterator.hasNext()) {
                     stringBuilder.append(", ");
                 }
@@ -314,7 +234,6 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
 
     @Override
     public String getString() {
-        securityCheck();
         StringBuilder base = new StringBuilder();
         if (packageName != null) base.append("package ").append(packageName).append(";\n");
         imports.forEach(importClass -> base.append("import ").append(importClass).append(";\n"));
@@ -336,6 +255,11 @@ public final class JClass implements JObject, JGeneratable, Var, FieldOwnable, M
         innerClasses.forEach(innerClass -> base.append(innerClass.getString()).append("\n"));
         base.append("}\n");
         return base.toString();
+    }
+
+    @Override
+    public String typeString() {
+        return this.getName();
     }
 
 }

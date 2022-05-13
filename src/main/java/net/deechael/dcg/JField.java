@@ -4,9 +4,7 @@ import net.deechael.dcg.items.Var;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JField implements JObject, Var {
@@ -14,8 +12,8 @@ public class JField implements JObject, Var {
     Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
 
     final Level level;
-    final Class<?> type;
-    final JGeneratable jType;
+    final JType type;
+    final JType jType;
     final FieldOwnable parent;
     final String name;
     final boolean isFinal;
@@ -24,19 +22,9 @@ public class JField implements JObject, Var {
     private boolean needInit = false;
     private String initBody = "";
 
-    JField(Level level, Class<?> type, FieldOwnable clazz, String name, boolean isFinal, boolean isStatic) {
+    JField(Level level, JType type, FieldOwnable clazz, String name, boolean isFinal, boolean isStatic) {
         this.level = level;
         this.type = type;
-        this.jType = null;
-        this.parent = clazz;
-        this.name = name;
-        this.isFinal = isFinal;
-        this.isStatic = isStatic;
-    }
-
-    JField(Level level, JGeneratable type, FieldOwnable clazz, String name, boolean isFinal, boolean isStatic) {
-        this.level = level;
-        this.type = null;
         this.jType = type;
         this.parent = clazz;
         this.name = name;
@@ -78,9 +66,9 @@ public class JField implements JObject, Var {
             base.append("final ");
         }
         if (type != null) {
-            base.append(type.getName());
+            base.append(type.typeString());
         } else if (jType != null) {
-            base.append(jType.getName());
+            base.append(jType.typeString());
         }
         base.append(" ");
         base.append(name);
@@ -113,7 +101,7 @@ public class JField implements JObject, Var {
         return annotations;
     }
 
-    public Class<?> getType() {
+    public JType getType() {
         if (this.type != null) {
             return this.type;
         } else {

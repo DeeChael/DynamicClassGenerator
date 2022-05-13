@@ -15,30 +15,12 @@ public final class JInterfaceMethodDefaulted extends JExecutableParametered impl
     private final String methodName;
 
     JInterfaceMethodDefaulted(String methodName) {
-        this(void.class, methodName);
+        this(JType.classType(void.class), methodName);
     }
 
-    JInterfaceMethodDefaulted(Class<?> returnType, String methodName) {
-        String returnTypeString = returnType.getName();
-        while (returnTypeString.contains("[")) {
-            returnTypeString = deal(returnTypeString);
-        }
-        this.returnType = returnTypeString;
+    JInterfaceMethodDefaulted(JType returnType, String methodName) {
+        this.returnType = returnType.typeString();
         this.methodName = methodName;
-    }
-
-    JInterfaceMethodDefaulted(JGeneratable returnType, String methodName) {
-        this.returnType = returnType.getName();
-        this.methodName = methodName;
-    }
-
-    private String deal(String typeName) {
-        if (typeName.startsWith("[L")) {
-            return typeName.substring(2) + "[]";
-        } else if (typeName.startsWith("[")) {
-            return typeName.substring(1) + "[]";
-        }
-        return typeName;
     }
 
     @Override

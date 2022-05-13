@@ -12,14 +12,14 @@ public class Example {
 
     public static void main(String[] args) throws URISyntaxException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         JClass clazz = new JClass(Level.PUBLIC, "net.deechael.test", "DynamicClassGeneratorTest");
-        JField field = clazz.addField(Level.PUBLIC, String.class, "parent", false, false);
+        JField field = clazz.addField(Level.PUBLIC, JType.classType(String.class), "parent", false, false);
         field.initialize(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
         JConstructor constructor = clazz.addConstructor(Level.PUBLIC);
-        Var testing = constructor.addParameter(String.class, "testing");
-        Var human = constructor.addParameter(Human.class, "human");
-        Var second = constructor.createVar(String.class, "second", Var.constructor(String.class, testing));
-        Var age = constructor.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
-        Var name = constructor.createVar(String.class, "name", Var.invokeMethod(human, "getName"));
+        Var testing = constructor.addParameter(JType.classType(String.class), "testing");
+        Var human = constructor.addParameter(JType.classType(Human.class), "human");
+        Var second = constructor.createVar(JType.classType(String.class), "second", Var.constructor(JType.classType(String.class), testing));
+        Var age = constructor.createVar(JType.classType(int.class), "age", Var.invokeMethod(human, "getAge"));
+        Var name = constructor.createVar(JType.classType(String.class), "name", Var.invokeMethod(human, "getName"));
         constructor.invokeMethod(human, "print", testing);
         constructor.invokeMethod(human, "print", second);
         constructor.invokeMethod(human, "print", human);
@@ -32,8 +32,8 @@ public class Example {
         }));
 
         JMethod method = clazz.addMethod(Level.PUBLIC, "testing", false, false, false);
-        Var method_human = method.addParameter(Human.class, "human");
-        Var method_age = method.createVar(int.class, "age", Var.invokeMethod(human, "getAge"));
+        Var method_human = method.addParameter(JType.classType(Human.class), "human");
+        Var method_age = method.createVar(JType.classType(int.class), "age", Var.invokeMethod(human, "getAge"));
         method.invokeMethod(method_human, "print", JStringVar.stringVar("Method testing"));
         method.ifElse(Requirement.isEqual(method_age, JStringVar.intVar(16)), (executable) -> {
             executable.invokeMethod(method_human, "print", JStringVar.stringVar("Method if body"));
