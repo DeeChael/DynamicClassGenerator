@@ -31,7 +31,7 @@
 
     <name>DynamicClassGenerator</name>
     <description>Allow you to generate classes while the program is running</description>
-    <url>https://github.com/Ocean-Project/DynamicClassGenerator</url>
+    <url>https://github.com/TheOthers-SMP-Project/DynamicClassGenerator</url>
 
     <licenses>
         <license>
@@ -54,9 +54,9 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/Ocean-Project/DynamicClassGenerator.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:Ocean-Project/DynamicClassGenerator.git</developerConnection>
-        <url>https://github.com/Ocean-Project/DynamicClassGenerator</url>
+        <connection>https://github.com/TheOthers-SMP-Project/DynamicClassGenerator.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:TheOthers-SMP-Project/DynamicClassGenerator.git</developerConnection>
+        <url>https://github.com/TheOthers-SMP-Project/DynamicClassGenerator</url>
     </scm>
 
     <profiles>
