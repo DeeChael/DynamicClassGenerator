@@ -10,9 +10,9 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
-public final class JEnum implements JObject, JGeneratable, JType, FieldOwnable, MethodOwnable, ConstructorOwnable {
+public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
-    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     private final String packageName;
 
@@ -125,8 +125,18 @@ public final class JEnum implements JObject, JGeneratable, JType, FieldOwnable, 
         return method;
     }
 
+    @Override
+    public JType getType() {
+        return JType.CLASS;
+    }
+
     public String getName() {
         return packageName != null ? (packageName.endsWith(".") ? packageName + className : packageName + "." + className) : className;
+    }
+
+    @Override
+    public String varString() {
+        return this.getName() + ".class";
     }
 
     public JField getField(String name) {
@@ -147,6 +157,9 @@ public final class JEnum implements JObject, JGeneratable, JType, FieldOwnable, 
             this.innerClasses.add(generatable);
         } else if (generatable instanceof JEnum) {
             ((JEnum) generatable).setInner();
+            this.innerClasses.add(generatable);
+        } else if (generatable instanceof JAnnotation) {
+            ((JAnnotation) generatable).setInner();
             this.innerClasses.add(generatable);
         }
     }
@@ -191,24 +204,12 @@ public final class JEnum implements JObject, JGeneratable, JType, FieldOwnable, 
     }
 
     @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.TYPE) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for class!");
-        }
+    public void addAnnotation(JType annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);
     }
 
     @Override
-    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
+    public Map<JType, Map<String, JStringVar>> getAnnotations() {
         return annotations;
     }
 

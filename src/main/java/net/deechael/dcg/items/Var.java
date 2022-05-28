@@ -99,7 +99,7 @@ public interface Var {
     }
 
     static Var nullVar() {
-        return new CustomVar("null");
+        return JStringVar.nullVar();
     }
 
     static Var referringVar(JType type, String name) {

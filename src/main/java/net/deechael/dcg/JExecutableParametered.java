@@ -46,4 +46,9 @@ public abstract class JExecutableParametered extends JExecutable {
         return new ArrayList<>(throwings);
     }
 
+    @Override
+    public String getString() {
+        return null;
+    }
+
 }

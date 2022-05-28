@@ -84,23 +84,6 @@ public final class JConstructor extends JExecutableParametered {
         return base.toString();
     }
 
-    @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.CONSTRUCTOR) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for constructor!");
-        }
-        super.addAnnotation(annotation, values);
-    }
-
     /*
     public String toString() {
         StringBuilder parametersString = new StringBuilder();

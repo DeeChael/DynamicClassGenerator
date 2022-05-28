@@ -15,7 +15,7 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
 
     private final Map<String, Class<?>> parameters = new HashMap<>();
 
-    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
 
     private final Level level;
@@ -93,25 +93,13 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
     }
 
     @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.METHOD) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for method!");
-        }
+    public void addAnnotation(JType annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);
     }
 
     @Override
-    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
-        return this.annotations;
+    public Map<JType, Map<String, JStringVar>> getAnnotations() {
+        return annotations;
     }
 
 }

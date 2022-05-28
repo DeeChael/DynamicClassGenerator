@@ -8,16 +8,16 @@ public interface JObject {
 
     String getString();
 
-    void addAnnotation(Class<?> annotation, Map<String, JStringVar> values);
+    void addAnnotation(JType type, Map<String, JStringVar> values);
 
-    Map<Class<?>, Map<String, JStringVar>> getAnnotations();
+    Map<JType, Map<String, JStringVar>> getAnnotations();
 
     default String annotationString() {
         StringBuilder base = new StringBuilder();
-        Map<Class<?>, Map<String, JStringVar>> map = getAnnotations();
+        Map<JType, Map<String, JStringVar>> map = getAnnotations();
         if (!map.isEmpty()) {
-            for (Map.Entry<Class<?>, Map<String, JStringVar>> entry : map.entrySet()) {
-                base.append("@").append(entry.getKey().getName().replace("$", "."));
+            for (Map.Entry<JType, Map<String, JStringVar>> entry : map.entrySet()) {
+                base.append("@").append(entry.getKey().typeString());
                 if (!entry.getValue().isEmpty()) {
                     base.append("(");
                     List<Map.Entry<String, JStringVar>> jStringVars = new ArrayList<>(entry.getValue().entrySet());
@@ -34,7 +34,7 @@ public interface JObject {
                 }
             }
         }
-        return base.toString();
+        return base.append(" ").toString();
     }
 
 }

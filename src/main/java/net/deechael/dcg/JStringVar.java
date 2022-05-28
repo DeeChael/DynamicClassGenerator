@@ -8,11 +8,13 @@ import java.util.Arrays;
 
 public final class JStringVar implements Var {
 
-    private final JType type;
+    private final Type type;
+    private final JType dcgType;
     private final String value;
 
-    private JStringVar(JType type, String value) {
+    private JStringVar(Type type, String value) {
         this.type = type;
+        this.dcgType = type.getDcgType();
         this.value = value;
     }
 
@@ -22,6 +24,10 @@ public final class JStringVar implements Var {
 
     @Override
     public JType getType() {
+        return this.dcgType;
+    }
+
+    public Type getJStringVarType() {
         return this.type;
     }
 
@@ -39,59 +45,59 @@ public final class JStringVar implements Var {
     }
 
     public static JStringVar stringVar(String value) {
-        return new JStringVar(JType.classType(String.class), "\"" + value + "\"");
+        return new JStringVar(Type.STRING, "\"" + value + "\"");
     }
 
     public static JStringVar intVar(int value) {
-        return new JStringVar(JType.classType(int.class), String.valueOf(value));
+        return new JStringVar(Type.INT, String.valueOf(value));
     }
 
     public static JStringVar byteVar(byte value) {
-        return new JStringVar(JType.classType(byte.class), String.valueOf(value));
+        return new JStringVar(Type.BYTE, String.valueOf(value));
     }
 
     public static JStringVar charVar(char value) {
-        return new JStringVar(JType.classType(char.class), String.valueOf(value));
+        return new JStringVar(Type.CHAR, String.valueOf(value));
     }
 
     public static JStringVar shortVar(short value) {
-        return new JStringVar(JType.classType(short.class), String.valueOf(value));
+        return new JStringVar(Type.SHORT, String.valueOf(value));
     }
 
     public static JStringVar longVar(long value) {
-        return new JStringVar(JType.classType(long.class), String.valueOf(value));
+        return new JStringVar(Type.LONG, String.valueOf(value));
     }
 
     public static JStringVar floatVar(float value) {
-        return new JStringVar(JType.classType(float.class), String.valueOf(value));
+        return new JStringVar(Type.FLOAT, String.valueOf(value));
     }
 
     public static JStringVar doubleVar(double value) {
-        return new JStringVar(JType.classType(double.class), String.valueOf(value));
+        return new JStringVar(Type.DOUBLE, String.valueOf(value));
     }
 
     public static JStringVar booleanVar(boolean value) {
-        return new JStringVar(JType.classType(boolean.class), String.valueOf(value));
+        return new JStringVar(Type.BOOLEAN, String.valueOf(value));
     }
 
     public static JStringVar classVar(Class<?> value) {
-        return new JStringVar(JType.classType(Class.class), value.getName());
+        return new JStringVar(Type.CLASS, value.getName());
     }
 
     public static JStringVar classVar(JGeneratable generatable) {
-        return new JStringVar(JType.classType(Class.class), generatable.getName());
+        return new JStringVar(Type.CLASS, generatable.getName());
     }
 
     public static JStringVar enumVar(Object value) {
         if (!value.getClass().isEnum()) throw new RuntimeException("The value is not a enum type");
-        return new JStringVar(JType.classType(value.getClass()), value.getClass().getName() + "." + value);
+        return new JStringVar(Type.ENUM, value.getClass().getName() + "." + value);
     }
 
     public static JStringVar enumVar(Class<?> enumClass, String name) {
         if (!enumClass.isEnum()) throw new RuntimeException("The value is not a enum type");
         try {
             enumClass.getMethod("valueOf", String.class).invoke(null, name);
-            return new JStringVar(JType.classType(enumClass), enumClass.getName() + "." + name);
+            return new JStringVar(Type.CLASS, enumClass.getName() + "." + name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -250,7 +256,7 @@ public final class JStringVar implements Var {
             }
         }
         base.append("}");
-        return new JStringVar(JType.classType(Array.newInstance(clazz, 0).getClass()), base.toString());
+        return new JStringVar(Type.ARRAY, base.toString());
     }
 
     public static JStringVar arrayVar(Object[][] array) {
@@ -276,7 +282,7 @@ public final class JStringVar implements Var {
             }
         }
         base.append("}");
-        return new JStringVar(JType.classType(Array.newInstance(Array.newInstance(clazz, 0).getClass(), 0).getClass()), base.toString());
+        return new JStringVar(Type.ARRAY, base.toString());
     }
 
     public static boolean isSupport(Class<?> clazz) {
@@ -285,6 +291,32 @@ public final class JStringVar implements Var {
             type = type.getComponentType();
         }
         return type == Double.class || type == Float.class || type == Long.class || type == Class.class || type == Character.class || type == Short.class || type == Byte.class || type == Integer.class || type == String.class || type.isEnum() || type.isPrimitive();
+    }
+
+    public static enum Type {
+        STRING(JType.STRING),
+        INT(JType.INT),
+        BOOLEAN(JType.BOOLEAN),
+        DOUBLE(JType.DOUBLE),
+        FLOAT(JType.FLOAT),
+        LONG(JType.LONG),
+        SHORT(JType.SHORT),
+        BYTE(JType.BYTE),
+        CHAR(JType.CHAR),
+        CLASS(JType.CLASS),
+        ENUM(null),
+        ARRAY(null);
+
+        private final JType dcgType;
+
+        Type(JType jType) {
+            this.dcgType = jType;
+        }
+
+        public JType getDcgType() {
+            return dcgType;
+        }
+
     }
 
 }

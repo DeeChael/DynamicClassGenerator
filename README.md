@@ -6,6 +6,8 @@
 [![Stars](https://img.shields.io/github/stars/Ocean-Project/DynamicClassGenerator.svg)]()
 ## Allow you to generate classes while the program is running!
 
+#### I have made a plan that I will make DCG 2.00.0 for jdk17+
+
 <b>Go to wiki to learn more!</b>
 
 ### Known Issues:

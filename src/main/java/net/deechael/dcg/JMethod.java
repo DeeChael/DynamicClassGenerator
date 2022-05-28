@@ -83,21 +83,5 @@ public final class JMethod extends JExecutableParametered implements ClassMethod
         return base.toString();
     }
 
-    @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.METHOD) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for method!");
-        }
-        super.addAnnotation(annotation, values);
-    }
 
 }

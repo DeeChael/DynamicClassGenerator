@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class JField implements JObject, Var {
 
-    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     final Level level;
     final JType type;
@@ -81,23 +81,12 @@ public class JField implements JObject, Var {
     }
 
     @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.FIELD) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for field!");
-        }
+    public void addAnnotation(JType annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);
     }
 
-    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
+    @Override
+    public Map<JType, Map<String, JStringVar>> getAnnotations() {
         return annotations;
     }
 

@@ -17,7 +17,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
     private final String packageName;
     private final String className;
 
-    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     private final List<String> extensions = new ArrayList<>();
 
@@ -103,6 +103,10 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
             ((JEnum) generatable).setInner();
             ((JEnum) generatable).level = Level.UNNAMED;
             this.innerClasses.add(generatable);
+        } else if (generatable instanceof JAnnotation) {
+            ((JAnnotation) generatable).setInner();
+            ((JAnnotation) generatable).level = Level.UNNAMED;
+            this.innerClasses.add(generatable);
         }
     }
     public String getPackage() {
@@ -149,7 +153,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
 
     @Override
     public JType getType() {
-        throw new RuntimeException("Generate JInterface to get type");
+        return JType.CLASS;
     }
 
     @Override
@@ -162,25 +166,14 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
         return this.getName() + ".class";
     }
 
+
     @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
-        if (!annotation.isAnnotation()) throw new RuntimeException("The class is not an annotation!");
-        Target target = annotation.getAnnotation(Target.class);
-        if (target != null) {
-            boolean hasConstructor = false;
-            for (ElementType elementType : target.value()) {
-                if (elementType == ElementType.TYPE) {
-                    hasConstructor = true;
-                    break;
-                }
-            }
-            if (!hasConstructor) throw new RuntimeException("This annotation is not for class!");
-        }
+    public void addAnnotation(JType annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);
     }
 
     @Override
-    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
+    public Map<JType, Map<String, JStringVar>> getAnnotations() {
         return annotations;
     }
 

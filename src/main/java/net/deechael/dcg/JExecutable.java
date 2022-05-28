@@ -22,7 +22,7 @@ import java.util.function.Function;
  */
 public abstract class JExecutable implements JObject {
 
-    Map<Class<?>, Map<String, JStringVar>> annotations = new HashMap<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     protected final List<Operation> operations = new ArrayList<>();
     private final List<String> extraClasses = new ArrayList<>();
@@ -243,14 +243,15 @@ public abstract class JExecutable implements JObject {
     }
 
     @Override
-    public void addAnnotation(Class<?> annotation, Map<String, JStringVar> values) {
+    public void addAnnotation(JType annotation, Map<String, JStringVar> values) {
         getAnnotations().put(annotation, values);
     }
 
     @Override
-    public Map<Class<?>, Map<String, JStringVar>> getAnnotations() {
+    public Map<JType, Map<String, JStringVar>> getAnnotations() {
         return annotations;
     }
+
 
     /**
      * Be used for inner structure like if-else, try-catch
