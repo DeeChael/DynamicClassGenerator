@@ -1,9 +1,9 @@
 # Dynamic Class Generator 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg)
-[![License](https://img.shields.io/github/license/Ocean-Project/DynamicClassGenerator.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![CodeFactor](https://www.codefactor.io/repository/github/theothers-smp-project/dynamicclassgenerator/badge)](https://www.codefactor.io/repository/github/theothers-smp-project/dynamicclassgenerator)
-[![Forks](https://img.shields.io/github/forks/Ocean-Project/DynamicClassGenerator.svg)](https://github.com/Ocean-Project/DynamicClassGenerator/fork)
-[![Stars](https://img.shields.io/github/stars/Ocean-Project/DynamicClassGenerator.svg)]()
+[![License](https://img.shields.io/github/license/DeeChael/DynamicClassGenerator.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![CodeFactor](https://www.codefactor.io/repository/github/deechael/dynamicclassgenerator/badge)](https://www.codefactor.io/repository/github/theothers-smp-project/dynamicclassgenerator)
+[![Forks](https://img.shields.io/github/forks/DeeChael/DynamicClassGenerator.svg)](https://github.com/DeeChael/DynamicClassGenerator/fork)
+[![Stars](https://img.shields.io/github/stars/DeeChael/DynamicClassGenerator.svg)](https://github.com/DeeChael/DynamicClassGenerator/stargazers)
 ## Allow you to generate classes while the program is running!
 
 #### I have made a plan that I will make DCG 2.00.0 for jdk17+
