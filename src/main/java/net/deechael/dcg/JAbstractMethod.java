@@ -1,7 +1,7 @@
 package net.deechael.dcg;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import net.deechael.dcg.items.Var;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +13,10 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
 
     private final String name;
 
-    private final Map<String, Class<?>> parameters = new HashMap<>();
-
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
+    private final Map<String, JType> parameters = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
-
     private final Level level;
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     public JAbstractMethod(Level level, String methodName) {
         this(level, JType.classType(void.class), methodName);
@@ -30,7 +28,8 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
         this.level = level;
     }
 
-    public void throwing(Class<? extends Throwable>... throwables) {
+    @SafeVarargs
+    public final void throwing(Class<? extends Throwable>... throwables) {
         if (throwables.length == 0) return;
         for (Class<? extends Throwable> throwable : throwables) {
             if (!throwings.contains(throwable)) {
@@ -39,7 +38,14 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
         }
     }
 
-    private Map<String, Class<?>> getParameters() {
+    public Var addParameter(JType clazz, String parameterName) {
+        if (parameterName == null) return null;
+        parameterName = "jparam_" + parameterName;
+        this.parameters.put(parameterName, clazz);
+        return Var.referringVar(clazz, parameterName);
+    }
+
+    private Map<String, JType> getParameters() {
         return parameters;
     }
 
@@ -47,7 +53,7 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
         return new ArrayList<>(throwings);
     }
 
-    private List<Class<?>> getRequirementTypes() {
+    private List<JType> getRequirementTypes() {
         return new ArrayList<>(parameters.values());
     }
 
@@ -55,10 +61,10 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
     public String getString() {
         StringBuilder base = new StringBuilder();
         base.append(this.annotationString()).append("\n").append(this.level.getString()).append(" abstract ").append(this.returnType).append(" ").append(this.name).append("(");
-        List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
+        List<Map.Entry<String, JType>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
-            Map.Entry<String, Class<?>> entry = entries.get(i);
-            base.append(entry.getValue().getName()).append(" ").append(entry.getKey());
+            Map.Entry<String, JType> entry = entries.get(i);
+            base.append(entry.getValue().typeString()).append(" ").append(entry.getKey());
             if (i != entries.size() - 1) {
                 base.append(", ");
             }

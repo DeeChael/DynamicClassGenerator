@@ -1,7 +1,7 @@
 package net.deechael.dcg;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import net.deechael.dcg.items.Var;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +13,12 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
 
     private final String name;
 
-    private final Map<String, Class<?>> parameters = new HashMap<>();
-
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
+    private final Map<String, JType> parameters = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
-
     private final Level level;
-
     private final boolean isFinal;
     private final boolean isStatic;
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     public JNativeMethod(Level level, String methodName, boolean isFinal, boolean isStatic) {
         this(level, JType.classType(void.class), methodName, isFinal, isStatic);
@@ -54,6 +51,13 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
         }
     }
 
+    public Var addParameter(JType clazz, String parameterName) {
+        if (parameterName == null) return null;
+        parameterName = "jparam_" + parameterName;
+        this.parameters.put(parameterName, clazz);
+        return Var.referringVar(clazz, parameterName);
+    }
+
     public List<Class<?>> getThrowings() {
         return new ArrayList<>(throwings);
     }
@@ -69,10 +73,10 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
             base.append(" static");
         }
         base.append(" native ").append(this.returnType).append(" ").append(this.name).append("(");
-        List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.parameters.entrySet());
+        List<Map.Entry<String, JType>> entries = new ArrayList<>(this.parameters.entrySet());
         for (int i = 0; i < entries.size(); i++) {
-            Map.Entry<String, Class<?>> entry = entries.get(i);
-            base.append(entry.getValue().getName()).append(" ").append(entry.getKey());
+            Map.Entry<String, JType> entry = entries.get(i);
+            base.append(entry.getValue().typeString()).append(" ").append(entry.getKey());
             if (i != entries.size() - 1) {
                 base.append(", ");
             }

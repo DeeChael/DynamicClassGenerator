@@ -2,14 +2,10 @@ package net.deechael.dcg;
 
 import net.deechael.dcg.items.Var;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JField implements JObject, Var {
-
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     final Level level;
     final JType type;
@@ -18,7 +14,7 @@ public class JField implements JObject, Var {
     final String name;
     final boolean isFinal;
     final boolean isStatic;
-
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
     private boolean needInit = false;
     private String initBody = "";
 

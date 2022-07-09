@@ -20,23 +20,11 @@ public final class TryCatchInnerCreator {
     private final JExecutable tryBody;
 
     private final List<Map.Entry<Class<? extends Throwable>[], DuObj<String, JExecutable>>> catches = new ArrayList<>();
-
-    private JExecutable finallyBody;
-
-    private boolean editable = true;
-
     private final String varType;
     private final String varName;
     private final Var varValue;
-
-    private String deal(String typeName) {
-        if (typeName.startsWith("[L")) {
-            return typeName.substring(2) + "[]";
-        } else if (typeName.startsWith("[")) {
-            return typeName.substring(1) + "[]";
-        }
-        return typeName;
-    }
+    private JExecutable finallyBody;
+    private boolean editable = true;
 
     public TryCatchInnerCreator(JExecutable executable, DuParameter<JExecutable, Var> tryExecuting, JType clazz, String varName, Var var) {
         varName = "jvar_" + varName;
@@ -49,7 +37,17 @@ public final class TryCatchInnerCreator {
         this.varValue = var;
     }
 
-    public TryCatchInnerCreator catchIt(String throwableObjectName, DuParameter<JExecutable, Var> catchExecuting, Class<? extends Throwable>... throwings) {
+    private String deal(String typeName) {
+        if (typeName.startsWith("[L")) {
+            return typeName.substring(2) + "[]";
+        } else if (typeName.startsWith("[")) {
+            return typeName.substring(1) + "[]";
+        }
+        return typeName;
+    }
+
+    @SafeVarargs
+    public final TryCatchInnerCreator catchIt(String throwableObjectName, DuParameter<JExecutable, Var> catchExecuting, Class<? extends Throwable>... throwings) {
         if (!editable) return this;
         if (throwings.length == 0) return this;
         throwableObjectName = "jthrowable_" + throwableObjectName;

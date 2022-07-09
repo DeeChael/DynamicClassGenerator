@@ -4,35 +4,24 @@ import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
 public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     private final String packageName;
-
     private final String className;
-
-    Level level;
-
     private final List<String> imports = new ArrayList<>();
     private final List<String> importStatics = new ArrayList<>();
-
     private final List<JField> fields = new ArrayList<>();
     private final List<JConstructor> constructors = new ArrayList<>();
     private final List<ClassMethod> methods = new ArrayList<>();
-
     private final List<String> implementations = new ArrayList<>();
-
     private final List<JGeneratable> innerClasses = new ArrayList<>();
-    private boolean inner = false;
-
     private final List<Entry<String, Var[]>> elements = new ArrayList<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
+    Level level;
+    private boolean inner = false;
 
     public JEnum(Level level, @Nullable String packageName, String className) {
         this.level = level;

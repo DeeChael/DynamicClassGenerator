@@ -10,7 +10,10 @@ import javax.tools.ToolProvider;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public final class JGenerator {
@@ -19,6 +22,9 @@ public final class JGenerator {
     private final static JJavaFileManager JAVA_FILE_MANAGER = new JJavaFileManager(COMPILER.getStandardFileManager(null, null, null));
 
     private final static List<File> libraries = new ArrayList<>();
+
+    private JGenerator() {
+    }
 
     public static void loadLibrary(File file) {
         if (file.exists()) {
@@ -85,7 +91,5 @@ public final class JGenerator {
             throw new RuntimeException("Failed to generate the class!");
         }
     }
-
-    private JGenerator() {}
 
 }

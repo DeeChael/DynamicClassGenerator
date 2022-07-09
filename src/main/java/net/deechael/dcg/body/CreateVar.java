@@ -2,9 +2,6 @@ package net.deechael.dcg.body;
 
 import net.deechael.dcg.JType;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
 public final class CreateVar implements Operation {
 
     private final String type;

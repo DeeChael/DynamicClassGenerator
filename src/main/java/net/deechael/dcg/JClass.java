@@ -4,38 +4,26 @@ import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwnable, MethodOwnable, ConstructorOwnable {
 
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     private final String packageName;
-
     private final String className;
-
-    Level level;
-
     private final List<String> imports = new ArrayList<>();
     private final List<String> importStatics = new ArrayList<>();
-
     private final List<JField> fields = new ArrayList<>();
     private final List<JConstructor> constructors = new ArrayList<>();
     private final List<ClassMethod> methods = new ArrayList<>();
-
-    private boolean extending = false;
-    private JType extended = null;
     private final List<String> implementations = new ArrayList<>();
-
     private final List<JGeneratable> innerClasses = new ArrayList<>();
-    private boolean inner = false;
-
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
+    Level level;
     boolean isAbstract;
     boolean isFinal;
+    private boolean extending = false;
+    private JType extended = null;
+    private boolean inner = false;
 
     public JClass(Level level, @Nullable String packageName, String className) {
         this(level, packageName, className, false, false);

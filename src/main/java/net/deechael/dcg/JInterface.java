@@ -4,26 +4,18 @@ import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 public final class JInterface implements JType, JGeneratable, JObject, Var {
 
     private final List<String> imports = new ArrayList<>();
-
-    Level level;
     private final String packageName;
     private final String className;
-
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     private final List<String> extensions = new ArrayList<>();
-
     private final List<InterfaceMethod> methods = new ArrayList<>();
-
     private final List<JGeneratable> innerClasses = new ArrayList<>();
+    Level level;
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
     private boolean inner = false;
 
     public JInterface(Level level, @Nullable String packageName, String className) {
@@ -90,7 +82,8 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
     }
 
     public void addInner(JGeneratable generatable) {
-        if (generatable.getLevel() == Level.PRIVATE || generatable.getLevel() == Level.PROTECTED) throw new RuntimeException("Interface not supports private or protected inner classes");
+        if (generatable.getLevel() == Level.PRIVATE || generatable.getLevel() == Level.PROTECTED)
+            throw new RuntimeException("Interface not supports private or protected inner classes");
         if (generatable instanceof JClass) {
             ((JClass) generatable).setInner();
             ((JClass) generatable).level = Level.UNNAMED;
@@ -109,6 +102,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
             this.innerClasses.add(generatable);
         }
     }
+
     public String getPackage() {
         return packageName;
     }

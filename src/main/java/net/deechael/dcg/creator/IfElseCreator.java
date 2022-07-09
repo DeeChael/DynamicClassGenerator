@@ -1,8 +1,8 @@
 package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
-import net.deechael.dcg.body.IfElse;
 import net.deechael.dcg.Requirement;
+import net.deechael.dcg.body.IfElse;
 import net.deechael.useless.function.parameters.Parameter;
 
 import java.util.AbstractMap;
@@ -16,11 +16,8 @@ public final class IfElseCreator {
 
     private final Requirement ifRequirement;
     private final JExecutable ifBody;
-
-    private JExecutable elseBody;
-
     private final List<Map.Entry<Requirement, JExecutable>> elseifBodies = new ArrayList<>();
-
+    private JExecutable elseBody;
     private boolean editable = true;
 
     public IfElseCreator(JExecutable executable, Requirement requirement, Parameter<JExecutable> ifExecuting) {

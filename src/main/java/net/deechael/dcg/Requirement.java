@@ -4,12 +4,9 @@ import net.deechael.dcg.items.Var;
 
 public interface Requirement {
 
-    String getString();
-
     static Requirement isInstanceof(Var var, JType clazz) {
         return () -> var.varString() + " instanceof " + clazz.typeString();
     }
-
 
     static Requirement isEqual(Var var, Var another) {
         return () -> var.varString() + " == " + another.varString();
@@ -74,5 +71,7 @@ public interface Requirement {
     static Requirement isSmallerOrEqual(Var one, Var another) {
         return () -> "(" + one.varString() + ") <= (" + another.varString() + ")";
     }
+
+    String getString();
 
 }

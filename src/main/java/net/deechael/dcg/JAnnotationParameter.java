@@ -1,16 +1,13 @@
 package net.deechael.dcg;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class JAnnotationParameter implements JObject {
 
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     private final JType type;
     private final String name;
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
     private JStringVar defaultValue = null;
 
     JAnnotationParameter(JType type, String name) {

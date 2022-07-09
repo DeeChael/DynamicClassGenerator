@@ -5,12 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Var {
 
-    JType getType();
-
-    String getName();
-
-    String varString();
-
     static Var directField(Var var, String fieldName) {
         return new FieldVar(var.varString(), fieldName);
     }
@@ -204,5 +198,11 @@ public interface Var {
     static Var arrayElement(Var arrayVar, Var index) {
         return new ArrayElementVar(arrayVar, index);
     }
+
+    JType getType();
+
+    String getName();
+
+    String varString();
 
 }

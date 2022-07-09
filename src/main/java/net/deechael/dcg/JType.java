@@ -16,18 +16,18 @@ public interface JType {
     JType STRING = classType(String.class);
     JType CLASS = classType(Class.class);
 
-    String typeString();
-
     static JType classType(Class<?> clazz) {
         return new JVMType(clazz);
     }
 
     static JType typedClassType(Class<?> clazz, JType... types) {
-        return new JVMTypedType(clazz,  types);
+        return new JVMTypedType(clazz, types);
     }
 
     static JType typeType(String typeId) {
         return new CustomType(typeId);
     }
+
+    String typeString();
 
 }

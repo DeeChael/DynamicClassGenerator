@@ -4,8 +4,6 @@ import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,22 +11,14 @@ import java.util.Map;
 
 public class JAnnotation implements JObject, JGeneratable, JType, Var {
 
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     private final String packageName;
-
     private final String className;
-
-    Level level;
-
     private final List<String> imports = new ArrayList<>();
     private final List<String> importStatics = new ArrayList<>();
-
-
-    private boolean inner = false;
-
-
     private final List<JAnnotationParameter> parameters = new ArrayList<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
+    Level level;
+    private boolean inner = false;
 
     public JAnnotation(Level level, @Nullable String packageName, @NotNull String className) {
         this.level = level;

@@ -29,6 +29,7 @@ final class SetValueVar implements Var {
         if (got) {
             return originalTarget;
         } else {
+            got = true;
             return "(" + originalTarget + " = " + value.varString() + ")";
         }
     }

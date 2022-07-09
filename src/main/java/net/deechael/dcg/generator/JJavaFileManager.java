@@ -1,13 +1,16 @@
 package net.deechael.dcg.generator;
 
-import javax.tools.*;
-import java.util.*;
+import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
+import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import java.util.ArrayList;
+import java.util.List;
 
 final class JJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
-    private JJavaFileObject javaFileObject;
-
     private final List<JJavaFileObject> cache = new ArrayList<>();
+    private JJavaFileObject javaFileObject;
 
     public JJavaFileManager(JavaFileManager fileManager) {
         super(fileManager);

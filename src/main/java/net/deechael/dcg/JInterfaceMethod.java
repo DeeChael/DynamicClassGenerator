@@ -1,7 +1,5 @@
 package net.deechael.dcg;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +12,8 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     private final String name;
 
     private final Map<String, Class<?>> parameters = new HashMap<>();
-
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
     private final List<Class<?>> throwings = new ArrayList<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     public JInterfaceMethod(String methodName) {
         this(JType.classType(void.class), methodName);
@@ -27,7 +24,8 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         this.name = methodName;
     }
 
-    public void throwing(Class<? extends Throwable>... throwables) {
+    @SafeVarargs
+    public final void throwing(Class<? extends Throwable>... throwables) {
         if (throwables.length == 0) return;
         for (Class<? extends Throwable> throwable : throwables) {
             if (!throwings.contains(throwable)) {
@@ -36,7 +34,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         }
     }
 
-    protected Map<String, Class<?>> getParameters() {
+    private Map<String, Class<?>> getParameters() {
         return parameters;
     }
 
@@ -44,7 +42,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
         return new ArrayList<>(throwings);
     }
 
-    protected List<Class<?>> getRequirementTypes() {
+    private List<Class<?>> getRequirementTypes() {
         return new ArrayList<>(parameters.values());
     }
 

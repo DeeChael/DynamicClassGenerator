@@ -11,7 +11,10 @@ import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -22,10 +25,9 @@ import java.util.function.Function;
  */
 public abstract class JExecutable implements JObject {
 
-    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
-
     protected final List<Operation> operations = new ArrayList<>();
     private final List<String> extraClasses = new ArrayList<>();
+    Map<JType, Map<String, JStringVar>> annotations = new HashMap<>();
 
     private String deal(String typeName) {
         if (typeName.startsWith("[L")) {

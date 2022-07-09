@@ -2,8 +2,6 @@ package net.deechael.dcg;
 
 import net.deechael.dcg.body.Operation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

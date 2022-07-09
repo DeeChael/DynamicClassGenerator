@@ -9,17 +9,29 @@ import java.util.Map;
 
 final class JClassLoader extends ClassLoader {
 
-    private final Map<String, Class<?>> generated_classes = new HashMap<>();
-
     private final static List<ClassLoader> contextLoaders = new ArrayList<>();
-
     private final static JClassLoader instance = new JClassLoader();
+    private final Map<String, Class<?>> generated_classes = new HashMap<>();
 
     private JClassLoader() {
     }
 
+    public static JClassLoader getInstance() {
+        return instance;
+    }
+
+    public static Class<?> generate(String className, byte[] bytes) {
+        return getInstance().generate0(className, bytes);
+    }
+
+    public static void addLoader(ClassLoader classLoader) {
+        if (!contextLoaders.contains(classLoader)) {
+            contextLoaders.add(classLoader);
+        }
+    }
+
     @Override
-    public Class<?> loadClass(String name)  {
+    public Class<?> loadClass(String name) {
         if (generated_classes.containsKey(name)) {
             return generated_classes.get(name);
         }
@@ -60,20 +72,6 @@ final class JClassLoader extends ClassLoader {
         Class<?> clazz = defineClass(className, bytes, 0, bytes.length);
         this.generated_classes.put(className, clazz);
         return clazz;
-    }
-
-    public static JClassLoader getInstance() {
-        return instance;
-    }
-
-    public static Class<?> generate(String className, byte[] bytes) {
-        return getInstance().generate0(className, bytes);
-    }
-
-    public static void addLoader(ClassLoader classLoader) {
-        if (!contextLoaders.contains(classLoader)) {
-            contextLoaders.add(classLoader);
-        }
     }
 
 }

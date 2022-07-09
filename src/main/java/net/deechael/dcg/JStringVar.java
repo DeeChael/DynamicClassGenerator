@@ -2,7 +2,6 @@ package net.deechael.dcg;
 
 import net.deechael.dcg.items.Var;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
@@ -14,30 +13,12 @@ public final class JStringVar implements Var {
 
     private JStringVar(Type type, String value) {
         this.type = type;
-        this.dcgType = type.getDcgType();
+        if (type != null) {
+            this.dcgType = type.getDcgType();
+        } else {
+            this.dcgType = null;
+        }
         this.value = value;
-    }
-
-    public String getValueString() {
-        return value;
-    }
-
-    @Override
-    public JType getType() {
-        return this.dcgType;
-    }
-
-    public Type getJStringVarType() {
-        return this.type;
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    public String varString() {
-        return getValueString();
     }
 
     public static JStringVar nullVar() {
@@ -231,15 +212,15 @@ public final class JStringVar implements Var {
         return arrayVar(Arrays.stream(array).toArray());
     }
 
-    public static JStringVar arrayVar(Class[] array) {
+    public static JStringVar arrayVar(Class<?>[] array) {
         return arrayVar(Arrays.stream(array).toArray());
     }
 
-    public static JStringVar arrayVar(Class[][] array) {
+    public static JStringVar arrayVar(Class<?>[][] array) {
         return arrayVar(Arrays.stream(array).toArray());
     }
 
-    public static JStringVar arrayVar(Class[][][] array) {
+    public static JStringVar arrayVar(Class<?>[][][] array) {
         return arrayVar(Arrays.stream(array).toArray());
     }
 
@@ -293,7 +274,29 @@ public final class JStringVar implements Var {
         return type == Double.class || type == Float.class || type == Long.class || type == Class.class || type == Character.class || type == Short.class || type == Byte.class || type == Integer.class || type == String.class || type.isEnum() || type.isPrimitive();
     }
 
-    public static enum Type {
+    public String getValueString() {
+        return value;
+    }
+
+    @Override
+    public JType getType() {
+        return this.dcgType;
+    }
+
+    public Type getJStringVarType() {
+        return this.type;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    public String varString() {
+        return getValueString();
+    }
+
+    public enum Type {
         STRING(JType.STRING),
         INT(JType.INT),
         BOOLEAN(JType.BOOLEAN),
