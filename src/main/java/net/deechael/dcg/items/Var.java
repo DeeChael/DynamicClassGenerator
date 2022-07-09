@@ -197,4 +197,12 @@ public interface Var {
         return new LambdaVar(clazz, "new");
     }
 
+    static Var arrayElement(Var arrayVar, int index) {
+        return arrayElement(arrayVar, JStringVar.intVar(index));
+    }
+
+    static Var arrayElement(Var arrayVar, Var index) {
+        return new ArrayElementVar(arrayVar, index);
+    }
+
 }
