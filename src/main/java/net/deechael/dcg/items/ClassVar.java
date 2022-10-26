@@ -11,6 +11,11 @@ final class ClassVar implements Var {
     }
 
     @Override
+    public JType getType() {
+        return JType.CLASS;
+    }
+
+    @Override
     public String getName() {
         throw new RuntimeException("Class var doesn't have name!");
     }
