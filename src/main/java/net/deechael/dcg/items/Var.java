@@ -199,6 +199,10 @@ public interface Var {
         return new ArrayElementVar(arrayVar, index);
     }
 
+    static Var classVar(JType type) {
+        return new ClassVar(type);
+    }
+
     JType getType();
 
     String getName();

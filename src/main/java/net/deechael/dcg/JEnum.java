@@ -208,7 +208,7 @@ public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwna
         if (packageName != null) base.append("package ").append(packageName).append(";\n");
         imports.forEach(importClass -> base.append("import ").append(importClass).append(";\n"));
         importStatics.forEach(importStatic -> base.append("import static ").append(importStatic).append(";\n"));
-        base.append(this.annotationString()).append(level.getString());
+        base.append(this.annotationString(getAnnotations())).append(level.getString());
         if (this.inner) {
             base.append(" static");
         }
@@ -236,6 +236,50 @@ public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwna
     @Override
     public String typeString() {
         return this.getName();
+    }
+
+
+    public static class Builder {
+
+        private Level level;
+        private String packageName = null;
+        private String className = null;
+
+        private Builder(Level level) {
+            this.level = level;
+        }
+
+        public Builder withPackage(String name) {
+            this.packageName = name;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.className = name;
+            return this;
+        }
+
+        public JEnum build() {
+            if (className == null)
+                throw new RuntimeException("The class name cannot be null!");
+            return new JEnum(level, packageName, className);
+        }
+        public static Builder ofPublic() {
+            return new Builder(Level.PUBLIC);
+        }
+
+        public static Builder ofPrivate() {
+            return new Builder(Level.PRIVATE);
+        }
+
+        public static Builder ofProtected() {
+            return new Builder(Level.PROTECTED);
+        }
+
+        public static Builder of() {
+            return new Builder(Level.UNNAMED);
+        }
+
     }
 
 }

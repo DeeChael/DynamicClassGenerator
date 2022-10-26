@@ -123,7 +123,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
         for (String importClass : imports) {
             base.append("import ").append(importClass).append(";\n");
         }
-        base.append(this.annotationString()).append(level.getString());
+        base.append(this.annotationString(getAnnotations())).append(level.getString());
         if (this.inner) {
             base.append(" static");
         }
@@ -174,6 +174,49 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
     @Override
     public String typeString() {
         return this.getName();
+    }
+
+    public static class Builder {
+
+        private Level level;
+        private String packageName = null;
+        private String className = null;
+
+        private Builder(Level level) {
+            this.level = level;
+        }
+
+        public Builder withPackage(String name) {
+            this.packageName = name;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.className = name;
+            return this;
+        }
+
+        public JInterface build() {
+            if (className == null)
+                throw new RuntimeException("The class name cannot be null!");
+            return new JInterface(level, packageName, className);
+        }
+        public static Builder ofPublic() {
+            return new Builder(Level.PUBLIC);
+        }
+
+        public static Builder ofPrivate() {
+            return new Builder(Level.PRIVATE);
+        }
+
+        public static Builder ofProtected() {
+            return new Builder(Level.PROTECTED);
+        }
+
+        public static Builder of() {
+            return new Builder(Level.UNNAMED);
+        }
+
     }
 
 }

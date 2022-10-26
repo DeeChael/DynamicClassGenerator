@@ -19,7 +19,7 @@
 <dependency>
     <groupId>net.deechael</groupId>
     <artifactId>dcg</artifactId>
-    <version>1.04.0</version>
+    <version>1.05.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -27,7 +27,7 @@
 ```kotlin
 dependencies { 
     //...
-    implementation 'net.deechael:dcg:1.04.0'
+    implementation 'net.deechael:dcg:1.05.0'
 }
 ```
 

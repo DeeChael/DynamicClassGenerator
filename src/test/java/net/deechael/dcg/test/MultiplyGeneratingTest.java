@@ -9,8 +9,16 @@ import java.util.List;
 public class MultiplyGeneratingTest {
 
     public static void main(String[] args) throws InstantiationException, IllegalAccessException {
-        JClass class1 = new JClass(Level.PUBLIC, "io.dcg", "AClass");
-        JClass class2 = new JClass(Level.PUBLIC, "io.dcg", "BClass");
+        JClass class1 = JClass.Builder
+                .ofPublic()
+                .withPackage("io.dcg")
+                .withName("AClass")
+                .build();
+        JClass class2 = JClass.Builder
+                .ofPublic()
+                .withPackage("io.dcg")
+                .withName("BClass")
+                .build();
         class1.importClass(class1.getName());
         JConstructor constructor = class1.addConstructor(Level.PUBLIC);
         constructor.invokeMethod(Var.staticField(System.class, "out"), "println", Var.custom("new BClass()"));

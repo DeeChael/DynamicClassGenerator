@@ -44,7 +44,19 @@ public abstract class JExecutable implements JObject {
 
     public Var createVar(@NotNull JType type, @NotNull String name, @NotNull Var var) {
         name = "jvar_" + name;
-        operations.add(new CreateVar(type, name, var.varString()));
+        operations.add(new CreateVar(null, false, type, name, var.varString()));
+        return Var.referringVar(type, name);
+    }
+
+    public Var createVar(boolean isFinal, @NotNull JType type, @NotNull String name, @NotNull Var var) {
+        name = "jvar_" + name;
+        operations.add(new CreateVar(null, isFinal, type, name, var.varString()));
+        return Var.referringVar(type, name);
+    }
+
+    public Var createVar(Map<JType, Map<String, JStringVar>> annotations, boolean isFinal, @NotNull JType type, @NotNull String name, @NotNull Var var) {
+        name = "jvar_" + name;
+        operations.add(new CreateVar(annotations, isFinal, type, name, var.varString()));
         return Var.referringVar(type, name);
     }
 

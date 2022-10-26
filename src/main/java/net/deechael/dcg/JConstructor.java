@@ -42,12 +42,16 @@ public final class JConstructor extends JExecutableParametered {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append(level.getString()).append(" ").append(className).append(" (");
-        List<Map.Entry<String, String>> entrySet = new ArrayList<>(getParameters().entrySet());
-        for (int i = 0; i < entrySet.size(); i++) {
-            Map.Entry<String, String> entry = entrySet.get(i);
+        base.append(this.annotationString(getAnnotations())).append(level.getString()).append(" ").append(className).append(" (");
+        List<Map.Entry<String, String>> entries = new ArrayList<>(this.parameters.entrySet());
+        for (int i = 0; i < entries.size(); i++) {
+            Map.Entry<String, String> entry = entries.get(i);
+            if (annotatedParameters.containsKey(entry.getKey()))
+                base.append(this.annotationString(annotatedParameters.get(entry.getKey())));
+            if (finalledParameters.contains(entry.getKey()))
+                base.append("final ");
             base.append(entry.getValue()).append(" ").append(entry.getKey());
-            if (i != entrySet.size() - 1) {
+            if (i != entries.size() - 1) {
                 base.append(", ");
             }
         }

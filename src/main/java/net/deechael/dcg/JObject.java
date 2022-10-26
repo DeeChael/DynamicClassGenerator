@@ -12,9 +12,9 @@ public interface JObject {
 
     Map<JType, Map<String, JStringVar>> getAnnotations();
 
-    default String annotationString() {
+    default String annotationString(Map<JType, Map<String, JStringVar>> annotations) {
         StringBuilder base = new StringBuilder();
-        Map<JType, Map<String, JStringVar>> map = getAnnotations();
+        Map<JType, Map<String, JStringVar>> map = annotations;
         if (!map.isEmpty()) {
             for (Map.Entry<JType, Map<String, JStringVar>> entry : map.entrySet()) {
                 base.append("@").append(entry.getKey().typeString());

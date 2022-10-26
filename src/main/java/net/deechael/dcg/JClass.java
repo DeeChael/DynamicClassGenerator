@@ -25,11 +25,11 @@ public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwn
     private JType extended = null;
     private boolean inner = false;
 
-    public JClass(Level level, @Nullable String packageName, String className) {
+    JClass(Level level, @Nullable String packageName, String className) {
         this(level, packageName, className, false, false);
     }
 
-    public JClass(Level level, @Nullable String packageName, String className, boolean isAbstract) {
+    JClass(Level level, @Nullable String packageName, String className, boolean isAbstract) {
         this(level, packageName, className, isAbstract, false);
     }
 
@@ -217,7 +217,7 @@ public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwn
         if (packageName != null) base.append("package ").append(packageName).append(";\n");
         imports.forEach(importClass -> base.append("import ").append(importClass).append(";\n"));
         importStatics.forEach(importStatic -> base.append("import static ").append(importStatic).append(";\n"));
-        base.append(this.annotationString()).append(level.getString());
+        base.append(this.annotationString(getAnnotations())).append(level.getString());
         if (this.inner) {
             base.append(" static");
         }
@@ -239,6 +239,61 @@ public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwn
     @Override
     public String typeString() {
         return this.getName();
+    }
+
+    public static class Builder {
+
+        private Level level;
+        private String packageName = null;
+        private String className = null;
+        private boolean isAbstract;
+        private boolean isFinal;
+
+        private Builder(Level level) {
+            this.level = level;
+        }
+
+        public Builder withPackage(String name) {
+            this.packageName = name;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.className = name;
+            return this;
+        }
+
+        public Builder withAbstract() {
+            this.isAbstract = true;
+            return this;
+        }
+
+        public Builder withFinal() {
+            this.isFinal = true;
+            return this;
+        }
+
+        public JClass build() {
+            if (className == null)
+                throw new RuntimeException("The class name cannot be null!");
+            return new JClass(level, packageName, className, isAbstract, isFinal);
+        }
+        public static Builder ofPublic() {
+            return new Builder(Level.PUBLIC);
+        }
+
+        public static Builder ofPrivate() {
+            return new Builder(Level.PRIVATE);
+        }
+
+        public static Builder ofProtected() {
+            return new Builder(Level.PROTECTED);
+        }
+
+        public static Builder of() {
+            return new Builder(Level.UNNAMED);
+        }
+
     }
 
 }

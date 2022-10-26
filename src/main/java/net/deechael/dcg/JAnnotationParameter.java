@@ -22,7 +22,7 @@ public final class JAnnotationParameter implements JObject {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append(this.type.typeString()).append(" ").append(this.name).append("()");
+        base.append(this.annotationString(getAnnotations())).append(this.type.typeString()).append(" ").append(this.name).append("()");
         if (this.defaultValue != null) {
             base.append(" default ").append(this.defaultValue.varString());
         }

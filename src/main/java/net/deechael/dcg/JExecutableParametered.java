@@ -9,7 +9,9 @@ import java.util.Map;
 
 public abstract class JExecutableParametered extends JExecutable {
 
-    private final Map<String, String> parameters = new HashMap<>();
+    protected final Map<String, String> parameters = new HashMap<>();
+    protected final List<String> finalledParameters = new ArrayList<>();
+    protected final Map<String, Map<JType, Map<String, JStringVar>>> annotatedParameters = new HashMap<>();
 
     private final List<String> throwings = new ArrayList<>();
 
@@ -17,6 +19,33 @@ public abstract class JExecutableParametered extends JExecutable {
         if (parameterName == null) return null;
         parameterName = "jparam_" + parameterName;
         this.parameters.put(parameterName, clazz.typeString());
+        return Var.referringVar(clazz, parameterName);
+    }
+
+    public Var addParameter(JType clazz, String parameterName, boolean isFinal) {
+        if (parameterName == null) return null;
+        parameterName = "jparam_" + parameterName;
+        this.parameters.put(parameterName, clazz.typeString());
+        if (isFinal)
+            this.finalledParameters.add(parameterName);
+        return Var.referringVar(clazz, parameterName);
+    }
+
+    public Var addParameter(JType clazz, String parameterName, Map<JType, Map<String, JStringVar>> annotations) {
+        if (parameterName == null) return null;
+        parameterName = "jparam_" + parameterName;
+        this.parameters.put(parameterName, clazz.typeString());
+        this.annotatedParameters.put(parameterName, annotations);
+        return Var.referringVar(clazz, parameterName);
+    }
+
+    public Var addParameter(JType clazz, String parameterName, boolean isFinal, Map<JType, Map<String, JStringVar>> annotations) {
+        if (parameterName == null) return null;
+        parameterName = "jparam_" + parameterName;
+        this.parameters.put(parameterName, clazz.typeString());
+        if (isFinal)
+            this.finalledParameters.add(parameterName);
+        this.annotatedParameters.put(parameterName, annotations);
         return Var.referringVar(clazz, parameterName);
     }
 

@@ -109,7 +109,7 @@ public class JAnnotation implements JObject, JGeneratable, JType, Var {
         if (packageName != null) builder.append("package ").append(packageName).append(";\n");
         imports.forEach(importClass -> builder.append("import ").append(importClass).append(";\n"));
         importStatics.forEach(importStatic -> builder.append("import static ").append(importStatic).append(";\n"));
-        builder.append(this.annotationString()).append(level.getString());
+        builder.append(this.annotationString(getAnnotations())).append(level.getString());
         if (this.inner) {
             builder.append(" static");
         }
@@ -122,6 +122,49 @@ public class JAnnotation implements JObject, JGeneratable, JType, Var {
     @Override
     public String typeString() {
         return this.getName();
+    }
+
+    public static class Builder {
+
+        private Level level;
+        private String packageName = null;
+        private String className = null;
+
+        private Builder(Level level) {
+            this.level = level;
+        }
+
+        public Builder withPackage(String name) {
+            this.packageName = name;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.className = name;
+            return this;
+        }
+
+        public JAnnotation build() {
+            if (className == null)
+                throw new RuntimeException("The class name cannot be null!");
+            return new JAnnotation(level, packageName, className);
+        }
+        public static Builder ofPublic() {
+            return new Builder(Level.PUBLIC);
+        }
+
+        public static Builder ofPrivate() {
+            return new Builder(Level.PRIVATE);
+        }
+
+        public static Builder ofProtected() {
+            return new Builder(Level.PROTECTED);
+        }
+
+        public static Builder of() {
+            return new Builder(Level.UNNAMED);
+        }
+
     }
 
 }

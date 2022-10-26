@@ -49,7 +49,7 @@ public final class JInterfaceMethod implements JObject, InterfaceMethod {
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.returnType).append(" ").append(this.name).append("(");
+        base.append(this.annotationString(getAnnotations())).append("\n").append(this.returnType).append(" ").append(this.name).append("(");
         List<Map.Entry<String, Class<?>>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, Class<?>> entry = entries.get(i);

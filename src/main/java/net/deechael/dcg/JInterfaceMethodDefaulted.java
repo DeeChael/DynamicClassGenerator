@@ -23,15 +23,19 @@ public final class JInterfaceMethodDefaulted extends JExecutableParametered impl
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString())
+        base.append(this.annotationString(getAnnotations()))
                 .append("default ")
                 .append(returnType)
                 .append(" ")
                 .append(methodName)
                 .append("(");
-        List<Map.Entry<String, String>> entries = new ArrayList<>(this.getParameters().entrySet());
+        List<Map.Entry<String, String>> entries = new ArrayList<>(this.parameters.entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, String> entry = entries.get(i);
+            if (annotatedParameters.containsKey(entry.getKey()))
+                base.append(this.annotationString(annotatedParameters.get(entry.getKey())));
+            if (finalledParameters.contains(entry.getKey()))
+                base.append("final ");
             base.append(entry.getValue()).append(" ").append(entry.getKey());
             if (i != entries.size() - 1) {
                 base.append(", ");

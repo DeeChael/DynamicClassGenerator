@@ -65,7 +65,7 @@ public final class JNativeMethod implements ClassMethod, NonStructureMethod, JOb
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.level.getString());
+        base.append(this.annotationString(getAnnotations())).append("\n").append(this.level.getString());
         if (isFinal) {
             base.append(" final");
         }

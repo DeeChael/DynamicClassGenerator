@@ -11,7 +11,11 @@ import java.net.URISyntaxException;
 public class Example {
 
     public static void main(String[] args) throws URISyntaxException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        JClass clazz = new JClass(Level.PUBLIC, "net.deechael.test", "DynamicClassGeneratorTest");
+        JClass clazz = JClass.Builder
+                .ofPublic()
+                .withPackage("net.deechael.test")
+                .withName("DynamicClassGeneratorTest")
+                .build();
         JField field = clazz.addField(Level.PUBLIC, JType.classType(String.class), "parent", false, false);
         field.initialize(JStringVar.stringVar("aaaaaaaaaaaaaaaaaaaaaaa"));
         JConstructor constructor = clazz.addConstructor(Level.PUBLIC);

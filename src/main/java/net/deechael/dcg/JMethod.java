@@ -43,7 +43,7 @@ public final class JMethod extends JExecutableParametered implements ClassMethod
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append(level.getString()).append(" ");
+        base.append(this.annotationString(getAnnotations())).append(level.getString()).append(" ");
         if (isFinal) {
             base.append("final ");
         }
@@ -54,9 +54,13 @@ public final class JMethod extends JExecutableParametered implements ClassMethod
             base.append("synchronized ");
         }
         base.append(returnType).append(" ").append(methodName).append("(");
-        List<Map.Entry<String, String>> entries = new ArrayList<>(this.getParameters().entrySet());
+        List<Map.Entry<String, String>> entries = new ArrayList<>(this.parameters.entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, String> entry = entries.get(i);
+            if (annotatedParameters.containsKey(entry.getKey()))
+                base.append(this.annotationString(annotatedParameters.get(entry.getKey())));
+            if (finalledParameters.contains(entry.getKey()))
+                base.append("final ");
             base.append(entry.getValue()).append(" ").append(entry.getKey());
             if (i != entries.size() - 1) {
                 base.append(", ");

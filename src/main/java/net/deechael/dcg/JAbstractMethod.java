@@ -60,7 +60,7 @@ public final class JAbstractMethod implements ClassMethod, NonStructureMethod, J
     @Override
     public String getString() {
         StringBuilder base = new StringBuilder();
-        base.append(this.annotationString()).append("\n").append(this.level.getString()).append(" abstract ").append(this.returnType).append(" ").append(this.name).append("(");
+        base.append(this.annotationString(getAnnotations())).append("\n").append(this.level.getString()).append(" abstract ").append(this.returnType).append(" ").append(this.name).append("(");
         List<Map.Entry<String, JType>> entries = new ArrayList<>(this.getParameters().entrySet());
         for (int i = 0; i < entries.size(); i++) {
             Map.Entry<String, JType> entry = entries.get(i);
