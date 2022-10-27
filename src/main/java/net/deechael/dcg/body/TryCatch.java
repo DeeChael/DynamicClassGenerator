@@ -39,7 +39,7 @@ public final class TryCatch implements Operation {
                     base.append(" | ");
                 }
             }
-            base.append(" ").append(duObj.getFirst()).append(") {\n")
+            base.append(" ").append(duObj.getObject()).append(") {\n")
                     .append(duObj.getSecond().getString()).append("\n")
                     .append("}");
         }

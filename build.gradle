@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group project.dcg_group
+version project.dcg_version
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+    implementation 'net.deechael:Useless:1.03.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.dcg_group
+            artifactId = 'dcg'
+            version = project.dcg_version
+            from components.java
+
+            pom {
+                name = 'DynamicClassGenerator'
+                description = 'Allow you to generate classes while the program is running'
+                url = 'https://github.com/DeeChael/DynamicClassGenerator'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'deechael'
+                        name = 'DeeChael'
+                        email = 'DeeChael@outlook.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/DeeChael/DynamicClassGenerator.git'
+                    developerConnection = 'scm:git:ssh://git@github.com:DeeChael/DynamicClassGenerator.git'
+                    url = 'https://github.com/DeeChael/DynamicClassGenerator'
+                }
+            }
+        }
+    }
+
+    repositories {
+        var ENV = System.getenv()
+        maven {
+            credentials {
+                username = ENV.get("OSSRH_USERNAME")
+                password = ENV.get("OSSRH_PASSWORD")
+            }
+            name = 'release'
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.maven
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}

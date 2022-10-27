@@ -58,7 +58,7 @@ public final class JGenerator {
         }
         JavaCompiler.CompilationTask task = COMPILER.getTask(null, JAVA_FILE_MANAGER, null, options, null, Arrays.stream(generatables).map(generatable -> new DuObj<>(generatable.getSimpleName(), generatable.getString())).map(obj -> {
             try {
-                return new StringObject(new URI(obj.getFirst() + ".java"), JavaFileObject.Kind.SOURCE, obj.getSecond());
+                return new StringObject(new URI(obj.getObject() + ".java"), JavaFileObject.Kind.SOURCE, obj.getSecond());
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
