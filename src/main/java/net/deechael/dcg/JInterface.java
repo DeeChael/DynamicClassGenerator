@@ -1,6 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -178,7 +177,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
 
     public static class Builder {
 
-        private Level level;
+        private final Level level;
         private String packageName = null;
         private String className = null;
 
@@ -201,6 +200,7 @@ public final class JInterface implements JType, JGeneratable, JObject, Var {
                 throw new RuntimeException("The class name cannot be null!");
             return new JInterface(level, packageName, className);
         }
+
         public static Builder ofPublic() {
             return new Builder(Level.PUBLIC);
         }

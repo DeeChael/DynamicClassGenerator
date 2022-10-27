@@ -2,7 +2,7 @@ package net.deechael.dcg.test;
 
 import net.deechael.dcg.*;
 import net.deechael.dcg.generator.JGenerator;
-import net.deechael.dcg.items.Var;
+import net.deechael.dcg.Var;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +48,7 @@ public class Example {
         method.setFieldValue(field, JStringVar.stringVar("bbbbbbbbbbbbbbbbbbbb"));
         method.invokeMethod(method_human, "print", field);
 
-        Class<?> generated = JGenerator.generate(clazz);
+        Class<?> generated = JGenerator.generate(clazz).get(0);
         Constructor<?> cons = generated.getConstructor(String.class, Human.class);
         Object instance = cons.newInstance("Test message!", new Human("Name", 16));
         generated.getMethod("testing", Human.class).invoke(instance, new Human("DeeChael", 16));

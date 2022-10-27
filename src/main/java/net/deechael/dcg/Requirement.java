@@ -1,7 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
-
 public interface Requirement {
 
     static Requirement isInstanceof(Var var, JType clazz) {

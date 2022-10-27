@@ -1,6 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -243,7 +242,7 @@ public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwn
 
     public static class Builder {
 
-        private Level level;
+        private final Level level;
         private String packageName = null;
         private String className = null;
         private boolean isAbstract;
@@ -278,6 +277,7 @@ public final class JClass implements JObject, JGeneratable, JType, Var, FieldOwn
                 throw new RuntimeException("The class name cannot be null!");
             return new JClass(level, packageName, className, isAbstract, isFinal);
         }
+
         public static Builder ofPublic() {
             return new Builder(Level.PUBLIC);
         }

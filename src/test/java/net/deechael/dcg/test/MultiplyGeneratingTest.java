@@ -2,7 +2,7 @@ package net.deechael.dcg.test;
 
 import net.deechael.dcg.*;
 import net.deechael.dcg.generator.JGenerator;
-import net.deechael.dcg.items.Var;
+import net.deechael.dcg.Var;
 
 import java.util.List;
 

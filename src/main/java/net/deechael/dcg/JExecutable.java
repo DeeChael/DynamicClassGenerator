@@ -1,11 +1,10 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.body.*;
 import net.deechael.dcg.creator.IfElseCreator;
 import net.deechael.dcg.creator.SwitchCaseCreator;
 import net.deechael.dcg.creator.TryCatchCreator;
 import net.deechael.dcg.creator.TryCatchInnerCreator;
-import net.deechael.dcg.items.Var;
+import net.deechael.dcg.operation.*;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
 import org.jetbrains.annotations.NotNull;

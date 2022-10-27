@@ -1,8 +1,8 @@
 package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
-import net.deechael.dcg.body.SwitchCase;
-import net.deechael.dcg.items.Var;
+import net.deechael.dcg.Var;
+import net.deechael.dcg.operation.SwitchCase;
 import net.deechael.useless.function.parameters.Parameter;
 
 import java.util.AbstractMap;
@@ -37,12 +37,12 @@ public final class SwitchCaseCreator {
         return this;
     }
 
-    public void defaultCase(Parameter<JExecutable.JExecutable4Switch> parameter) {
-        if (!editable) return;
+    public SwitchCaseCreator defaultCase(Parameter<JExecutable.JExecutable4Switch> parameter) {
+        if (!editable) return this;
         JExecutable.JExecutable4Switch caseBody = new JExecutable.JExecutable4Switch();
         parameter.apply(caseBody);
         this.defaultCaseBody = caseBody;
-        done();
+        return this;
     }
 
     public void done() {

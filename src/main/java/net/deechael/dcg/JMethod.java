@@ -1,6 +1,6 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.body.Operation;
+import net.deechael.dcg.operation.Operation;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,12 @@ public final class JGenerator {
 
     public static void addLoader(ClassLoader classLoader) {
         JClassLoader.addLoader(classLoader);
+    }
+
+    public static List<Class<?>> generate(Iterable<JGeneratable> generatables) {
+        List<JGeneratable> generatableList = new ArrayList<>();
+        generatables.iterator().forEachRemaining(generatableList::add);
+        return generate(generatableList.toArray(new JGeneratable[0]));
     }
 
     /**
@@ -74,22 +79,15 @@ public final class JGenerator {
         }
     }
 
-    public static Class<?> generate(JGeneratable generatable) throws URISyntaxException {
-        Iterable<String> options = null;
-        if (libraries.size() > 0) {
-            StringBuilder classpath_option = new StringBuilder();
-            for (File library : libraries) {
-                classpath_option.append(library.getPath()).append(";");
-            }
-            options = Arrays.asList("-classpath", classpath_option.toString());
-        }
-        JavaCompiler.CompilationTask task = COMPILER.getTask(null, JAVA_FILE_MANAGER, null, options, null, Collections.singletonList(new StringObject(new URI(generatable.getSimpleName() + ".java"), JavaFileObject.Kind.SOURCE, generatable.getString())));
-        if (task.call()) {
-            JJavaFileObject javaFileObject = JAVA_FILE_MANAGER.getLastJavaFileObject();
-            return JClassLoader.generate(generatable.getName(), javaFileObject.getBytes());
-        } else {
-            throw new RuntimeException("Failed to generate the class!");
-        }
+    /**
+     * Compile the JClass, JInterface, JEnum, JAnnotation to a jvm Class in cache
+     *
+     * @param generatable the class
+     * @return if there are no inner or anonymous classes the class, will return a list whose size is 1, or else is over 1
+     * @since v2.00.0
+     */
+    public static List<Class<?>> generate(JGeneratable generatable) {
+        return generate(new JGeneratable[]{generatable});
     }
 
 }

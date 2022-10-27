@@ -2,8 +2,8 @@ package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
 import net.deechael.dcg.JType;
-import net.deechael.dcg.body.TryCatchInner;
-import net.deechael.dcg.items.Var;
+import net.deechael.dcg.Var;
+import net.deechael.dcg.operation.TryCatchInner;
 import net.deechael.useless.function.parameters.DuParameter;
 import net.deechael.useless.function.parameters.Parameter;
 import net.deechael.useless.objs.DuObj;
@@ -58,12 +58,12 @@ public final class TryCatchInnerCreator {
         return this;
     }
 
-    public void setFinally(Parameter<JExecutable> finallyExecuting) {
-        if (!editable) return;
+    public TryCatchInnerCreator setFinally(Parameter<JExecutable> finallyExecuting) {
+        if (!editable) return this;
         JExecutable.JExecutable4InnerStructure finallyBody = new JExecutable.JExecutable4InnerStructure();
         finallyExecuting.apply(finallyBody);
         this.finallyBody = finallyBody;
-        done();
+        return this;
     }
 
     public void done() {

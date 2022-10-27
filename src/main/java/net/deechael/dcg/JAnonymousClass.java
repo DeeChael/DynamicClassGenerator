@@ -1,6 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

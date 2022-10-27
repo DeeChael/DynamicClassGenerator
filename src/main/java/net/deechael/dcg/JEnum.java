@@ -1,6 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -241,7 +240,7 @@ public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwna
 
     public static class Builder {
 
-        private Level level;
+        private final Level level;
         private String packageName = null;
         private String className = null;
 
@@ -264,6 +263,7 @@ public final class JEnum implements JObject, JGeneratable, JType, Var, FieldOwna
                 throw new RuntimeException("The class name cannot be null!");
             return new JEnum(level, packageName, className);
         }
+
         public static Builder ofPublic() {
             return new Builder(Level.PUBLIC);
         }

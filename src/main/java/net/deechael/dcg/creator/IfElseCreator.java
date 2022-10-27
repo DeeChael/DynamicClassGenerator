@@ -2,7 +2,7 @@ package net.deechael.dcg.creator;
 
 import net.deechael.dcg.JExecutable;
 import net.deechael.dcg.Requirement;
-import net.deechael.dcg.body.IfElse;
+import net.deechael.dcg.operation.IfElse;
 import net.deechael.useless.function.parameters.Parameter;
 
 import java.util.AbstractMap;
@@ -36,12 +36,12 @@ public final class IfElseCreator {
         return this;
     }
 
-    public void setElse(Parameter<JExecutable> elseExecuting) {
-        if (!editable) return;
+    public IfElseCreator setElse(Parameter<JExecutable> elseExecuting) {
+        if (!editable) return this;
         JExecutable.JExecutable4InnerStructure elseBody = new JExecutable.JExecutable4InnerStructure();
         elseExecuting.apply(elseBody);
         this.elseBody = elseBody;
-        done();
+        return this;
     }
 
     public void done() {

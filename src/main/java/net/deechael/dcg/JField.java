@@ -1,7 +1,5 @@
 package net.deechael.dcg;
 
-import net.deechael.dcg.items.Var;
-
 import java.util.HashMap;
 import java.util.Map;
 
