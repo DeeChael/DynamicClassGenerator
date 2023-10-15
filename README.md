@@ -1,3 +1,5 @@
+# ! This Project is reworking under https://www.github.com/DeeChael/dcg ! Check new project! !
+
 # Dynamic Class Generator 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.deechael/dcg)
 [![License](https://img.shields.io/github/license/DeeChael/DynamicClassGenerator.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
